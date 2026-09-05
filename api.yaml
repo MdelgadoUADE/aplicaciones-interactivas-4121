@@ -1,0 +1,1059 @@
+openapi: 3.0.3
+info:
+  title: API de tienda de libros MaxiLibros
+  description: API para la gestión de venta de libros
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:3000/api
+    description: Servidor principal
+
+tags:
+  - name: Identificadores
+    description: Utilidades para obtener IDs de productos
+  - name: Productos
+    description: Gestión del catálogo de libros
+  - name: Categorías
+    description: Gestión de categorías
+  - name: Autenticación
+    description: Registro y login de usuarios
+  - name: Pedidos
+    description: Gestión de órdenes de compra
+
+paths:
+  /products/get-ids:
+    get:
+      summary: Trae los IDs de productos disponibles, ordenados de menor a mayor
+      description: >
+        Endpoint de utilidad para sincronizar listas en el frontend sin
+        descargar el catálogo completo.
+      tags:
+        - Identificadores
+      parameters:
+        - name: limit
+          in: query
+          required: false
+          description: Límite de cuántos IDs traer. Por defecto trae 1.
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: categoryId
+          in: query
+          required: false
+          description: Filtra los IDs por categoría
+          schema:
+            type: integer
+        - name: offset
+          in: query
+          required: false
+          description: Cantidad de IDs a saltar (para paginar)
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+      responses:
+        "200":
+          description: IDs obtenidos correctamente (la lista puede estar vacía)
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: integer
+              example: [1, 2, 3]
+
+  /products:
+    get:
+      summary: Obtener lista de productos (info básica para armar cards)
+      tags:
+        - Productos
+      parameters:
+        - $ref: "#/components/parameters/PageParam"
+        - $ref: "#/components/parameters/LimitParam"
+        - name: categoryId
+          in: query
+          required: false
+          description: Filtrar por categoría
+          schema:
+            type: integer
+        - name: search
+          in: query
+          required: false
+          description: Buscar por título o autor
+          schema:
+            type: string
+        - name: minPrice
+          in: query
+          required: false
+          schema:
+            type: number
+            format: float
+        - name: maxPrice
+          in: query
+          required: false
+          schema:
+            type: number
+            format: float
+        - name: inStock
+          in: query
+          required: false
+          description: Solo productos con stock disponible
+          schema:
+            type: boolean
+        - name: sort
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [price_asc, price_desc, title_asc, newest]
+            default: newest
+      responses:
+        "200":
+          description: Lista paginada de productos
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PagedProductCard"
+    post:
+      summary: Crear un nuevo producto (libro)
+      description: Requiere rol admin. El ISBN debe ser único.
+      tags:
+        - Productos
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProductInput"
+      responses:
+        "201":
+          description: Producto creado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProductDetail"
+        "400":
+          $ref: "#/components/responses/ValidationError"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "409":
+          description: Ya existe un producto con ese ISBN
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /products/{id}:
+    get:
+      summary: Obtener el detalle completo de un producto
+      tags:
+        - Productos
+      parameters:
+        - $ref: "#/components/parameters/PathProductId"
+      responses:
+        "200":
+          description: Detalle del producto
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProductDetail"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    put:
+      summary: Reemplazar completamente un producto
+      description: Requiere rol admin. Todos los campos del input son obligatorios.
+      tags:
+        - Productos
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/PathProductId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProductInput"
+      responses:
+        "200":
+          description: Producto actualizado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProductDetail"
+        "400":
+          $ref: "#/components/responses/ValidationError"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    patch:
+      summary: Actualizar campos específicos de un producto
+      description: >
+        Requiere rol admin. Útil para cambiar solo el stock o el precio
+        sin enviar el objeto completo.
+      tags:
+        - Productos
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/PathProductId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProductPatchInput"
+      responses:
+        "200":
+          description: Producto actualizado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProductDetail"
+        "400":
+          $ref: "#/components/responses/ValidationError"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    delete:
+      summary: Eliminar un producto
+      description: >
+        Requiere rol admin. Si el producto está asociado a pedidos,
+        se recomienda soft-delete o devolver 409.
+      tags:
+        - Productos
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/PathProductId"
+      responses:
+        "204":
+          description: Producto eliminado
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          description: El producto está asociado a pedidos existentes
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /categories:
+    get:
+      summary: Obtener lista de categorías
+      tags:
+        - Categorías
+      responses:
+        "200":
+          description: Lista de categorías
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Category"
+    post:
+      summary: Crear una categoría
+      description: Requiere rol admin. El nombre debe ser único.
+      tags:
+        - Categorías
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CategoryInput"
+      responses:
+        "201":
+          description: Categoría creada
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Category"
+        "400":
+          $ref: "#/components/responses/ValidationError"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "409":
+          description: Ya existe una categoría con ese nombre
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /categories/{id}:
+    get:
+      summary: Obtener una categoría
+      tags:
+        - Categorías
+      parameters:
+        - $ref: "#/components/parameters/PathCategoryId"
+      responses:
+        "200":
+          description: Detalle de la categoría
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Category"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    put:
+      summary: Actualizar una categoría
+      description: Requiere rol admin.
+      tags:
+        - Categorías
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/PathCategoryId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CategoryInput"
+      responses:
+        "200":
+          description: Categoría actualizada
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Category"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    delete:
+      summary: Eliminar una categoría
+      description: Requiere rol admin. Falla si tiene productos asociados.
+      tags:
+        - Categorías
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/PathCategoryId"
+      responses:
+        "204":
+          description: Categoría eliminada
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          description: La categoría tiene productos asociados
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /categories/{id}/products:
+    get:
+      summary: Obtener los productos de una categoría
+      tags:
+        - Categorías
+      parameters:
+        - $ref: "#/components/parameters/PathCategoryId"
+        - $ref: "#/components/parameters/PageParam"
+        - $ref: "#/components/parameters/LimitParam"
+      responses:
+        "200":
+          description: Lista paginada de productos de la categoría
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PagedProductCard"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /auth/register:
+    post:
+      summary: Registrar un nuevo usuario
+      tags:
+        - Autenticación
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterInput"
+      responses:
+        "201":
+          description: Usuario registrado. Devuelve token y datos del usuario.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "400":
+          $ref: "#/components/responses/ValidationError"
+        "409":
+          description: El email ya está registrado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /auth/login:
+    post:
+      summary: Iniciar sesión
+      tags:
+        - Autenticación
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginInput"
+      responses:
+        "200":
+          description: Login exitoso
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "400":
+          $ref: "#/components/responses/ValidationError"
+        "401":
+          description: Credenciales incorrectas
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /auth/logout:
+    post:
+      summary: Cerrar sesión
+      description: Invalida el token actual.
+      tags:
+        - Autenticación
+      security:
+        - bearerAuth: []
+      responses:
+        "204":
+          description: Sesión cerrada
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /auth/me:
+    get:
+      summary: Obtener el perfil del usuario autenticado
+      tags:
+        - Autenticación
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Datos del usuario actual
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /orders:
+    post:
+      summary: Crear un pedido
+      description: >
+        Crea un pedido a partir de una lista de productos. El servidor
+        valida el stock, calcula los precios y el total.
+      tags:
+        - Pedidos
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OrderInput"
+      responses:
+        "201":
+          description: Pedido creado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Order"
+        "400":
+          description: Stock insuficiente o items inválidos
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+    get:
+      summary: Obtener lista de pedidos
+      description: >
+        Un usuario autenticado ve sus propios pedidos. Un admin puede ver
+        todos usando el filtro userId.
+      tags:
+        - Pedidos
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: status
+          in: query
+          required: false
+          schema:
+            $ref: "#/components/schemas/OrderStatus"
+        - name: userId
+          in: query
+          required: false
+          description: Solo admin. Filtra los pedidos de un usuario.
+          schema:
+            type: integer
+        - $ref: "#/components/parameters/PageParam"
+        - $ref: "#/components/parameters/LimitParam"
+      responses:
+        "200":
+          description: Lista paginada de pedidos
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PagedOrder"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /orders/{id}:
+    get:
+      summary: Obtener el detalle de un pedido
+      description: El dueño del pedido o un admin pueden verlo.
+      tags:
+        - Pedidos
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/PathOrderId"
+      responses:
+        "200":
+          description: Detalle del pedido con sus items
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Order"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /orders/{id}/status:
+    patch:
+      summary: Actualizar el estado de un pedido
+      description: >
+        Solo admin puede mover a paid, shipped o delivered.
+        El dueño del pedido solo puede pasarlo a cancelled.
+      tags:
+        - Pedidos
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/PathOrderId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OrderStatusUpdate"
+      responses:
+        "200":
+          description: Estado actualizado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Order"
+        "400":
+          description: Transición de estado inválida (ej. delivered → shipped)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  parameters:
+    PathProductId:
+      name: id
+      in: path
+      required: true
+      description: ID del producto
+      schema:
+        type: integer
+        minimum: 1
+    PathCategoryId:
+      name: id
+      in: path
+      required: true
+      description: ID de la categoría
+      schema:
+        type: integer
+        minimum: 1
+    PathOrderId:
+      name: id
+      in: path
+      required: true
+      description: ID del pedido
+      schema:
+        type: integer
+        minimum: 1
+    PageParam:
+      name: page
+      in: query
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+        default: 1
+    LimitParam:
+      name: limit
+      in: query
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+
+  responses:
+    NotFound:
+      description: Recurso no encontrado
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+          example:
+            error: Recurso no encontrado
+    ValidationError:
+      description: Datos de entrada inválidos
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+          example:
+            error: El campo price debe ser mayor a 0
+    Unauthorized:
+      description: No autenticado (token ausente, inválido o expirado)
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+          example:
+            error: Token inválido o expirado
+    Forbidden:
+      description: No tienes permisos para esta operación
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+          example:
+            error: Se requiere rol admin
+
+  schemas:
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          example: Mensaje descriptivo del error
+
+    OrderStatus:
+      type: string
+      enum:
+        - pending
+        - paid
+        - shipped
+        - delivered
+        - cancelled
+
+    ProductCard:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        title:
+          type: string
+          example: Cien años de soledad
+        author:
+          type: string
+          example: Gabriel García Márquez
+        price:
+          type: number
+          format: float
+          example: 19.99
+        imageUrl:
+          type: string
+          example: https://cdn.maxilibros.com/cien-anos.jpg
+        stock:
+          type: integer
+          example: 25
+        categoryId:
+          type: integer
+          example: 3
+        categoryName:
+          type: string
+          example: Novela
+
+    PagedProductCard:
+      type: object
+      properties:
+        total:
+          type: integer
+          example: 152
+        page:
+          type: integer
+          example: 1
+        limit:
+          type: integer
+          example: 20
+        totalPages:
+          type: integer
+          example: 8
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/ProductCard"
+
+    ProductDetail:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        title:
+          type: string
+          example: Cien años de soledad
+        author:
+          type: string
+          example: Gabriel García Márquez
+        isbn:
+          type: string
+          example: "9780307474728"
+        description:
+          type: string
+          example: Novela cumbre del realismo mágico.
+        price:
+          type: number
+          format: float
+          example: 19.99
+        stock:
+          type: integer
+          example: 25
+        categoryId:
+          type: integer
+          example: 3
+        categoryName:
+          type: string
+          example: Novela
+        imageUrl:
+          type: string
+          example: https://cdn.maxilibros.com/cien-anos.jpg
+        publishedYear:
+          type: integer
+          example: 1967
+        createdAt:
+          type: string
+          format: date-time
+          example: "2026-01-15T10:30:00Z"
+
+    ProductInput:
+      type: object
+      required:
+        - title
+        - author
+        - price
+        - categoryId
+      properties:
+        title:
+          type: string
+          example: Cien años de soledad
+        author:
+          type: string
+          example: Gabriel García Márquez
+        isbn:
+          type: string
+          example: "9780307474728"
+        description:
+          type: string
+          example: Novela cumbre del realismo mágico.
+        price:
+          type: number
+          format: float
+          minimum: 0
+          example: 19.99
+        stock:
+          type: integer
+          minimum: 0
+          default: 0
+          example: 25
+        categoryId:
+          type: integer
+          example: 3
+        imageUrl:
+          type: string
+          example: https://cdn.maxilibros.com/cien-anos.jpg
+        publishedYear:
+          type: integer
+          example: 1967
+
+    ProductPatchInput:
+      type: object
+      description: Todos los campos son opcionales; solo se actualizan los enviados.
+      properties:
+        title:
+          type: string
+        price:
+          type: number
+          format: float
+          minimum: 0
+        stock:
+          type: integer
+          minimum: 0
+        categoryId:
+          type: integer
+        imageUrl:
+          type: string
+
+    Category:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 3
+        name:
+          type: string
+          example: Novela
+        description:
+          type: string
+          example: Novelas literarias y contemporáneas
+        productCount:
+          type: integer
+          description: Cantidad de productos en la categoría
+          example: 42
+
+    CategoryInput:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          example: Novela
+        description:
+          type: string
+          example: Novelas literarias y contemporáneas
+
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 7
+        name:
+          type: string
+          example: Maxi
+        email:
+          type: string
+          format: email
+          example: maxi@maxilibros.com
+        role:
+          type: string
+          enum: [customer, admin]
+          example: customer
+        createdAt:
+          type: string
+          format: date-time
+          example: "2026-01-10T08:00:00Z"
+
+    RegisterInput:
+      type: object
+      required:
+        - name
+        - email
+        - password
+      properties:
+        name:
+          type: string
+          example: Maxi
+        email:
+          type: string
+          format: email
+          example: maxi@maxilibros.com
+        password:
+          type: string
+          format: password
+          minLength: 8
+          writeOnly: true
+          example: S3gura!2026
+
+    LoginInput:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+          example: maxi@maxilibros.com
+        password:
+          type: string
+          format: password
+          example: S3gura!2026
+
+    AuthResponse:
+      type: object
+      properties:
+        token:
+          type: string
+          description: JWT para autenticar peticiones (header Authorization Bearer)
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        user:
+          $ref: "#/components/schemas/User"
+
+    ShippingAddress:
+      type: object
+      required:
+        - street
+        - city
+        - zip
+        - country
+      properties:
+        street:
+          type: string
+          example: Av. Siempre Viva 742
+        city:
+          type: string
+          example: Springfield
+        state:
+          type: string
+          example: Springfield State
+        zip:
+          type: string
+          example: "12345"
+        country:
+          type: string
+          example: Argentina
+
+    OrderItemInput:
+      type: object
+      required:
+        - productId
+        - quantity
+      properties:
+        productId:
+          type: integer
+          example: 1
+        quantity:
+          type: integer
+          minimum: 1
+          default: 1
+          example: 2
+
+    OrderInput:
+      type: object
+      required:
+        - items
+        - shippingAddress
+      properties:
+        items:
+          type: array
+          minItems: 1
+          items:
+            $ref: "#/components/schemas/OrderItemInput"
+        shippingAddress:
+          $ref: "#/components/schemas/ShippingAddress"
+
+    OrderItem:
+      type: object
+      properties:
+        productId:
+          type: integer
+          example: 1
+        title:
+          type: string
+          example: Cien años de soledad
+        quantity:
+          type: integer
+          example: 2
+        unitPrice:
+          type: number
+          format: float
+          example: 19.99
+        subtotal:
+          type: number
+          format: float
+          example: 39.98
+
+    Order:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 100
+        userId:
+          type: integer
+          example: 7
+        status:
+          $ref: "#/components/schemas/OrderStatus"
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/OrderItem"
+        total:
+          type: number
+          format: float
+          example: 39.98
+        shippingAddress:
+          $ref: "#/components/schemas/ShippingAddress"
+        createdAt:
+          type: string
+          format: date-time
+          example: "2026-04-09T20:00:00Z"
+
+    PagedOrder:
+      type: object
+      properties:
+        total:
+          type: integer
+          example: 34
+        page:
+          type: integer
+          example: 1
+        limit:
+          type: integer
+          example: 20
+        totalPages:
+          type: integer
+          example: 2
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Order"
+
+    OrderStatusUpdate:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          $ref: "#/components/schemas/OrderStatus"
