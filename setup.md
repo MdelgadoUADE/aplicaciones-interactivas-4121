@@ -26,22 +26,26 @@ Cada integrante del equipo necesita instalar esto en su máquina:
 ```
 proyecto-libros/
 ├── backend/
+│   ├── app.js               # arma la instancia de Express (middlewares + rutas)
+│   ├── server.js            # importa app.js y hace app.listen()
 │   ├── config/
-│   │   └── config.js
-│   ├── models/
-│   ├── migrations/
-│   ├── seeders/
-│   ├── controllers/
-│   ├── routes/
-│   ├── middlewares/
+│   │    └── config.js       # datos de conexión leídos desde .env
+│   ├── auth/                # generación/verificación de JWT, hash de contraseñas
+│   ├── controllers/         # reciben el request, llaman a services, responden
+│   ├── services/            # lógica de negocio (antes de tocar los models)
+│   ├── models/              # definiciones de Sequelize
+│   ├── migrations/          # generadas por sequelize-cli
+│   ├── seeders/             # datos de prueba 
+│   ├── routes/ 
+│   ├── middlewares/         # validaciones, manejo de errores, auth guard
 │   ├── .env.example
 │   ├── .gitignore
 │   ├── package.json
-│   └── server.js
 ├── frontend/
 │   └── (proyecto de React)
 └── SETUP.md
 ```
+
 
 ## 1. Clonar el repositorio
 
