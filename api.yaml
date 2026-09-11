@@ -66,8 +66,13 @@ paths:
   /products:
     get:
       summary: Obtener lista de productos (info básica para armar cards)
+      description: Sitio público sin token, devuelve solo productos con status=active
+        ignorando cualquier otro valor de 'status' recibido. Panel admin con token válido y rol admin, respeta el filtro 'status' tal como se envía (incluyendo la posibilidad de ver 'inactive').
       tags:
         - Productos
+      security:
+        - bearerAuth: []
+        - {}
       parameters:
         - $ref: "#/components/parameters/PageParam"
         - $ref: "#/components/parameters/LimitParam"
@@ -101,6 +106,16 @@ paths:
           description: Solo productos con stock disponible
           schema:
             type: boolean
+        - name: status
+          in: query
+          required: false
+          description: iltra por estado. Si el solicitante no está autenticado como admin,
+            el servidor ignora cualquier valor distinto de 'active' y fuerza ese filtro.
+          schema: 
+            type: string
+            enunm: [active, inactive]
+
+
         - name: sort
           in: query
           required: false
@@ -151,6 +166,11 @@ paths:
   /products/{id}:
     get:
       summary: Obtener el detalle completo de un producto
+      description: Si el producto tiene status=inactive y quien solicita no es admin
+        autenticado, el servidor debe responder 404 (no filtrar su existencia).
+      security: 
+        - bearerAuth: []
+        - {}
       tags:
         - Productos
       parameters:
@@ -244,7 +264,37 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
-
+  /products/{id}/status:
+    patch:
+      summary: Activar o desactivar un producto
+      description: Requiere rol admin. Cambia la visibilidad de la publicación sin modificar el resto de los datos.
+      tags:
+        - Productos
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/PathProductId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProductStatusUpdate"
+      responses:
+        "200":
+          description: Estado actualizado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProductDetail"
+        "400":
+          $ref: "#/components/responses/ValidationError"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
   /categories:
     get:
       summary: Obtener lista de categorías
@@ -457,132 +507,6 @@ paths:
         "401":
           $ref: "#/components/responses/Unauthorized"
 
-  /orders:
-    post:
-      summary: Crear un pedido
-      description: >
-        Crea un pedido a partir de una lista de productos. El servidor
-        valida el stock, calcula los precios y el total.
-      tags:
-        - Pedidos
-      security:
-        - bearerAuth: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/OrderInput"
-      responses:
-        "201":
-          description: Pedido creado
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Order"
-        "400":
-          description: Stock insuficiente o items inválidos
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-    get:
-      summary: Obtener lista de pedidos
-      description: >
-        Un usuario autenticado ve sus propios pedidos. Un admin puede ver
-        todos usando el filtro userId.
-      tags:
-        - Pedidos
-      security:
-        - bearerAuth: []
-      parameters:
-        - name: status
-          in: query
-          required: false
-          schema:
-            $ref: "#/components/schemas/OrderStatus"
-        - name: userId
-          in: query
-          required: false
-          description: Solo admin. Filtra los pedidos de un usuario.
-          schema:
-            type: integer
-        - $ref: "#/components/parameters/PageParam"
-        - $ref: "#/components/parameters/LimitParam"
-      responses:
-        "200":
-          description: Lista paginada de pedidos
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/PagedOrder"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-
-  /orders/{id}:
-    get:
-      summary: Obtener el detalle de un pedido
-      description: El dueño del pedido o un admin pueden verlo.
-      tags:
-        - Pedidos
-      security:
-        - bearerAuth: []
-      parameters:
-        - $ref: "#/components/parameters/PathOrderId"
-      responses:
-        "200":
-          description: Detalle del pedido con sus items
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Order"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "404":
-          $ref: "#/components/responses/NotFound"
-
-  /orders/{id}/status:
-    patch:
-      summary: Actualizar el estado de un pedido
-      description: >
-        Solo admin puede mover a paid, shipped o delivered.
-        El dueño del pedido solo puede pasarlo a cancelled.
-      tags:
-        - Pedidos
-      security:
-        - bearerAuth: []
-      parameters:
-        - $ref: "#/components/parameters/PathOrderId"
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/OrderStatusUpdate"
-      responses:
-        "200":
-          description: Estado actualizado
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Order"
-        "400":
-          description: Transición de estado inválida (ej. delivered → shipped)
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "404":
-          $ref: "#/components/responses/NotFound"
-
 components:
   securitySchemes:
     bearerAuth:
@@ -712,6 +636,12 @@ components:
         categoryName:
           type: string
           example: Novela
+        status:
+          type: string
+          enum: [active, inactive]
+          default: active
+          description: Indica si la publicación está visible/disponible en el sitio público
+          example: active
 
     PagedProductCard:
       type: object
@@ -774,6 +704,12 @@ components:
           type: string
           format: date-time
           example: "2026-01-15T10:30:00Z"
+        status:
+          type: string
+          enum: [active, inactive]
+          default: active
+          description: Indica si la publicación está visible/disponible en el sitio público
+          example: active
 
     ProductInput:
       type: object
@@ -814,6 +750,10 @@ components:
         publishedYear:
           type: integer
           example: 1967
+        status:
+          type: string
+          enum: [active, inactive]
+          default: active
 
     ProductPatchInput:
       type: object
@@ -832,7 +772,18 @@ components:
           type: integer
         imageUrl:
           type: string
-
+        status:
+          type: string
+          enum: [active, inactive]
+    ProductStatusUpdate:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum: [active, inactive]
+          example: inactive
     Category:
       type: object
       properties:
@@ -866,8 +817,9 @@ components:
       type: object
       properties:
         id:
-          type: integer
-          example: 7
+          type: string
+          format: uuid
+          example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
         name:
           type: string
           example: Maxi
