@@ -17,8 +17,10 @@ tags:
     description: Gestión de categorías
   - name: Autenticación
     description: Registro y login de usuarios
-  - name: Pedidos
-    description: Gestión de órdenes de compra
+  - name: Comercio
+    description: Información institucional del comercio
+  - name: Consultas
+    description: Formulario de contacto y gestión de consultas
 
 paths:
   /products/get-ids:
@@ -66,8 +68,13 @@ paths:
   /products:
     get:
       summary: Obtener lista de productos (info básica para armar cards)
-      description: Sitio público sin token, devuelve solo productos con status=active
-        ignorando cualquier otro valor de 'status' recibido. Panel admin con token válido y rol admin, respeta el filtro 'status' tal como se envía (incluyendo la posibilidad de ver 'inactive').
+      description: >
+        Sitio público sin token: devuelve solo productos con status=active,
+        ignorando cualquier otro valor de 'status' recibido. Panel admin con
+        token válido y rol admin: respeta el filtro 'status' tal como se
+        envía (incluyendo la posibilidad de ver 'inactive').
+        El servidor decide esto según la autenticación, nunca según lo que
+        el cliente declare — ver nota de seguridad en el schema ProductCard.
       tags:
         - Productos
       security:
@@ -109,13 +116,19 @@ paths:
         - name: status
           in: query
           required: false
-          description: iltra por estado. Si el solicitante no está autenticado como admin,
-            el servidor ignora cualquier valor distinto de 'active' y fuerza ese filtro.
-          schema: 
+          description: >
+            Filtra por estado. Si el solicitante no está autenticado como
+            admin, el servidor ignora cualquier valor distinto de 'active'
+            y fuerza ese filtro.
+          schema:
             type: string
-            enunm: [active, inactive]
-
-
+            enum: [active, inactive]
+        - name: onSale
+          in: query
+          required: false
+          description: Si es true, devuelve solo productos con discountPercentage > 0
+          schema:
+            type: boolean
         - name: sort
           in: query
           required: false
@@ -166,9 +179,10 @@ paths:
   /products/{id}:
     get:
       summary: Obtener el detalle completo de un producto
-      description: Si el producto tiene status=inactive y quien solicita no es admin
+      description: >
+        Si el producto tiene status=inactive y quien solicita no es admin
         autenticado, el servidor debe responder 404 (no filtrar su existencia).
-      security: 
+      security:
         - bearerAuth: []
         - {}
       tags:
@@ -240,13 +254,15 @@ paths:
                 $ref: "#/components/schemas/ProductDetail"
         "400":
           $ref: "#/components/responses/ValidationError"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
         "404":
           $ref: "#/components/responses/NotFound"
     delete:
       summary: Eliminar un producto
-      description: >
-        Requiere rol admin. Si el producto está asociado a pedidos,
-        se recomienda soft-delete o devolver 409.
+      description: Requiere rol admin.
       tags:
         - Productos
       security:
@@ -256,18 +272,20 @@ paths:
       responses:
         "204":
           description: Producto eliminado
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
         "404":
           $ref: "#/components/responses/NotFound"
-        "409":
-          description: El producto está asociado a pedidos existentes
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
+
   /products/{id}/status:
     patch:
       summary: Activar o desactivar un producto
-      description: Requiere rol admin. Cambia la visibilidad de la publicación sin modificar el resto de los datos.
+      description: >
+        Requiere rol admin. Cambia la visibilidad de la publicación sin
+        modificar el resto de los datos. Operación independiente del PATCH
+        genérico para que quede como una acción explícita y auditable.
       tags:
         - Productos
       security:
@@ -295,6 +313,7 @@ paths:
           $ref: "#/components/responses/Forbidden"
         "404":
           $ref: "#/components/responses/NotFound"
+
   /categories:
     get:
       summary: Obtener lista de categorías
@@ -380,6 +399,10 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Category"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
         "404":
           $ref: "#/components/responses/NotFound"
     delete:
@@ -394,6 +417,10 @@ paths:
       responses:
         "204":
           description: Categoría eliminada
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
         "404":
           $ref: "#/components/responses/NotFound"
         "409":
@@ -425,6 +452,10 @@ paths:
   /auth/register:
     post:
       summary: Registrar un nuevo usuario
+      description: >
+        No se permiten emails duplicados. El rol se asigna siempre como
+        'customer' en el backend; este input no acepta 'role' del cliente
+        (ver nota de seguridad en RegisterInput sobre mass assignment).
       tags:
         - Autenticación
       requestBody:
@@ -490,6 +521,50 @@ paths:
         "401":
           $ref: "#/components/responses/Unauthorized"
 
+  /auth/forgot-password:
+    post:
+      summary: Solicitar recuperación de contraseña
+      description: >
+        Público. Envía un email con un link/token para restablecer la
+        contraseña si el email existe. Por seguridad, responde 200 aunque
+        el email no exista, para no filtrar qué correos están registrados.
+      tags:
+        - Autenticación
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ForgotPasswordInput"
+      responses:
+        "200":
+          description: >
+            Si el email existe, se envió un correo con instrucciones.
+            La respuesta es la misma exista o no la cuenta.
+        "400":
+          $ref: "#/components/responses/ValidationError"
+
+  /auth/reset-password:
+    post:
+      summary: Restablecer la contraseña usando el token recibido por email
+      tags:
+        - Autenticación
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ResetPasswordInput"
+      responses:
+        "200":
+          description: Contraseña actualizada correctamente
+        "400":
+          description: Token inválido, expirado, o contraseña que no cumple los requisitos
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
   /auth/me:
     get:
       summary: Obtener el perfil del usuario autenticado
@@ -506,6 +581,206 @@ paths:
                 $ref: "#/components/schemas/User"
         "401":
           $ref: "#/components/responses/Unauthorized"
+    patch:
+      summary: Modificar los datos personales del usuario autenticado
+      description: >
+        El usuario a modificar es siempre el que surge del token (id del
+        JWT verificado), nunca un id recibido en el body o en la URL. No
+        existe un endpoint para que un usuario modifique a otro por id
+        (evita IDOR / Broken Object Level Authorization).
+      tags:
+        - Autenticación
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserUpdateInput"
+      responses:
+        "200":
+          description: Datos actualizados
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "400":
+          $ref: "#/components/responses/ValidationError"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /comercio:
+    get:
+      summary: Obtener la información institucional del comercio
+      description: >
+        Público. Devuelve un único registro (singleton): el comercio
+        asociado a esta instancia de la aplicación.
+      tags:
+        - Comercio
+      responses:
+        "200":
+          description: Información del comercio
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Comercio"
+        "404":
+          description: Todavía no se cargó la información del comercio
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    put:
+      summary: Crear o actualizar la información institucional del comercio
+      description: Requiere rol admin. Al ser un singleton, PUT crea el registro si no existe o lo reemplaza si ya existe.
+      tags:
+        - Comercio
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ComercioInput"
+      responses:
+        "200":
+          description: Información del comercio actualizada
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Comercio"
+        "400":
+          $ref: "#/components/responses/ValidationError"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+
+  /consultas:
+    post:
+      summary: Enviar una consulta desde el formulario de contacto
+      description: Endpoint público, no requiere autenticación. Cualquier visitante puede enviar una consulta.
+      tags:
+        - Consultas
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ConsultaInput"
+      responses:
+        "201":
+          description: Consulta creada correctamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Consulta"
+        "400":
+          $ref: "#/components/responses/ValidationError"
+
+    get:
+      summary: Listar consultas recibidas
+      description: Solo admin. Permite filtrar por estado.
+      tags:
+        - Consultas
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: estado
+          in: query
+          required: false
+          schema:
+            $ref: "#/components/schemas/ConsultaStatus"
+        - $ref: "#/components/parameters/PageParam"
+        - $ref: "#/components/parameters/LimitParam"
+      responses:
+        "200":
+          description: Lista paginada de consultas
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PagedConsulta"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+
+  /consultas/{id}:
+    get:
+      summary: Obtener el detalle de una consulta
+      description: Solo admin.
+      tags:
+        - Consultas
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/PathConsultaId"
+      responses:
+        "200":
+          description: Detalle de la consulta
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Consulta"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+    delete:
+      summary: Eliminar una consulta
+      description: Solo admin.
+      tags:
+        - Consultas
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/PathConsultaId"
+      responses:
+        "204":
+          description: Consulta eliminada
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /consultas/{id}/estado:
+    patch:
+      summary: Cambiar el estado de una consulta
+      description: Solo admin. Permite marcar como pendiente, leída o respondida.
+      tags:
+        - Consultas
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/PathConsultaId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ConsultaStatusUpdate"
+      responses:
+        "200":
+          description: Estado actualizado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Consulta"
+        "400":
+          $ref: "#/components/responses/ValidationError"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
 
 components:
   securitySchemes:
@@ -513,6 +788,11 @@ components:
       type: http
       scheme: bearer
       bearerFormat: JWT
+      description: >
+        Header Authorization: Bearer <token>. El middleware debe validar
+        el token y, en cada rama (sin token, token inválido, token expirado),
+        cortar la ejecución con 'return' antes de llamar a next() — un
+        return faltante deja el request en un estado inconsistente.
 
   parameters:
     PathProductId:
@@ -531,14 +811,14 @@ components:
       schema:
         type: integer
         minimum: 1
-    PathOrderId:
+    PathConsultaId:
       name: id
       in: path
       required: true
-      description: ID del pedido
+      description: ID de la consulta
       schema:
         type: integer
-        minimum: 1
+      example: 1
     PageParam:
       name: page
       in: query
@@ -599,15 +879,6 @@ components:
           type: string
           example: Mensaje descriptivo del error
 
-    OrderStatus:
-      type: string
-      enum:
-        - pending
-        - paid
-        - shipped
-        - delivered
-        - cancelled
-
     ProductCard:
       type: object
       properties:
@@ -624,6 +895,14 @@ components:
           type: number
           format: float
           example: 19.99
+        discountPercentage:
+          type: number
+          format: float
+          example: 15
+        finalPrice:
+          type: number
+          format: float
+          readOnly: true
         imageUrl:
           type: string
           example: https://cdn.maxilibros.com/cien-anos.jpg
@@ -675,6 +954,9 @@ components:
         author:
           type: string
           example: Gabriel García Márquez
+        editorial:
+          type: string
+          example: Sudamericana
         isbn:
           type: string
           example: "9780307474728"
@@ -685,6 +967,20 @@ components:
           type: number
           format: float
           example: 19.99
+        discountPercentage:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 100
+          default: 0
+          description: Porcentaje de descuento aplicado sobre el precio. 0 significa sin descuento.
+          example: 15
+        finalPrice:
+          type: number
+          format: float
+          readOnly: true
+          description: Precio ya calculado con el descuento aplicado. Solo lectura, lo calcula el backend.
+          example: 22.09
         stock:
           type: integer
           example: 25
@@ -703,6 +999,7 @@ components:
         createdAt:
           type: string
           format: date-time
+          readOnly: true
           example: "2026-01-15T10:30:00Z"
         status:
           type: string
@@ -725,6 +1022,9 @@ components:
         author:
           type: string
           example: Gabriel García Márquez
+        editorial:
+          type: string
+          example: Sudamericana
         isbn:
           type: string
           example: "9780307474728"
@@ -736,6 +1036,12 @@ components:
           format: float
           minimum: 0
           example: 19.99
+        discountPercentage:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 100
+          default: 0
         stock:
           type: integer
           minimum: 0
@@ -761,6 +1067,10 @@ components:
       properties:
         title:
           type: string
+        author:
+          type: string
+        editorial:
+          type: string
         price:
           type: number
           format: float
@@ -768,6 +1078,11 @@ components:
         stock:
           type: integer
           minimum: 0
+        discountPercentage:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 100
         categoryId:
           type: integer
         imageUrl:
@@ -775,6 +1090,7 @@ components:
         status:
           type: string
           enum: [active, inactive]
+
     ProductStatusUpdate:
       type: object
       required:
@@ -784,6 +1100,7 @@ components:
           type: string
           enum: [active, inactive]
           example: inactive
+
     Category:
       type: object
       properties:
@@ -815,47 +1132,96 @@ components:
 
     User:
       type: object
+      description: >
+        Nunca incluye el hash de la contraseña. El backend debe excluir
+        explícitamente esa columna en toda consulta (p. ej. en Sequelize,
+        attributes: { exclude: ['passwordHash'] }), incluso en endpoints
+        que solo exigen estar autenticado, sin importar el rol.
       properties:
         id:
           type: string
           format: uuid
           example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
-        name:
+        nombre:
           type: string
           example: Maxi
+        apellido:
+          type: string
+          example: Gómez
         email:
           type: string
           format: email
           example: maxi@maxilibros.com
-        role:
+        telefono:
+          type: string
+          example: "1122334455"
+        direccion:
+          type: string
+          nullable: true
+          example: Av. Siempre Viva 742
+        rol:
           type: string
           enum: [customer, admin]
           example: customer
-        createdAt:
+        fechaRegistro:
           type: string
           format: date-time
+          readOnly: true
           example: "2026-01-10T08:00:00Z"
 
     RegisterInput:
       type: object
+      description: >
+        El campo 'rol' NO forma parte de este input intencionalmente
+        (protección contra mass assignment). El backend asigna 'customer'
+        por defecto sin importar qué envíe el cliente en el body; crear un
+        admin requiere un endpoint separado, protegido por rol admin, nunca
+        una variante del registro público.
       required:
-        - name
+        - nombre
+        - apellido
         - email
+        - telefono
         - password
       properties:
-        name:
+        nombre:
           type: string
           example: Maxi
+        apellido:
+          type: string
+          example: Gómez
         email:
           type: string
           format: email
           example: maxi@maxilibros.com
+        telefono:
+          type: string
+          example: "1122334455"
+        direccion:
+          type: string
+          nullable: true
+          description: Opcional en el registro inicial.
+          example: Av. Siempre Viva 742
         password:
           type: string
           format: password
           minLength: 8
           writeOnly: true
           example: S3gura!2026
+
+    UserUpdateInput:
+      type: object
+      description: Todos los campos son opcionales; solo se actualizan los enviados. No incluye 'rol' ni 'email' (cambiar el email requiere un flujo de verificación aparte).
+      properties:
+        nombre:
+          type: string
+        apellido:
+          type: string
+        telefono:
+          type: string
+        direccion:
+          type: string
+          nullable: true
 
     LoginInput:
       type: object
@@ -872,6 +1238,33 @@ components:
           format: password
           example: S3gura!2026
 
+    ForgotPasswordInput:
+      type: object
+      required:
+        - email
+      properties:
+        email:
+          type: string
+          format: email
+          example: maxi@maxilibros.com
+
+    ResetPasswordInput:
+      type: object
+      required:
+        - token
+        - password
+      properties:
+        token:
+          type: string
+          description: Token recibido por email, de un solo uso y con expiración corta.
+          example: 7f3a9c1e-4b2d-4e5f-8a6b-1c2d3e4f5a6b
+        password:
+          type: string
+          format: password
+          minLength: 8
+          writeOnly: true
+          example: NuevaS3gura!2026
+
     AuthResponse:
       type: object
       properties:
@@ -882,130 +1275,147 @@ components:
         user:
           $ref: "#/components/schemas/User"
 
-    ShippingAddress:
+    Comercio:
       type: object
-      required:
-        - street
-        - city
-        - zip
-        - country
-      properties:
-        street:
-          type: string
-          example: Av. Siempre Viva 742
-        city:
-          type: string
-          example: Springfield
-        state:
-          type: string
-          example: Springfield State
-        zip:
-          type: string
-          example: "12345"
-        country:
-          type: string
-          example: Argentina
-
-    OrderItemInput:
-      type: object
-      required:
-        - productId
-        - quantity
-      properties:
-        productId:
-          type: integer
-          example: 1
-        quantity:
-          type: integer
-          minimum: 1
-          default: 1
-          example: 2
-
-    OrderInput:
-      type: object
-      required:
-        - items
-        - shippingAddress
-      properties:
-        items:
-          type: array
-          minItems: 1
-          items:
-            $ref: "#/components/schemas/OrderItemInput"
-        shippingAddress:
-          $ref: "#/components/schemas/ShippingAddress"
-
-    OrderItem:
-      type: object
-      properties:
-        productId:
-          type: integer
-          example: 1
-        title:
-          type: string
-          example: Cien años de soledad
-        quantity:
-          type: integer
-          example: 2
-        unitPrice:
-          type: number
-          format: float
-          example: 19.99
-        subtotal:
-          type: number
-          format: float
-          example: 39.98
-
-    Order:
-      type: object
+      description: Registro único (singleton) con la información institucional del comercio.
       properties:
         id:
           type: integer
-          example: 100
-        userId:
+          example: 1
+        nombre:
+          type: string
+          example: Librería Maxilibros
+        descripcion:
+          type: string
+          example: Librería de barrio especializada en literatura latinoamericana.
+        direccion:
+          type: string
+          example: Av. Corrientes 1234, CABA
+        telefono:
+          type: string
+          example: "1145678900"
+        redesSociales:
+          type: object
+          description: Pares clave-valor de red social y URL.
+          additionalProperties:
+            type: string
+          example:
+            instagram: "https://instagram.com/maxilibros"
+            facebook: "https://facebook.com/maxilibros"
+        horarios:
+          type: string
+          description: Texto libre con los horarios de atención.
+          example: "Lunes a viernes 9 a 19hs, sábados 9 a 13hs"
+        updatedAt:
+          type: string
+          format: date-time
+          readOnly: true
+          example: "2026-09-01T12:00:00Z"
+
+    ComercioInput:
+      type: object
+      required:
+        - nombre
+        - direccion
+        - telefono
+      properties:
+        nombre:
+          type: string
+          example: Librería Maxilibros
+        descripcion:
+          type: string
+          example: Librería de barrio especializada en literatura latinoamericana.
+        direccion:
+          type: string
+          example: Av. Corrientes 1234, CABA
+        telefono:
+          type: string
+          example: "1145678900"
+        redesSociales:
+          type: object
+          additionalProperties:
+            type: string
+          example:
+            instagram: "https://instagram.com/maxilibros"
+        horarios:
+          type: string
+          example: "Lunes a viernes 9 a 19hs, sábados 9 a 13hs"
+
+    ConsultaStatus:
+      type: string
+      enum: [pendiente, leida, respondida]
+
+    ConsultaInput:
+      type: object
+      required:
+        - nombre
+        - email
+        - asunto
+        - mensaje
+      properties:
+        nombre:
+          type: string
+          example: Juan Pérez
+        email:
+          type: string
+          format: email
+          example: juan@example.com
+        telefono:
+          type: string
+          description: Opcional según la consigna del TPO
+          example: "1122334455"
+        asunto:
+          type: string
+          example: Consulta por stock
+        mensaje:
+          type: string
+          example: ¿Tienen disponible el producto en talle M?
+
+    Consulta:
+      type: object
+      description: El campo 'estado' se setea siempre en 'pendiente' al crear la consulta; el backend lo ignora si viene en el body de creación.
+      properties:
+        id:
           type: integer
-          example: 7
-        status:
-          $ref: "#/components/schemas/OrderStatus"
+          example: 1
+        nombre:
+          type: string
+        email:
+          type: string
+          format: email
+        telefono:
+          type: string
+          nullable: true
+        asunto:
+          type: string
+        mensaje:
+          type: string
+        estado:
+          $ref: "#/components/schemas/ConsultaStatus"
+        fecha:
+          type: string
+          format: date-time
+          readOnly: true
+          example: "2026-09-10T14:30:00Z"
+
+    ConsultaStatusUpdate:
+      type: object
+      required:
+        - estado
+      properties:
+        estado:
+          $ref: "#/components/schemas/ConsultaStatus"
+
+    PagedConsulta:
+      type: object
+      properties:
         items:
           type: array
           items:
-            $ref: "#/components/schemas/OrderItem"
-        total:
-          type: number
-          format: float
-          example: 39.98
-        shippingAddress:
-          $ref: "#/components/schemas/ShippingAddress"
-        createdAt:
-          type: string
-          format: date-time
-          example: "2026-04-09T20:00:00Z"
-
-    PagedOrder:
-      type: object
-      properties:
+            $ref: "#/components/schemas/Consulta"
         total:
           type: integer
-          example: 34
         page:
           type: integer
-          example: 1
         limit:
           type: integer
-          example: 20
-        totalPages:
-          type: integer
-          example: 2
-        data:
-          type: array
-          items:
-            $ref: "#/components/schemas/Order"
-
-    OrderStatusUpdate:
-      type: object
-      required:
-        - status
-      properties:
-        status:
-          $ref: "#/components/schemas/OrderStatus"
