@@ -1,0 +1,27 @@
+{
+  "name": "Maxilibrerias",
+  "version": "1.0.0",
+  "description": "Trabajo practico integrador de materia Aplicaciones Interactivas curso 4121",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MdelgadoUADE/aplicaciones-interactivas-4121.git"
+  },
+  "keywords": [],
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/MdelgadoUADE/aplicaciones-interactivas-4121/issues"
+  },
+  "homepage": "https://github.com/MdelgadoUADE/aplicaciones-interactivas-4121#readme",
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "express": "^5.2.1",
+    "sequelize": "^6.37.8"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  },
+  "allowScripts": {
+    "bcrypt@6.0.0": true
+  }
+}
