@@ -120,7 +120,7 @@ CREATE TABLE consulta (
     telefono VARCHAR(30),
     asunto VARCHAR(150) NOT NULL,
     mensaje TEXT NOT NULL,
-    estado VARCHAR(20) NOT NULL DEFAULT 'pendiente' CHECK (estado IN ('pendiente', 'respondida', 'leido')),
+    estado VARCHAR(20) NOT NULL DEFAULT 'pendiente' CHECK (estado IN ('pendiente', 'respondida', 'leida')),
     fecha TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
