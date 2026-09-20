@@ -40,7 +40,7 @@ module.exports = (sequelize, DataTypes) => {
         // sin importar qué envíe el cliente (mismo criterio de
         // mass assignment aplicado acá que en el rol de Usuario).
         validate: {
-          isIn: [['pendiente', 'respondida', 'cerrada']],
+          isIn: [['pendiente', 'respondida', 'leida']],
         },
       },
       fecha: {
