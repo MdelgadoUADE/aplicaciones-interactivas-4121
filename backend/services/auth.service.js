@@ -5,17 +5,26 @@ const { hashPassword, comparePassword } = require('../auth/hash');
 const { generateToken } = require('../auth/jwt');
 
 /**
- * Registra un nuevo usuario.
+ * Registra un nuevo usuario administrador.
  *
- * Seguridad: el objeto que se pasa a Usuario.create() se arma a mano,
- * campo por campo (allowlist explícita) — NUNCA se hace algo como
- * Usuario.create(req.body). Esto es intencional: la tabla usuarios tiene
- * DEFAULT 'admin' en la columna rol a nivel de base de datos, y el
- * cliente jamás debe poder decidir su propio rol (mass assignment, visto
- * en la clase de ciberseguridad). 'cliente' se asigna acá de forma
- * explícita, sin importar qué venga en el input.
+ * En este proyecto el único rol persistido es 'admin' (ver nota en
+ * usuario.model.js: la consigna del TPO solo define "visitante" -sin
+ * cuenta- y "administrador"). Como CUALQUIER registro exitoso otorga
+ * rol admin, el endpoint deja de ser público sin control: exige un
+ * inviteCode que coincide con process.env.ADMIN_INVITE_CODE, conocido
+ * solo por el dueño del comercio. Esto reemplaza la defensa de "rol
+ * cliente por defecto" que tendría sentido si hubiera más de un rol.
+ *
+ * Sigue habiendo allowlist explícita igual: el objeto que se pasa a
+ * Usuario.create() se arma campo por campo, nunca Usuario.create(req.body).
  */
-async function registrar({ nombre, apellido, email, telefono, direccion, password }) {
+async function registrar({ nombre, apellido, email, telefono, direccion, password, inviteCode }) {
+  if (inviteCode !== process.env.ADMIN_INVITE_CODE) {
+    const error = new Error('Código de invitación inválido.');
+    error.status = 403;
+    throw error;
+  }
+
   const existente = await Usuario.findOne({ where: { email } });
   if (existente) {
     const error = new Error('El email ya está registrado.');
@@ -32,7 +41,7 @@ async function registrar({ nombre, apellido, email, telefono, direccion, passwor
     telefono,
     direccion: direccion || null,
     passwordHash,
-    rol: 'cliente', // explícito, nunca desde el input del cliente
+    rol: 'admin', // único rol del sistema, explícito de todas formas
   });
 
   const { token } = generateToken(usuario);

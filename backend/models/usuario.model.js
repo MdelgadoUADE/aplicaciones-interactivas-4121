@@ -40,14 +40,16 @@ module.exports = (sequelize, DataTypes) => {
       rol: {
         type: DataTypes.STRING(20),
         allowNull: false,
-        defaultValue: 'cliente',
-        // OJO: el DEFAULT real en la base de datos es 'admin' (ver nota
-        // de seguridad más abajo). Este defaultValue de Sequelize NO es
-        // suficiente por sí solo como defensa; el service de registro
-        // debe asignar 'cliente' de forma explícita en cada creación,
-        // sin depender de este default ni del de la base.
+        defaultValue: 'admin',
+        // Único rol del sistema, según la consigna del TPO (que solo
+        // define "visitante" -sin cuenta- y "administrador"). No existe
+        // rol 'cliente': quien no está autenticado es un visitante
+        // implícito, no una fila en esta tabla.
+        // El registro sigue protegido por INVITE_CODE (ver
+        // auth.service.js) en vez de por distinción de roles, ya que
+        // ahora CUALQUIER registro exitoso crea un admin.
         validate: {
-          isIn: [['admin', 'cliente']],
+          isIn: [['admin']],
         },
       },
       direccion: {

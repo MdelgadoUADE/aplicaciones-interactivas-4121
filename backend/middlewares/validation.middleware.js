@@ -25,11 +25,17 @@ const validarRegistro = [
   body('password')
     .isLength({ min: 8 })
     .withMessage('La contraseña debe tener al menos 8 caracteres'),
+  body('inviteCode')
+    .notEmpty()
+    .withMessage('Falta el código de invitación'),
   // Nota importante: NO hay ningún validator para 'rol' acá. Si alguien
   // manda 'rol' en el body, express-validator no lo bloquea (solo valida
   // los campos listados), pero el controller/service tampoco lo lee del
   // body — la allowlist real está en auth.service.js, no acá. Esta
   // validación es sobre forma de los datos, no sobre seguridad de campos.
+  // La verificación real de que inviteCode sea CORRECTO (no solo que
+  // esté presente) pasa en auth.service.js, comparando contra
+  // process.env.ADMIN_INVITE_CODE.
 ];
 
 const validarLogin = [

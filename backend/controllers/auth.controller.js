@@ -9,7 +9,7 @@ const authService = require('../services/auth.service');
  */
 async function register(req, res, next) {
   try {
-    const { nombre, apellido, email, telefono, direccion, password } = req.body;
+    const { nombre, apellido, email, telefono, direccion, password, inviteCode } = req.body;
 
     const { token, usuario } = await authService.registrar({
       nombre,
@@ -18,6 +18,7 @@ async function register(req, res, next) {
       telefono,
       direccion,
       password,
+      inviteCode,
     });
 
     res.status(201).json({ token, user: usuario });
