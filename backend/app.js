@@ -20,8 +20,11 @@ app.get('/api/health', (req, res) => {
   res.status(200).json({ status: 'ok' });
 });
 
+
+// Ruta para autenticacion
+app.use('/api/auth', require('./routes/auth.routes'));
+
 // TODO Etapa 5 en adelante: acá van a montarse las rutas reales
-// app.use('/api/auth', require('./routes/auth.routes'));
 // app.use('/api/products', require('./routes/product.routes'));
 // etc.
 
