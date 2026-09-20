@@ -91,7 +91,7 @@ CREATE TABLE usuarios (
     email VARCHAR(255) NOT NULL UNIQUE,
     telefono VARCHAR(30),
     password_hash TEXT NOT NULL,
-    rol VARCHAR(20) NOT NULL DEFAULT 'admin' CHECK (rol IN ('admin', 'cliente')),
+    rol VARCHAR(20) NOT NULL DEFAULT 'admin' CHECK (rol IN ('admin')),
     direccion TEXT,
     fecha_registro TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
