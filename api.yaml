@@ -556,15 +556,14 @@ paths:
 
   /auth/register:
     post:
-      summary: Registrar un nuevo usuario
+      summary: Registrar un nuevo usuario administrador
       description: >
-        No se permiten emails duplicados. El rol se asigna siempre como
-        'cliente' en el backend; este input no acepta 'rol' del cliente
+        No se permiten emails duplicados. El único rol del sistema es
+        'admin' (ver User.rol); este input no acepta 'rol' del cliente
         (ver nota de seguridad en RegisterInput sobre mass assignment).
-        Importante: la tabla usuarios tiene DEFAULT 'admin' en la columna
-        rol a nivel de base de datos — el backend NUNCA debe confiar en
-        ese default y debe asignar 'cliente' explícitamente en cada INSERT
-        de registro público.
+        Como cualquier registro exitoso otorga rol admin, el endpoint
+        exige 'inviteCode' válido para evitar que un visitante cualquiera
+        se autogestione permisos de administrador.
       tags:
         - Autenticación
       requestBody:
@@ -582,6 +581,14 @@ paths:
                 $ref: "#/components/schemas/AuthResponse"
         "400":
           $ref: "#/components/responses/ValidationError"
+        "403":
+          description: Código de invitación inválido o ausente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              example:
+                error: Código de invitación inválido.
         "409":
           description: El email ya está registrado
           content:
@@ -636,11 +643,11 @@ paths:
     post:
       summary: Solicitar recuperación de contraseña
       description: >
-        Público. Genera una fila en password_reset_token con estado
-        'vigente' y envía un email con el token en texto plano (el
-        token_hash es lo único que se persiste). Por seguridad, responde
-        200 aunque el email no exista, para no filtrar qué correos están
-        registrados.
+        Público. Genera una fila en password_reset_token con usado=false
+        y envía un email con el token en texto plano (el token_hash es
+        lo único que se persiste, nunca el token real). Por seguridad,
+        responde 200 aunque el email no exista, para no filtrar qué
+        correos están registrados.
       tags:
         - Autenticación
       requestBody:
@@ -661,9 +668,9 @@ paths:
     post:
       summary: Restablecer la contraseña usando el token recibido por email
       description: >
-        Busca el token por su hash, valida que su estado sea 'vigente' y
-        que fecha_expiracion no haya pasado. Al usarlo exitosamente, pasa
-        su estado a 'usado'.
+        Busca el token por su hash, valida que usado=false y que
+        fecha_expiracion no haya pasado. Al usarlo exitosamente, marca
+        usado=true (el token no se puede reutilizar).
       tags:
         - Autenticación
       requestBody:
@@ -677,8 +684,8 @@ paths:
           description: Contraseña actualizada correctamente
         "400":
           description: >
-            Token inválido, con estado distinto de 'vigente', expirado, o
-            contraseña que no cumple los requisitos.
+            Token inválido, ya usado, expirado, o contraseña que no
+            cumple los requisitos.
           content:
             application/json:
               schema:
@@ -877,8 +884,8 @@ paths:
     patch:
       summary: Cambiar el estado de una consulta
       description: >
-        Solo admin. Estados posibles según el DER actual: pendiente,
-        respondida, cerrada.
+        Solo admin. Estados posibles: pendiente, leida, respondida
+        (según la consigna del TPO).
       tags:
         - Consultas
       security:
@@ -1349,8 +1356,12 @@ components:
           example: Av. Siempre Viva 742
         rol:
           type: string
-          enum: [admin, cliente]
-          example: cliente
+          enum: [admin]
+          description: >
+            Único rol del sistema. La consigna del TPO solo define
+            "visitante" (sin cuenta) y "administrador" — no existe un
+            rol de cliente registrado.
+          example: admin
         fechaRegistro:
           type: string
           format: date-time
@@ -1361,18 +1372,22 @@ components:
       type: object
       description: >
         El campo 'rol' NO forma parte de este input intencionalmente
-        (protección contra mass assignment). El backend asigna 'cliente'
-        de forma explícita en el INSERT, sin depender del valor DEFAULT
-        de la columna en la base de datos (que está seteado en 'admin' —
-        confiar en ese default sería un riesgo de seguridad). Crear un
-        admin requiere un endpoint separado, protegido por rol admin,
-        nunca una variante del registro público.
+        (protección contra mass assignment): el backend asigna 'admin'
+        de forma explícita en el INSERT, sin importar qué envíe el
+        cliente en el body. Como este es el único rol del sistema
+        (ver User.rol), un registro público sin más control significaría
+        que cualquier visitante podría auto-otorgarse permisos de
+        administrador. Por eso el registro exige 'inviteCode': una clave
+        que solo conoce el dueño del comercio (configurada en el backend
+        como ADMIN_INVITE_CODE), sin la cual el registro falla con 403
+        antes de tocar la base de datos.
       required:
         - nombre
         - apellido
         - email
         - telefono
         - password
+        - inviteCode
       properties:
         nombre:
           type: string
@@ -1398,6 +1413,13 @@ components:
           minLength: 8
           writeOnly: true
           example: S3gura!2026
+        inviteCode:
+          type: string
+          writeOnly: true
+          description: >
+            Código de invitación que habilita el registro. Debe coincidir
+            con la variable de entorno ADMIN_INVITE_CODE del backend.
+          example: 7a3f9e2b1c4d5680
 
     UserUpdateInput:
       type: object
@@ -1554,8 +1576,11 @@ components:
 
     ConsultaStatus:
       type: string
-      enum: [pendiente, Leída, Respondida]
-      description:  "Estado de la consulta"
+      enum: [pendiente, leida, respondida]
+      description: >
+        Estado de la consulta, según los "Estados mínimos" que exige la
+        consigna del TPO: Pendiente, Leída, Respondida.
+
     ConsultaInput:
       type: object
       required:
