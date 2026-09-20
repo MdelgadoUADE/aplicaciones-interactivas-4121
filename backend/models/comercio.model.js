@@ -28,11 +28,6 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.TEXT,
         allowNull: true,
       },
-      updatedAt: {
-        type: DataTypes.DATE,
-        field: 'updated_at',
-        defaultValue: DataTypes.NOW,
-      },
     },
     {
       tableName: 'comercio',

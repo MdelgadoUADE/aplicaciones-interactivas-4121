@@ -56,11 +56,6 @@ module.exports = (sequelize, DataTypes) => {
           max: 100,
         },
       },
-      updatedAt: {
-        type: DataTypes.DATE,
-        field: 'updated_at',
-        defaultValue: DataTypes.NOW,
-      },
     },
     {
       tableName: 'producto',
