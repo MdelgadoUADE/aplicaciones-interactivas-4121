@@ -23,7 +23,7 @@ app.get('/api/health', (req, res) => {
 
 app.use('/api/auth', require('./routes/auth.routes'));
 app.use('/api/categories', require('./routes/category.routes'));
-
+app.use('/api/products', require('./routes/product.routes'));
 // TODO Etapa 5 en adelante: acá van a montarse las rutas reales
 // app.use('/api/products', require('./routes/product.routes'));
 // etc.
