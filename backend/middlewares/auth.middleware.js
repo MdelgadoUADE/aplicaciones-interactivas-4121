@@ -1,3 +1,4 @@
+// middlewares/auth.middleware.js
 const { verifyToken } = require('../auth/jwt');
 const db = require('../models');
 const { TokenRevocado } = db;
@@ -40,6 +41,7 @@ async function requireAuth(req, res, next) {
   req.userId = decoded.id;
   req.userRole = decoded.rol;
   req.tokenJti = decoded.jti;
+  req.tokenExp = decoded.exp; // timestamp unix (segundos) de expiración, lo pone jsonwebtoken automáticamente al firmar con expiresIn
 
   next();
 }

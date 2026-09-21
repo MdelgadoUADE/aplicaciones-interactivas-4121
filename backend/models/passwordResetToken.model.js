@@ -23,13 +23,10 @@ module.exports = (sequelize, DataTypes) => {
         // 4) al llegar el reset, hashear el token recibido y buscarlo acá
         //    por tokenHash, nunca comparar el texto plano directamente.
       },
-      estado: {
-        type: DataTypes.STRING(20),
+      usado: {
+        type: DataTypes.BOOLEAN,
         allowNull: false,
-        defaultValue: 'vigente',
-        validate: {
-          isIn: [['vigente', 'usado', 'expirado']],
-        },
+        defaultValue: false,
       },
       fechaCreacion: {
         type: DataTypes.DATE,
@@ -54,7 +51,7 @@ module.exports = (sequelize, DataTypes) => {
 
   // Método de instancia: ¿este token todavía se puede usar?
   PasswordResetToken.prototype.esValido = function () {
-    return this.estado === 'vigente' && this.fechaExpiracion > new Date();
+    return this.usado === false && this.fechaExpiracion > new Date();
   };
 
   PasswordResetToken.associate = (models) => {
