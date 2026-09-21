@@ -21,6 +21,10 @@ const validarEstado = [
   body('estado').isIn(['activo', 'inactivo', 'agotado']).withMessage('Estado inválido'),
 ];
 
+const validarDestacado = [
+  body('destacado').isBoolean().withMessage('destacado debe ser true o false'),
+];
+
 // Públicas (optionalAuth: cambia el comportamiento si sos admin, pero no bloquea)
 router.get('/', optionalAuth, productController.listar);
 router.get('/:id', optionalAuth, productController.obtenerPorId);
@@ -30,6 +34,7 @@ router.post('/', requireAuth, requireRole('admin'), validarProducto, manejarVali
 router.put('/:id', requireAuth, requireRole('admin'), validarProducto, manejarValidacion, productController.actualizar);
 router.patch('/:id', requireAuth, requireRole('admin'), productController.actualizarParcial);
 router.patch('/:id/status', requireAuth, requireRole('admin'), validarEstado, manejarValidacion, productController.cambiarEstado);
+router.patch('/:id/destacado', requireAuth, requireRole('admin'), validarDestacado, manejarValidacion, productController.cambiarDestacado);
 router.delete('/:id', requireAuth, requireRole('admin'), productController.eliminar);
 
 // Imágenes: sub-rutas anidadas bajo /:id/images (mergeParams en el

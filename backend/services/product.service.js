@@ -46,6 +46,7 @@ async function listar({
   estado,
   tipoProducto,
   onSale,
+  destacado,
   sort = 'newest',
   isAdmin = false,
 }) {
@@ -55,6 +56,7 @@ async function listar({
   where.estado = isAdmin && estado ? estado : 'activo';
 
   if (tipoProducto) where.tipoProducto = tipoProducto;
+  if (destacado === true) where.destacado = true;
   if (search) {
     where[Op.or] = [
       { nombre: { [Op.iLike]: `%${search}%` } },
@@ -104,6 +106,7 @@ async function listar({
       imagenPrincipal: imagenPrincipal?.imagenUrl || null,
       stock: json.stock,
       categories: json.categorias,
+      destacado: json.destacado,
       estado: json.estado,
     };
   });
@@ -284,6 +287,38 @@ async function cambiarEstado(id, estado) {
   return obtenerPorId(id, { isAdmin: true });
 }
 
+const MAX_DESTACADOS = 6;
+
+/**
+ * Marca o desmarca un producto como destacado. Al marcar (destacado=true),
+ * si ya hay MAX_DESTACADOS productos destacados, rechaza con 409 — el
+ * admin tiene que desmarcar uno manualmente antes de agregar otro (en
+ * vez de reemplazar automáticamente el más viejo, que sería una
+ * sorpresa para el admin).
+ */
+async function cambiarDestacado(id, destacado) {
+  const producto = await Producto.findByPk(id);
+  if (!producto) {
+    const error = new Error('Producto no encontrado.');
+    error.status = 404;
+    throw error;
+  }
+
+  if (destacado && !producto.destacado) {
+    const cantidadActual = await Producto.count({ where: { destacado: true } });
+    if (cantidadActual >= MAX_DESTACADOS) {
+      const error = new Error(
+        `Ya hay ${MAX_DESTACADOS} productos destacados (el máximo permitido). Desmarcá alguno antes de agregar otro.`
+      );
+      error.status = 409;
+      throw error;
+    }
+  }
+
+  await producto.update({ destacado });
+  return obtenerPorId(id, { isAdmin: true });
+}
+
 async function eliminar(id) {
   const producto = await Producto.findByPk(id);
   if (!producto) {
@@ -303,5 +338,6 @@ module.exports = {
   actualizar,
   actualizarParcial,
   cambiarEstado,
+  cambiarDestacado,
   eliminar,
 };

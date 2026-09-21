@@ -56,6 +56,14 @@ module.exports = (sequelize, DataTypes) => {
           max: 100,
         },
       },
+      destacado: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
+        // Máximo 6 productos con destacado=true al mismo tiempo — la
+        // regla se valida en el service (product.service.js), no acá,
+        // porque requiere contar filas de la tabla antes de decidir.
+      },
     },
     {
       tableName: 'producto',

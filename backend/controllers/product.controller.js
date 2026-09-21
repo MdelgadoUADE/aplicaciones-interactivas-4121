@@ -11,7 +11,7 @@ async function listar(req, res, next) {
     const isAdmin = req.userRole === 'admin';
     const {
       page, limit, categoryId, search, minPrice, maxPrice,
-      inStock, estado, tipoProducto, onSale, sort,
+      inStock, estado, tipoProducto, onSale, destacado, sort,
     } = req.query;
 
     const resultado = await productService.listar({
@@ -25,6 +25,7 @@ async function listar(req, res, next) {
       estado,
       tipoProducto,
       onSale: parseBool(onSale),
+      destacado: parseBool(destacado),
       sort,
       isAdmin,
     });
@@ -90,6 +91,15 @@ async function cambiarEstado(req, res, next) {
   }
 }
 
+async function cambiarDestacado(req, res, next) {
+  try {
+    const producto = await productService.cambiarDestacado(req.params.id, req.body.destacado);
+    res.status(200).json(producto);
+  } catch (err) {
+    next(err);
+  }
+}
+
 async function eliminar(req, res, next) {
   try {
     await productService.eliminar(req.params.id);
@@ -106,5 +116,6 @@ module.exports = {
   actualizar,
   actualizarParcial,
   cambiarEstado,
+  cambiarDestacado,
   eliminar,
 };

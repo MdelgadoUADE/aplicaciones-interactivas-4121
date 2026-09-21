@@ -20,7 +20,8 @@ CREATE TABLE producto (
     stock INTEGER NOT NULL DEFAULT 0 CHECK (stock >= 0),
     estado VARCHAR(20) NOT NULL DEFAULT 'activo' CHECK (estado IN ('activo', 'inactivo', 'agotado')),
     descuento NUMERIC(5,2) NOT NULL DEFAULT 0 CHECK (descuento >= 0 AND descuento <= 100),
-    updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+    updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+    destacado BOOLEAN NOT NULL DEFAULT FALSE
 );
 
 -- Especialización de Libro (1:0..1)
