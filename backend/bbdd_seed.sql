@@ -93,7 +93,9 @@ CREATE TABLE usuarios (
     password_hash TEXT NOT NULL,
     rol VARCHAR(20) NOT NULL DEFAULT 'admin' CHECK (rol IN ('admin')),
     direccion TEXT,
-    fecha_registro TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+    fecha_registro TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    intentos_fallidos INTEGER NOT NULL DEFAULT 0,
+    bloqueado_hasta TIMESTAMPTZ
 );
 
 CREATE TABLE password_reset_token (

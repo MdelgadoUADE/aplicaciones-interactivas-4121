@@ -50,7 +50,31 @@ async function enviarNotificacionConsulta(consulta) {
   });
 }
 
+/**
+ * Alerta al dueño de la cuenta cuando se detectan intentos fallidos de
+ * login consecutivos contra su email. Se envía UNA vez al llegar al
+ * umbral (no en cada intento posterior mientras dure el bloqueo), para
+ * no inundar la bandeja de entrada si alguien insiste.
+ */
+async function enviarAlertaIntentosFallidos(destinatario, { intentos, minutosBloqueo }) {
+  await transporter.sendMail({
+    from: process.env.EMAIL_FROM,
+    to: destinatario,
+    subject: 'Actividad sospechosa en tu cuenta — Maxilibros',
+    html: `
+      <p>Detectamos ${intentos} intentos fallidos de inicio de sesión
+      seguidos en tu cuenta.</p>
+      <p>Por seguridad, bloqueamos temporalmente el inicio de sesión de
+      esta cuenta durante ${minutosBloqueo} minutos.</p>
+      <p>Si fuiste vos, simplemente esperá y volvé a intentar. Si no
+      fuiste vos, te recomendamos cambiar tu contraseña apenas puedas
+      volver a entrar.</p>
+    `,
+  });
+}
+
 module.exports = {
   enviarEmailRecuperacion,
   enviarNotificacionConsulta,
+  enviarAlertaIntentosFallidos,
 };

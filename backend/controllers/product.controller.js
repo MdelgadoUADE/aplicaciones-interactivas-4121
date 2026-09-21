@@ -47,7 +47,10 @@ async function obtenerPorId(req, res, next) {
 
 async function crear(req, res, next) {
   try {
-    const producto = await productService.crear(req.body);
+    const { tipoProducto, nombre, descripcion, precio, descuento, stock, estado, categoryIds, images, libro } = req.body;
+    const producto = await productService.crear({
+      tipoProducto, nombre, descripcion, precio, descuento, stock, estado, categoryIds, images, libro,
+    });
     res.status(201).json(producto);
   } catch (err) {
     next(err);
@@ -56,7 +59,10 @@ async function crear(req, res, next) {
 
 async function actualizar(req, res, next) {
   try {
-    const producto = await productService.actualizar(req.params.id, req.body);
+    const { tipoProducto, nombre, descripcion, precio, descuento, stock, estado, categoryIds, libro } = req.body;
+    const producto = await productService.actualizar(req.params.id, {
+      tipoProducto, nombre, descripcion, precio, descuento, stock, estado, categoryIds, libro,
+    });
     res.status(200).json(producto);
   } catch (err) {
     next(err);
@@ -65,7 +71,10 @@ async function actualizar(req, res, next) {
 
 async function actualizarParcial(req, res, next) {
   try {
-    const producto = await productService.actualizarParcial(req.params.id, req.body);
+    const { nombre, descripcion, precio, descuento, stock, estado, categoryIds } = req.body;
+    const producto = await productService.actualizarParcial(req.params.id, {
+      nombre, descripcion, precio, descuento, stock, estado, categoryIds,
+    });
     res.status(200).json(producto);
   } catch (err) {
     next(err);

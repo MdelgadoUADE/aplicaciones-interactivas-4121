@@ -61,6 +61,19 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         defaultValue: DataTypes.NOW,
       },
+      intentosFallidos: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 0,
+        // Se incrementa en cada login fallido, se resetea a 0 en cada
+        // login exitoso (ver auth.service.js).
+      },
+      bloqueadoHasta: {
+        type: DataTypes.DATE,
+        allowNull: true,
+        // Si tiene un valor y ese valor es futuro, el login se rechaza
+        // sin siquiera comparar la contraseña, hasta que pase esa fecha.
+      },
     },
     {
       tableName: 'usuarios',

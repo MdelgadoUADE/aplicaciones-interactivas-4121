@@ -4,7 +4,10 @@ const db = require('../models');
 const { Usuario, PasswordResetToken, TokenRevocado } = db;
 const { hashPassword, comparePassword } = require('../auth/hash');
 const { generateToken } = require('../auth/jwt');
-const { enviarEmailRecuperacion } = require('./email.service');
+const { enviarEmailRecuperacion, enviarAlertaIntentosFallidos } = require('./email.service');
+
+const MAX_INTENTOS_FALLIDOS = 3;
+const MINUTOS_BLOQUEO = 15;
 
 /**
  * Registra un nuevo usuario administrador.
@@ -55,6 +58,12 @@ async function registrar({ nombre, apellido, email, telefono, direccion, passwor
  * Login. Usa el scope 'conPassword' porque el defaultScope de Usuario
  * excluye passwordHash de toda consulta (ver models/usuario.model.js) —
  * este es el único lugar de todo el backend donde se necesita el hash.
+ *
+ * Rate limiting por email: tras 3 intentos fallidos consecutivos, la
+ * cuenta queda bloqueada 15 minutos (bloqueadoHasta) y se manda un mail
+ * de alerta UNA sola vez, al momento de llegar al umbral — no en cada
+ * intento adicional mientras dure el bloqueo. El contador se resetea a
+ * 0 en cualquier login exitoso.
  */
 async function login({ email, password }) {
   const usuario = await Usuario.scope('conPassword').findOne({ where: { email } });
@@ -72,9 +81,40 @@ async function login({ email, password }) {
     throw credencialesInvalidas();
   }
 
+  // Si está bloqueado y el bloqueo todavía no venció, cortar ACÁ, sin
+  // siquiera comparar la contraseña (evita gastar el costo de bcrypt
+  // en un intento que ya sabemos que va a ser rechazado).
+  if (usuario.bloqueadoHasta && usuario.bloqueadoHasta > new Date()) {
+    const minutosRestantes = Math.ceil((usuario.bloqueadoHasta - new Date()) / 60000);
+    const error = new Error(
+      `Cuenta bloqueada temporalmente por intentos fallidos. Probá de nuevo en ${minutosRestantes} minuto(s).`
+    );
+    error.status = 423; // 423 Locked
+    throw error;
+  }
+
   const passwordCorrecta = await comparePassword(password, usuario.passwordHash);
+
   if (!passwordCorrecta) {
+    const nuevosIntentos = usuario.intentosFallidos + 1;
+
+    if (nuevosIntentos >= MAX_INTENTOS_FALLIDOS) {
+      const bloqueadoHasta = new Date(Date.now() + MINUTOS_BLOQUEO * 60 * 1000);
+      await usuario.update({ intentosFallidos: nuevosIntentos, bloqueadoHasta });
+      await enviarAlertaIntentosFallidos(usuario.email, {
+        intentos: nuevosIntentos,
+        minutosBloqueo: MINUTOS_BLOQUEO,
+      });
+    } else {
+      await usuario.update({ intentosFallidos: nuevosIntentos });
+    }
+
     throw credencialesInvalidas();
+  }
+
+  // Login exitoso: resetear el contador y cualquier bloqueo previo.
+  if (usuario.intentosFallidos > 0 || usuario.bloqueadoHasta) {
+    await usuario.update({ intentosFallidos: 0, bloqueadoHasta: null });
   }
 
   const { token } = generateToken(usuario);
