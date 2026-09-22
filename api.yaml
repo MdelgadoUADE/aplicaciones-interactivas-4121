@@ -5,15 +5,13 @@ info:
     API para la gestión de venta de libros. Alineada al DER con
     producto_categoria (N:N), producto_imagen (múltiples imágenes) y
     estados en español.
-  version: 2.0.0
+  version: 2.1.0
 
 servers:
   - url: http://localhost:3000/api
     description: Servidor principal
 
 tags:
-  - name: Identificadores
-    description: Utilidades para obtener IDs de productos
   - name: Productos
     description: Gestión del catálogo de productos
   - name: Categorías
@@ -26,48 +24,6 @@ tags:
     description: Formulario de contacto y gestión de consultas
 
 paths:
-  /products/get-ids:
-    get:
-      summary: Trae los IDs de productos disponibles, ordenados de menor a mayor
-      description: >
-        Endpoint de utilidad para sincronizar listas en el frontend sin
-        descargar el catálogo completo.
-      tags:
-        - Identificadores
-      parameters:
-        - name: limit
-          in: query
-          required: false
-          description: Límite de cuántos IDs traer. Por defecto trae 1.
-          schema:
-            type: integer
-            minimum: 1
-            default: 1
-        - name: categoryId
-          in: query
-          required: false
-          description: Filtra los IDs por categoría
-          schema:
-            type: integer
-        - name: offset
-          in: query
-          required: false
-          description: Cantidad de IDs a saltar (para paginar)
-          schema:
-            type: integer
-            minimum: 0
-            default: 0
-      responses:
-        "200":
-          description: IDs obtenidos correctamente (la lista puede estar vacía)
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  type: integer
-              example: [1, 2, 3]
-
   /products:
     get:
       summary: Obtener lista de productos (info básica para armar cards)
@@ -76,8 +32,6 @@ paths:
         ignorando cualquier otro valor de 'estado' recibido. Panel admin con
         token válido y rol admin: respeta el filtro 'estado' tal como se
         envía (incluyendo la posibilidad de ver 'inactivo' o 'agotado').
-        El servidor decide esto según la autenticación, nunca según lo que
-        el cliente declare.
       tags:
         - Productos
       security:
@@ -89,15 +43,11 @@ paths:
         - name: categoryId
           in: query
           required: false
-          description: >
-            Filtra productos que tengan asignada esta categoría (relación
-            muchos a muchos vía producto_categoria).
           schema:
             type: integer
         - name: search
           in: query
           required: false
-          description: Buscar por nombre o descripción
           schema:
             type: string
         - name: minPrice
@@ -115,30 +65,26 @@ paths:
         - name: inStock
           in: query
           required: false
-          description: Solo productos con stock disponible
           schema:
             type: boolean
         - name: estado
           in: query
           required: false
-          description: >
-            Filtra por estado. Si el solicitante no está autenticado como
-            admin, el servidor ignora cualquier valor distinto de 'activo'
-            y fuerza ese filtro.
           schema:
             $ref: "#/components/schemas/ProductoEstado"
         - name: tipoProducto
           in: query
           required: false
-          description: >
-            Filtra por tipo de producto. Actualmente solo 'libro' tiene
-            tabla de especialización implementada (ver schema Libro).
           schema:
             $ref: "#/components/schemas/TipoProducto"
         - name: onSale
           in: query
           required: false
-          description: Si es true, devuelve solo productos con descuento > 0
+          schema:
+            type: boolean
+        - name: destacado
+          in: query
+          required: false
           schema:
             type: boolean
         - name: sort
@@ -157,13 +103,6 @@ paths:
                 $ref: "#/components/schemas/PagedProductCard"
     post:
       summary: Crear un nuevo producto
-      description: >
-        Requiere rol admin. Debe incluir al menos una categoría
-        (producto_categoria no permite productos sin categoría) y, si
-        tipoProducto es 'libro', los datos de la tabla libro (isbn único).
-        Se recomienda ejecutar la creación del producto y sus tablas
-        relacionadas (libro, categorías, imágenes) dentro de una única
-        transacción de base de datos.
       tags:
         - Productos
       security:
@@ -197,9 +136,6 @@ paths:
   /products/{id}:
     get:
       summary: Obtener el detalle completo de un producto
-      description: >
-        Si el producto tiene estado=inactivo y quien solicita no es admin
-        autenticado, el servidor debe responder 404 (no filtrar su existencia).
       security:
         - bearerAuth: []
         - {}
@@ -218,10 +154,6 @@ paths:
           $ref: "#/components/responses/NotFound"
     put:
       summary: Reemplazar completamente un producto
-      description: >
-        Requiere rol admin. Todos los campos del input son obligatorios,
-        incluyendo el array completo de categorías (reemplaza las
-        asignaciones existentes en producto_categoria).
       tags:
         - Productos
       security:
@@ -251,10 +183,6 @@ paths:
           $ref: "#/components/responses/NotFound"
     patch:
       summary: Actualizar campos específicos de un producto
-      description: >
-        Requiere rol admin. Útil para cambiar solo el stock o el precio
-        sin enviar el objeto completo. Si se envía categoryIds, reemplaza
-        el set completo de categorías (no hace un merge parcial).
       tags:
         - Productos
       security:
@@ -284,9 +212,6 @@ paths:
           $ref: "#/components/responses/NotFound"
     delete:
       summary: Eliminar un producto
-      description: >
-        Requiere rol admin. Elimina en cascada (o vía transacción manual)
-        sus filas asociadas en libro, producto_categoria y producto_imagen.
       tags:
         - Productos
       security:
@@ -306,9 +231,6 @@ paths:
   /products/{id}/status:
     patch:
       summary: Activar, desactivar o marcar como agotado un producto
-      description: >
-        Requiere rol admin. Cambia únicamente el campo estado, como
-        operación explícita e independiente del PATCH genérico.
       tags:
         - Productos
       security:
@@ -337,6 +259,48 @@ paths:
         "404":
           $ref: "#/components/responses/NotFound"
 
+  /products/{id}/destacado:
+    patch:
+      summary: Marcar o desmarcar un producto como destacado
+      description: >
+        Requiere rol admin. Marca o desmarca un producto como destacado. 
+        Al marcar (destacado=true), si ya hay 6 productos destacados, 
+        rechaza con 409 — el admin tiene que desmarcar uno manualmente 
+        antes de agregar otro.
+      tags:
+        - Productos
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/PathProductId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProductDestacadoUpdate"
+      responses:
+        "200":
+          description: Destacado actualizado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProductDetail"
+        "400":
+          $ref: "#/components/responses/ValidationError"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          description: Ya hay 6 productos destacados (el máximo permitido).
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
   /products/{id}/images:
     get:
       summary: Listar las imágenes de un producto
@@ -357,11 +321,6 @@ paths:
           $ref: "#/components/responses/NotFound"
     post:
       summary: Agregar una imagen a un producto
-      description: >
-        Requiere rol admin. Si esPrincipal=true, el backend debe
-        desmarcar cualquier otra imagen principal del mismo producto
-        (hay un índice único parcial en la base que solo permite una
-        imagen principal por producto).
       tags:
         - Productos
       security:
@@ -393,7 +352,6 @@ paths:
   /products/{id}/images/{imageId}:
     delete:
       summary: Eliminar una imagen de un producto
-      description: Requiere rol admin.
       tags:
         - Productos
       security:
@@ -431,7 +389,6 @@ paths:
                   $ref: "#/components/schemas/Category"
     post:
       summary: Crear una categoría
-      description: Requiere rol admin. El nombre debe ser único.
       tags:
         - Categorías
       security:
@@ -480,7 +437,6 @@ paths:
           $ref: "#/components/responses/NotFound"
     put:
       summary: Actualizar una categoría
-      description: Requiere rol admin.
       tags:
         - Categorías
       security:
@@ -557,13 +513,6 @@ paths:
   /auth/register:
     post:
       summary: Registrar un nuevo usuario administrador
-      description: >
-        No se permiten emails duplicados. El único rol del sistema es
-        'admin' (ver User.rol); este input no acepta 'rol' del cliente
-        (ver nota de seguridad en RegisterInput sobre mass assignment).
-        Como cualquier registro exitoso otorga rol admin, el endpoint
-        exige 'inviteCode' válido para evitar que un visitante cualquiera
-        se autogestione permisos de administrador.
       tags:
         - Autenticación
       requestBody:
@@ -587,8 +536,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
-              example:
-                error: Código de invitación inválido.
         "409":
           description: El email ya está registrado
           content:
@@ -622,13 +569,16 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+        "423":
+          description: Cuenta bloqueada temporalmente por intentos fallidos.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
 
   /auth/logout:
     post:
       summary: Cerrar sesión
-      description: >
-        Agrega el jti del token actual a token_revocado para invalidarlo
-        antes de su expiración natural.
       tags:
         - Autenticación
       security:
@@ -642,12 +592,6 @@ paths:
   /auth/forgot-password:
     post:
       summary: Solicitar recuperación de contraseña
-      description: >
-        Público. Genera una fila en password_reset_token con usado=false
-        y envía un email con el token en texto plano (el token_hash es
-        lo único que se persiste, nunca el token real). Por seguridad,
-        responde 200 aunque el email no exista, para no filtrar qué
-        correos están registrados.
       tags:
         - Autenticación
       requestBody:
@@ -667,10 +611,6 @@ paths:
   /auth/reset-password:
     post:
       summary: Restablecer la contraseña usando el token recibido por email
-      description: >
-        Busca el token por su hash, valida que usado=false y que
-        fecha_expiracion no haya pasado. Al usarlo exitosamente, marca
-        usado=true (el token no se puede reutilizar).
       tags:
         - Autenticación
       requestBody:
@@ -709,11 +649,6 @@ paths:
           $ref: "#/components/responses/Unauthorized"
     patch:
       summary: Modificar los datos personales del usuario autenticado
-      description: >
-        El usuario a modificar es siempre el que surge del token (id del
-        JWT verificado), nunca un id recibido en el body o en la URL. No
-        existe un endpoint para que un usuario modifique a otro por id
-        (evita IDOR / Broken Object Level Authorization).
       tags:
         - Autenticación
       security:
@@ -739,9 +674,6 @@ paths:
   /comercio:
     get:
       summary: Obtener la información institucional del comercio
-      description: >
-        Público. Devuelve un único registro (singleton): el comercio
-        asociado a esta instancia de la aplicación, con sus redes sociales.
       tags:
         - Comercio
       responses:
@@ -759,11 +691,6 @@ paths:
                 $ref: "#/components/schemas/Error"
     put:
       summary: Crear o actualizar la información institucional del comercio
-      description: >
-        Requiere rol admin. Al ser un singleton, PUT crea el registro si
-        no existe o lo reemplaza si ya existe. El array redesSociales
-        reemplaza completamente las filas existentes en red_social
-        (borrar todas e insertar las nuevas dentro de una transacción).
       tags:
         - Comercio
       security:
@@ -809,7 +736,6 @@ paths:
                 $ref: "#/components/schemas/Consulta"
         "400":
           $ref: "#/components/responses/ValidationError"
-
     get:
       summary: Listar consultas recibidas
       description: Solo admin. Permite filtrar por estado.
@@ -860,7 +786,6 @@ paths:
           $ref: "#/components/responses/Forbidden"
         "404":
           $ref: "#/components/responses/NotFound"
-
     delete:
       summary: Eliminar una consulta
       description: Solo admin.
@@ -885,7 +810,6 @@ paths:
       summary: Cambiar el estado de una consulta
       description: >
         Solo admin. Estados posibles: pendiente, leida, respondida
-        (según la consigna del TPO).
       tags:
         - Consultas
       security:
@@ -920,13 +844,6 @@ components:
       type: http
       scheme: bearer
       bearerFormat: JWT
-      description: >
-        Header Authorization: Bearer <token>. El middleware debe validar
-        el token, chequear que su jti no esté en token_revocado, y en
-        cada rama (sin token, token inválido, token expirado, token
-        revocado) cortar la ejecución con 'return' antes de llamar a
-        next() — un return faltante deja el request en un estado
-        inconsistente.
 
   parameters:
     PathProductId:
@@ -936,7 +853,6 @@ components:
       description: ID del producto
       schema:
         type: integer
-        minimum: 1
     PathCategoryId:
       name: id
       in: path
@@ -944,7 +860,6 @@ components:
       description: ID de la categoría
       schema:
         type: integer
-        minimum: 1
     PathConsultaId:
       name: id
       in: path
@@ -952,7 +867,6 @@ components:
       description: ID de la consulta
       schema:
         type: integer
-      example: 1
     PageParam:
       name: page
       in: query
@@ -978,32 +892,24 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/Error"
-          example:
-            error: Recurso no encontrado
     ValidationError:
       description: Datos de entrada inválidos
       content:
         application/json:
           schema:
             $ref: "#/components/schemas/Error"
-          example:
-            error: El campo precio debe ser mayor o igual a 0
     Unauthorized:
       description: No autenticado (token ausente, inválido, expirado o revocado)
       content:
         application/json:
           schema:
             $ref: "#/components/schemas/Error"
-          example:
-            error: Token inválido o expirado
     Forbidden:
       description: No tienes permisos para esta operación
       content:
         application/json:
           schema:
             $ref: "#/components/schemas/Error"
-          example:
-            error: Se requiere rol admin
 
   schemas:
     Error:
@@ -1011,16 +917,10 @@ components:
       properties:
         error:
           type: string
-          example: Mensaje descriptivo del error
 
     TipoProducto:
       type: string
       enum: [libro, papeleria, accesorio, otros]
-      description: >
-        Solo 'libro' tiene hoy una tabla de especialización implementada
-        (ver schema Libro). Los demás valores existen a nivel de base de
-        datos (CHECK constraint) pero no tienen endpoints ni schemas
-        específicos todavía en esta API.
 
     ProductoEstado:
       type: string
@@ -1029,19 +929,15 @@ components:
     Category:
       type: object
       properties:
-        id:
+        idCategoria:
           type: integer
-          example: 3
-        name:
+        nombre:
           type: string
-          example: Novela
-        description:
+        descripcion:
           type: string
-          example: Novelas literarias y contemporáneas
+          nullable: true
         productCount:
           type: integer
-          description: Cantidad de productos asociados (vía producto_categoria)
-          example: 42
 
     CategoryInput:
       type: object
@@ -1050,29 +946,22 @@ components:
       properties:
         name:
           type: string
-          example: Novela
         description:
           type: string
-          example: Novelas literarias y contemporáneas
 
     ProductImage:
       type: object
       properties:
-        id:
+        idImagen:
           type: integer
-          example: 1
-        imageUrl:
+        idProducto:
+          type: integer
+        imagenUrl:
           type: string
-          example: https://cdn.maxilibros.com/cien-anos-1.jpg
         orden:
           type: integer
-          example: 0
         esPrincipal:
           type: boolean
-          description: >
-            Solo una imagen por producto puede tener esPrincipal=true
-            (índice único parcial en la base de datos).
-          example: true
 
     ProductImageInput:
       type: object
@@ -1081,51 +970,39 @@ components:
       properties:
         imageUrl:
           type: string
-          example: https://cdn.maxilibros.com/cien-anos-2.jpg
         orden:
           type: integer
           minimum: 0
-          default: 0
         esPrincipal:
           type: boolean
-          default: false
 
     ProductCard:
       type: object
       properties:
         id:
           type: integer
-          example: 1
         nombre:
           type: string
-          example: Cien años de soledad
         tipoProducto:
           $ref: "#/components/schemas/TipoProducto"
         precio:
           type: number
-          format: float
-          example: 19.99
         descuento:
           type: number
-          format: float
-          example: 15
         precioFinal:
           type: number
-          format: float
           readOnly: true
         imagenPrincipal:
           type: string
           nullable: true
-          description: URL de la imagen con esPrincipal=true, o la de menor orden si ninguna está marcada.
-          example: https://cdn.maxilibros.com/cien-anos-1.jpg
         stock:
           type: integer
-          example: 25
         categories:
           type: array
-          description: Todas las categorías asociadas (relación N:N)
           items:
             $ref: "#/components/schemas/Category"
+        destacado:
+          type: boolean
         estado:
           $ref: "#/components/schemas/ProductoEstado"
 
@@ -1134,16 +1011,12 @@ components:
       properties:
         total:
           type: integer
-          example: 152
         page:
           type: integer
-          example: 1
         limit:
           type: integer
-          example: 20
         totalPages:
           type: integer
-          example: 8
         data:
           type: array
           items:
@@ -1151,63 +1024,49 @@ components:
 
     Libro:
       type: object
-      description: Datos específicos de la tabla libro, cuando tipoProducto='libro'.
       properties:
         isbn:
           type: string
-          example: "9780307474728"
         autor:
           type: string
-          example: Gabriel García Márquez
+          nullable: true
         editorial:
           type: string
-          example: Sudamericana
+          nullable: true
         anioPublicacion:
           type: integer
-          example: 1967
+          nullable: true
 
     ProductDetail:
       type: object
       properties:
-        id:
+        idProducto:
           type: integer
-          example: 1
         tipoProducto:
           $ref: "#/components/schemas/TipoProducto"
         nombre:
           type: string
-          example: Cien años de soledad
         descripcion:
           type: string
-          example: Novela cumbre del realismo mágico.
+          nullable: true
         precio:
           type: number
-          format: float
-          example: 19.99
         descuento:
           type: number
-          format: float
-          minimum: 0
-          maximum: 100
-          default: 0
-          description: Porcentaje de descuento sobre el precio. 0 significa sin descuento.
-          example: 15
-        precioFinal:
-          type: number
-          format: float
-          readOnly: true
-          description: Precio ya calculado con el descuento aplicado. Solo lectura, lo calcula el backend.
-          example: 16.99
-        stock:
-          type: integer
-          example: 25
+        destacado:
+          type: boolean
         estado:
           $ref: "#/components/schemas/ProductoEstado"
-        categories:
+        stock:
+          type: integer
+        updatedAt:
+          type: string
+          format: date-time
+        categorias:
           type: array
           items:
             $ref: "#/components/schemas/Category"
-        images:
+        imagenes:
           type: array
           items:
             $ref: "#/components/schemas/ProductImage"
@@ -1215,12 +1074,9 @@ components:
           allOf:
             - $ref: "#/components/schemas/Libro"
           nullable: true
-          description: Presente solo si tipoProducto='libro'; null en caso contrario.
-        updatedAt:
-          type: string
-          format: date-time
+        precioFinal:
+          type: number
           readOnly: true
-          example: "2026-09-01T12:00:00Z"
 
     ProductInput:
       type: object
@@ -1234,42 +1090,30 @@ components:
           $ref: "#/components/schemas/TipoProducto"
         nombre:
           type: string
-          example: Cien años de soledad
         descripcion:
           type: string
-          example: Novela cumbre del realismo mágico.
         precio:
           type: number
-          format: float
           minimum: 0
-          example: 19.99
         descuento:
           type: number
-          format: float
           minimum: 0
           maximum: 100
-          default: 0
         stock:
           type: integer
           minimum: 0
-          default: 0
-          example: 25
         estado:
           $ref: "#/components/schemas/ProductoEstado"
         categoryIds:
           type: array
-          description: Debe incluir al menos una categoría.
           minItems: 1
           items:
             type: integer
-          example: [3, 5]
         images:
           type: array
-          description: Opcional al crear; se pueden agregar después con POST /products/{id}/images.
           items:
             $ref: "#/components/schemas/ProductImageInput"
         libro:
-          description: Obligatorio si tipoProducto='libro'; se ignora en otro caso.
           allOf:
             - type: object
               required:
@@ -1277,20 +1121,15 @@ components:
               properties:
                 isbn:
                   type: string
-                  example: "9780307474728"
                 autor:
                   type: string
-                  example: Gabriel García Márquez
                 editorial:
                   type: string
-                  example: Sudamericana
                 anioPublicacion:
                   type: integer
-                  example: 1967
 
     ProductPatchInput:
       type: object
-      description: Todos los campos son opcionales; solo se actualizan los enviados.
       properties:
         nombre:
           type: string
@@ -1298,21 +1137,18 @@ components:
           type: string
         precio:
           type: number
-          format: float
           minimum: 0
         stock:
           type: integer
           minimum: 0
         descuento:
           type: number
-          format: float
           minimum: 0
           maximum: 100
         estado:
           $ref: "#/components/schemas/ProductoEstado"
         categoryIds:
           type: array
-          description: Si se envía, reemplaza el set completo de categorías.
           items:
             type: integer
 
@@ -1323,64 +1159,45 @@ components:
       properties:
         estado:
           $ref: "#/components/schemas/ProductoEstado"
-          example: agotado
+
+    ProductDestacadoUpdate:
+      type: object
+      required:
+        - destacado
+      properties:
+        destacado:
+          type: boolean
 
     User:
       type: object
-      description: >
-        Nunca incluye password_hash. El backend debe excluir explícitamente
-        esa columna en toda consulta (p. ej. en Sequelize, attributes:
-        { exclude: ['passwordHash'] }), incluso en endpoints que solo
-        exigen estar autenticado, sin importar el rol.
       properties:
-        id:
+        idUsuario:
           type: string
           format: uuid
-          example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
         nombre:
           type: string
-          example: Maxi
         apellido:
           type: string
-          example: Gómez
+          nullable: true
         email:
           type: string
           format: email
-          example: maxi@maxilibros.com
         telefono:
           type: string
-          example: "1122334455"
-        direccion:
-          type: string
           nullable: true
-          example: Av. Siempre Viva 742
         rol:
           type: string
           enum: [admin]
-          description: >
-            Único rol del sistema. La consigna del TPO solo define
-            "visitante" (sin cuenta) y "administrador" — no existe un
-            rol de cliente registrado.
-          example: admin
+        direccion:
+          type: string
+          nullable: true
         fechaRegistro:
           type: string
           format: date-time
           readOnly: true
-          example: "2026-01-10T08:00:00Z"
 
     RegisterInput:
       type: object
-      description: >
-        El campo 'rol' NO forma parte de este input intencionalmente
-        (protección contra mass assignment): el backend asigna 'admin'
-        de forma explícita en el INSERT, sin importar qué envíe el
-        cliente en el body. Como este es el único rol del sistema
-        (ver User.rol), un registro público sin más control significaría
-        que cualquier visitante podría auto-otorgarse permisos de
-        administrador. Por eso el registro exige 'inviteCode': una clave
-        que solo conoce el dueño del comercio (configurada en el backend
-        como ADMIN_INVITE_CODE), sin la cual el registro falla con 403
-        antes de tocar la base de datos.
       required:
         - nombre
         - apellido
@@ -1391,42 +1208,25 @@ components:
       properties:
         nombre:
           type: string
-          example: Maxi
         apellido:
           type: string
-          example: Gómez
         email:
           type: string
           format: email
-          example: maxi@maxilibros.com
         telefono:
           type: string
-          example: "1122334455"
         direccion:
           type: string
           nullable: true
-          description: Opcional en el registro inicial.
-          example: Av. Siempre Viva 742
         password:
           type: string
           format: password
           minLength: 8
-          writeOnly: true
-          example: S3gura!2026
         inviteCode:
           type: string
-          writeOnly: true
-          description: >
-            Código de invitación que habilita el registro. Debe coincidir
-            con la variable de entorno ADMIN_INVITE_CODE del backend.
-          example: 7a3f9e2b1c4d5680
 
     UserUpdateInput:
       type: object
-      description: >
-        Todos los campos son opcionales; solo se actualizan los enviados.
-        No incluye 'rol' ni 'email' (cambiar el email requeriría un flujo
-        de verificación aparte, no implementado).
       properties:
         nombre:
           type: string
@@ -1447,11 +1247,9 @@ components:
         email:
           type: string
           format: email
-          example: maxi@maxilibros.com
         password:
           type: string
           format: password
-          example: S3gura!2026
 
     ForgotPasswordInput:
       type: object
@@ -1461,7 +1259,6 @@ components:
         email:
           type: string
           format: email
-          example: maxi@maxilibros.com
 
     ResetPasswordInput:
       type: object
@@ -1471,70 +1268,56 @@ components:
       properties:
         token:
           type: string
-          description: Token recibido por email en texto plano; el backend lo hashea para buscarlo en token_hash.
-          example: 7f3a9c1e-4b2d-4e5f-8a6b-1c2d3e4f5a6b
         password:
           type: string
           format: password
           minLength: 8
-          writeOnly: true
-          example: NuevaS3gura!2026
 
     AuthResponse:
       type: object
       properties:
         token:
           type: string
-          description: JWT para autenticar peticiones (header Authorization Bearer)
-          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
         user:
           $ref: "#/components/schemas/User"
 
     RedSocial:
       type: object
       properties:
-        id:
+        idRedSocial:
           type: integer
-          example: 1
         tipo:
           type: string
-          example: instagram
         url:
           type: string
-          example: "https://instagram.com/maxilibros"
 
     Comercio:
       type: object
-      description: Registro único (singleton) con la información institucional del comercio.
       properties:
-        id:
+        idComercio:
           type: integer
-          example: 1
         nombre:
           type: string
-          example: Librería Maxilibros
         descripcion:
           type: string
-          example: Librería de barrio especializada en literatura latinoamericana.
+          nullable: true
         direccion:
           type: string
-          example: Av. Corrientes 1234, CABA
+          nullable: true
         telefono:
           type: string
-          example: "1145678900"
-        redesSociales:
-          type: array
-          items:
-            $ref: "#/components/schemas/RedSocial"
+          nullable: true
         horarios:
           type: string
-          description: Texto libre con los horarios de atención.
-          example: "Lunes a viernes 9 a 19hs, sábados 9 a 13hs"
+          nullable: true
         updatedAt:
           type: string
           format: date-time
           readOnly: true
-          example: "2026-09-01T12:00:00Z"
+        redesSociales:
+          type: array
+          items:
+            $ref: "#/components/schemas/RedSocial"
 
     ComercioInput:
       type: object
@@ -1545,19 +1328,16 @@ components:
       properties:
         nombre:
           type: string
-          example: Librería Maxilibros
         descripcion:
           type: string
-          example: Librería de barrio especializada en literatura latinoamericana.
         direccion:
           type: string
-          example: Av. Corrientes 1234, CABA
         telefono:
           type: string
-          example: "1145678900"
+        horarios:
+          type: string
         redesSociales:
           type: array
-          description: Reemplaza completamente el set de redes sociales existente.
           items:
             type: object
             required:
@@ -1566,20 +1346,12 @@ components:
             properties:
               tipo:
                 type: string
-                example: instagram
               url:
                 type: string
-                example: "https://instagram.com/maxilibros"
-        horarios:
-          type: string
-          example: "Lunes a viernes 9 a 19hs, sábados 9 a 13hs"
 
     ConsultaStatus:
       type: string
       enum: [pendiente, leida, respondida]
-      description: >
-        Estado de la consulta, según los "Estados mínimos" que exige la
-        consigna del TPO: Pendiente, Leída, Respondida.
 
     ConsultaInput:
       type: object
@@ -1591,34 +1363,26 @@ components:
       properties:
         nombre:
           type: string
-          example: Juan Pérez
         email:
           type: string
           format: email
-          example: juan@example.com
         telefono:
           type: string
-          description: Opcional según la consigna del TPO
-          example: "1122334455"
+          nullable: true
         asunto:
           type: string
-          example: Consulta por stock
         mensaje:
           type: string
-          example: ¿Tienen disponible el producto en talle M?
 
     Consulta:
       type: object
-      description: El campo 'estado' se setea siempre en 'pendiente' al crear la consulta; el backend lo ignora si viene en el body de creación.
       properties:
-        id:
+        idConsulta:
           type: integer
-          example: 1
         nombre:
           type: string
         email:
           type: string
-          format: email
         telefono:
           type: string
           nullable: true
@@ -1632,7 +1396,6 @@ components:
           type: string
           format: date-time
           readOnly: true
-          example: "2026-09-10T14:30:00Z"
 
     ConsultaStatusUpdate:
       type: object
