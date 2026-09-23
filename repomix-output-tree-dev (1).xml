@@ -1,0 +1,3849 @@
+This file is a merged representation of a subset of the codebase, containing specifically included files, combined into a single document by Repomix.
+The content has been processed where security check has been disabled.
+
+<file_summary>
+This section contains a summary of this file.
+
+<purpose>
+This file contains a packed representation of a subset of the repository's contents that is considered the most important context.
+It is designed to be easily consumable by AI systems for analysis, code review,
+or other automated processes.
+</purpose>
+
+<file_format>
+The content is organized as follows:
+1. This summary section
+2. Repository information
+3. Directory structure
+4. Repository files (if enabled)
+5. Multiple file entries, each consisting of:
+  - File path as an attribute
+  - Full contents of the file
+</file_format>
+
+<usage_guidelines>
+- This file should be treated as read-only. Any changes should be made to the
+  original repository files, not this packed version.
+- When processing this file, use the file path to distinguish
+  between different files in the repository.
+- Be aware that this file may contain sensitive information. Handle it with
+  the same level of security as you would the original repository.
+</usage_guidelines>
+
+<notes>
+- Some files may have been excluded based on .gitignore rules and Repomix's configuration
+- Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
+- Only files matching these patterns are included: backend/seeders/20260101000004-productos.js, backend/services/product.service.js, backend/services/auth.service.js, backend/bbdd_seed.sql, setup.md, backend/services/category.service.js, backend/middlewares/auth.middleware.js, backend/models/usuario.model.js, backend/controllers/product.controller.js, backend/controllers/auth.controller.js, backend/services/email.service.js, backend/models/producto.model.js, backend/routes/product.routes.js, backend/services/comercio.service.js, backend/services/consulta.service.js, .gitignore, backend/services/productImage.service.js, backend/models/passwordResetToken.model.js, backend/middlewares/validation.middleware.js, backend/seeders/20260101000002-comercio.js, backend/routes/auth.routes.js, backend/models/consulta.model.js, backend/seeders/20260101000005-consultas.js, backend/controllers/category.controller.js, backend/models/tokenRevocado.model.js, backend/routes/consulta.routes.js, backend/controllers/consulta.controller.js, backend/models/redSocial.model.js, backend/seeders/20260101000001-categorias.js, backend/seeders/20260101000003-usuarios.js, backend/app.js, backend/routes/comercio.routes.js, backend/routes/productImage.routes.js, backend/auth/jwt.js, backend/models/productoCategoria.model.js, backend/models/index.js, backend/routes/category.routes.js, backend/models/libro.model.js, backend/models/comercio.model.js, backend/models/productoImagen.model.js, backend/package.json, backend/models/categoria.model.js, backend/controllers/productImage.controller.js, backend/config/config.js, backend/controllers/comercio.controller.js, README.md, backend/auth/hash.js, backend/server.js, package.json, backend/auth/.gitkeep, backend/controllers/.gitkeep, backend/middlewares/.gitkeep, backend/migrations/.gitkeep, backend/routes/.gitkeep, backend/seeders/.gitkeep, backend/services/.gitkeep
+- Files matching patterns in .gitignore are excluded
+- Files matching default ignore patterns are excluded
+- Security check has been disabled - content may contain sensitive information
+- Files are sorted by Git change count (files with more changes are at the bottom)
+</notes>
+
+</file_summary>
+
+<directory_structure>
+backend/
+  auth/
+    .gitkeep
+    hash.js
+    jwt.js
+  config/
+    config.js
+  controllers/
+    .gitkeep
+    auth.controller.js
+    category.controller.js
+    comercio.controller.js
+    consulta.controller.js
+    product.controller.js
+    productImage.controller.js
+  middlewares/
+    .gitkeep
+    auth.middleware.js
+    validation.middleware.js
+  migrations/
+    .gitkeep
+  models/
+    categoria.model.js
+    comercio.model.js
+    consulta.model.js
+    index.js
+    libro.model.js
+    passwordResetToken.model.js
+    producto.model.js
+    productoCategoria.model.js
+    productoImagen.model.js
+    redSocial.model.js
+    tokenRevocado.model.js
+    usuario.model.js
+  routes/
+    .gitkeep
+    auth.routes.js
+    category.routes.js
+    comercio.routes.js
+    consulta.routes.js
+    product.routes.js
+    productImage.routes.js
+  seeders/
+    .gitkeep
+    20260101000001-categorias.js
+    20260101000002-comercio.js
+    20260101000003-usuarios.js
+    20260101000004-productos.js
+    20260101000005-consultas.js
+  services/
+    .gitkeep
+    auth.service.js
+    category.service.js
+    comercio.service.js
+    consulta.service.js
+    email.service.js
+    product.service.js
+    productImage.service.js
+  app.js
+  bbdd_seed.sql
+  package.json
+  server.js
+.gitignore
+package.json
+README.md
+setup.md
+</directory_structure>
+
+<files>
+This section contains the contents of the repository's files.
+
+<file path="backend/auth/.gitkeep">
+
+</file>
+
+<file path="backend/auth/hash.js">
+// auth/hash.js
+const bcrypt = require('bcrypt');
+
+const SALT_ROUNDS = 10;
+
+async function hashPassword(plainPassword) {
+  return bcrypt.hash(plainPassword, SALT_ROUNDS);
+}
+
+async function comparePassword(plainPassword, passwordHash) {
+  return bcrypt.compare(plainPassword, passwordHash);
+}
+
+module.exports = {
+  hashPassword,
+  comparePassword,
+};
+</file>
+
+<file path="backend/auth/jwt.js">
+// auth/jwt.js
+const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
+
+const SECRET = process.env.JWT_SECRET;
+const EXPIRES_IN = process.env.JWT_EXPIRES_IN || '2h';
+
+if (!SECRET) {
+  // Fallar rápido y ruidoso en desarrollo es mejor que firmar tokens
+  // con un secret undefined, que Node aceptaría en silencio.
+  throw new Error('Falta JWT_SECRET en las variables de entorno (.env)');
+}
+
+/**
+ * Genera un JWT para un usuario autenticado.
+ * Incluye jti (JWT ID) para poder revocarlo individualmente en logout,
+ * sin depender de invalidar TODOS los tokens del usuario.
+ */
+function generateToken(usuario) {
+  const jti = crypto.randomUUID();
+
+  const token = jwt.sign(
+    {
+      id: usuario.idUsuario,
+      rol: usuario.rol,
+      jti,
+    },
+    SECRET,
+    { expiresIn: EXPIRES_IN }
+  );
+
+  return { token, jti };
+}
+
+/**
+ * Verifica un JWT. Lanza si es inválido o expiró — el middleware que lo
+ * llama es responsable de capturar el error y responder 401, con return
+ * en cada rama (ver middlewares/auth.middleware.js).
+ */
+function verifyToken(token) {
+  return jwt.verify(token, SECRET);
+}
+
+module.exports = {
+  generateToken,
+  verifyToken,
+};
+</file>
+
+<file path="backend/config/config.js">
+// config/config.js
+require('dotenv').config();
+
+module.exports = {
+  development: {
+    username: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME,
+    host: process.env.DB_HOST,
+    port: process.env.DB_PORT,
+    dialect: 'postgres',
+  },
+  test: {
+    username: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME_TEST || `${process.env.DB_NAME}_test`,
+    host: process.env.DB_HOST,
+    port: process.env.DB_PORT,
+    dialect: 'postgres',
+  },
+  production: {
+    use_env_variable: 'DATABASE_URL',
+    dialect: 'postgres',
+    dialectOptions: {
+      ssl: {
+        require: true,
+        rejectUnauthorized: false,
+      },
+    },
+  },
+};
+</file>
+
+<file path="backend/controllers/.gitkeep">
+
+</file>
+
+<file path="backend/controllers/auth.controller.js">
+// controllers/auth.controller.js
+const authService = require('../services/auth.service');
+
+/**
+ * POST /auth/register
+ * El controller solo extrae los campos esperados del body (misma
+ * allowlist que el service, por defensa en profundidad) y delega toda
+ * la lógica de negocio. No decide reglas acá, solo traduce HTTP <-> service.
+ */
+async function register(req, res, next) {
+  try {
+    const { nombre, apellido, email, telefono, direccion, password, inviteCode } = req.body;
+
+    const { token, usuario } = await authService.registrar({
+      nombre,
+      apellido,
+      email,
+      telefono,
+      direccion,
+      password,
+      inviteCode,
+    });
+
+    res.status(201).json({ token, user: usuario });
+  } catch (err) {
+    next(err); // lo resuelve el error handler centralizado de app.js
+  }
+}
+
+/**
+ * POST /auth/login
+ */
+async function login(req, res, next) {
+  try {
+    const { email, password } = req.body;
+
+    const { token, usuario } = await authService.login({ email, password });
+
+    res.status(200).json({ token, user: usuario });
+  } catch (err) {
+    next(err);
+  }
+}
+
+/**
+ * GET /auth/me
+ */
+async function me(req, res, next) {
+  try {
+    const usuario = await authService.obtenerPerfil(req.userId);
+    res.status(200).json(usuario);
+  } catch (err) {
+    next(err);
+  }
+}
+
+/**
+ * PATCH /auth/me
+ */
+async function updateMe(req, res, next) {
+  try {
+    const { nombre, apellido, telefono, direccion } = req.body;
+    const usuario = await authService.actualizarPerfil(req.userId, { nombre, apellido, telefono, direccion });
+    res.status(200).json(usuario);
+  } catch (err) {
+    next(err);
+  }
+}
+
+/**
+ * POST /auth/logout
+ */
+async function logout(req, res, next) {
+  try {
+    // req.tokenJti y la expiración vienen del middleware requireAuth,
+    // que ya decodificó y verificó el token en esta misma request.
+    await authService.logout(req.tokenJti, new Date(req.tokenExp * 1000));
+    res.status(204).send();
+  } catch (err) {
+    next(err);
+  }
+}
+
+/**
+ * POST /auth/forgot-password
+ * Responde 200 siempre, exista o no el email — la lógica de no filtrar
+ * esa información vive en authService.solicitarRecuperacion().
+ */
+async function forgotPassword(req, res, next) {
+  try {
+    const { email } = req.body;
+    await authService.solicitarRecuperacion(email);
+    res.status(200).json({ message: 'Si el email existe, se enviaron instrucciones.' });
+  } catch (err) {
+    next(err);
+  }
+}
+
+/**
+ * POST /auth/reset-password
+ */
+async function resetPassword(req, res, next) {
+  try {
+    const { token, password } = req.body;
+    await authService.restablecerContrasena(token, password);
+    res.status(200).json({ message: 'Contraseña actualizada correctamente.' });
+  } catch (err) {
+    next(err);
+  }
+}
+
+module.exports = {
+  register,
+  login,
+  me,
+  updateMe,
+  logout,
+  forgotPassword,
+  resetPassword,
+};
+</file>
+
+<file path="backend/controllers/category.controller.js">
+// controllers/category.controller.js
+const categoryService = require('../services/category.service');
+
+async function listar(req, res, next) {
+  try {
+    const categorias = await categoryService.listar();
+    res.status(200).json(categorias);
+  } catch (err) {
+    next(err);
+  }
+}
+
+async function obtenerPorId(req, res, next) {
+  try {
+    const categoria = await categoryService.obtenerPorId(req.params.id);
+    res.status(200).json(categoria);
+  } catch (err) {
+    next(err);
+  }
+}
+
+async function crear(req, res, next) {
+  try {
+    const { name, description } = req.body;
+    const categoria = await categoryService.crear({ name, description });
+    res.status(201).json(categoria);
+  } catch (err) {
+    next(err);
+  }
+}
+
+async function actualizar(req, res, next) {
+  try {
+    const { name, description } = req.body;
+    const categoria = await categoryService.actualizar(req.params.id, { name, description });
+    res.status(200).json(categoria);
+  } catch (err) {
+    next(err);
+  }
+}
+
+async function eliminar(req, res, next) {
+  try {
+    await categoryService.eliminar(req.params.id);
+    res.status(204).send();
+  } catch (err) {
+    next(err);
+  }
+}
+
+async function listarProductos(req, res, next) {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 20;
+    const resultado = await categoryService.listarProductosDeCategoria(req.params.id, { page, limit });
+    res.status(200).json(resultado);
+  } catch (err) {
+    next(err);
+  }
+}
+
+module.exports = {
+  listar,
+  obtenerPorId,
+  crear,
+  actualizar,
+  eliminar,
+  listarProductos,
+};
+</file>
+
+<file path="backend/controllers/comercio.controller.js">
+// controllers/comercio.controller.js
+const comercioService = require('../services/comercio.service');
+
+async function obtener(req, res, next) {
+  try {
+    const comercio = await comercioService.obtener();
+    res.status(200).json(comercio);
+  } catch (err) {
+    next(err);
+  }
+}
+
+async function guardar(req, res, next) {
+  try {
+    const { nombre, descripcion, direccion, telefono, horarios, redesSociales } = req.body;
+    const comercio = await comercioService.guardar({
+      nombre,
+      descripcion,
+      direccion,
+      telefono,
+      horarios,
+      redesSociales,
+    });
+    res.status(200).json(comercio);
+  } catch (err) {
+    next(err);
+  }
+}
+
+module.exports = {
+  obtener,
+  guardar,
+};
+</file>
+
+<file path="backend/controllers/consulta.controller.js">
+// controllers/consulta.controller.js
+const consultaService = require('../services/consulta.service');
+
+async function crear(req, res, next) {
+  try {
+    const { nombre, email, telefono, asunto, mensaje } = req.body;
+    const consulta = await consultaService.crear({ nombre, email, telefono, asunto, mensaje });
+    res.status(201).json(consulta);
+  } catch (err) {
+    next(err);
+  }
+}
+
+async function listar(req, res, next) {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 20;
+    const { estado } = req.query;
+    const resultado = await consultaService.listar({ page, limit, estado });
+    res.status(200).json(resultado);
+  } catch (err) {
+    next(err);
+  }
+}
+
+async function obtenerPorId(req, res, next) {
+  try {
+    const consulta = await consultaService.obtenerPorId(req.params.id);
+    res.status(200).json(consulta);
+  } catch (err) {
+    next(err);
+  }
+}
+
+async function cambiarEstado(req, res, next) {
+  try {
+    const consulta = await consultaService.cambiarEstado(req.params.id, req.body.estado);
+    res.status(200).json(consulta);
+  } catch (err) {
+    next(err);
+  }
+}
+
+async function eliminar(req, res, next) {
+  try {
+    await consultaService.eliminar(req.params.id);
+    res.status(204).send();
+  } catch (err) {
+    next(err);
+  }
+}
+
+module.exports = {
+  crear,
+  listar,
+  obtenerPorId,
+  cambiarEstado,
+  eliminar,
+};
+</file>
+
+<file path="backend/controllers/product.controller.js">
+// controllers/product.controller.js
+const productService = require('../services/product.service');
+
+function parseBool(value) {
+  if (value === undefined) return undefined;
+  return value === 'true' || value === true;
+}
+
+async function listar(req, res, next) {
+  try {
+    const isAdmin = req.userRole === 'admin';
+    const {
+      page, limit, categoryId, search, minPrice, maxPrice,
+      inStock, estado, tipoProducto, onSale, destacado, sort,
+    } = req.query;
+
+    const resultado = await productService.listar({
+      page: parseInt(page) || 1,
+      limit: parseInt(limit) || 20,
+      categoryId: categoryId ? parseInt(categoryId) : undefined,
+      search,
+      minPrice: minPrice ? parseFloat(minPrice) : undefined,
+      maxPrice: maxPrice ? parseFloat(maxPrice) : undefined,
+      inStock: parseBool(inStock),
+      estado,
+      tipoProducto,
+      onSale: parseBool(onSale),
+      destacado: parseBool(destacado),
+      sort,
+      isAdmin,
+    });
+
+    res.status(200).json(resultado);
+  } catch (err) {
+    next(err);
+  }
+}
+
+async function obtenerPorId(req, res, next) {
+  try {
+    const isAdmin = req.userRole === 'admin';
+    const producto = await productService.obtenerPorId(req.params.id, { isAdmin });
+    res.status(200).json(producto);
+  } catch (err) {
+    next(err);
+  }
+}
+
+async function crear(req, res, next) {
+  try {
+    const { tipoProducto, nombre, descripcion, precio, descuento, stock, estado, categoryIds, images, libro } = req.body;
+    const producto = await productService.crear({
+      tipoProducto, nombre, descripcion, precio, descuento, stock, estado, categoryIds, images, libro,
+    });
+    res.status(201).json(producto);
+  } catch (err) {
+    next(err);
+  }
+}
+
+async function actualizar(req, res, next) {
+  try {
+    const { tipoProducto, nombre, descripcion, precio, descuento, stock, estado, categoryIds, libro } = req.body;
+    const producto = await productService.actualizar(req.params.id, {
+      tipoProducto, nombre, descripcion, precio, descuento, stock, estado, categoryIds, libro,
+    });
+    res.status(200).json(producto);
+  } catch (err) {
+    next(err);
+  }
+}
+
+async function actualizarParcial(req, res, next) {
+  try {
+    const { nombre, descripcion, precio, descuento, stock, estado, categoryIds } = req.body;
+    const producto = await productService.actualizarParcial(req.params.id, {
+      nombre, descripcion, precio, descuento, stock, estado, categoryIds,
+    });
+    res.status(200).json(producto);
+  } catch (err) {
+    next(err);
+  }
+}
+
+async function cambiarEstado(req, res, next) {
+  try {
+    const producto = await productService.cambiarEstado(req.params.id, req.body.estado);
+    res.status(200).json(producto);
+  } catch (err) {
+    next(err);
+  }
+}
+
+async function cambiarDestacado(req, res, next) {
+  try {
+    const producto = await productService.cambiarDestacado(req.params.id, req.body.destacado);
+    res.status(200).json(producto);
+  } catch (err) {
+    next(err);
+  }
+}
+
+async function eliminar(req, res, next) {
+  try {
+    await productService.eliminar(req.params.id);
+    res.status(204).send();
+  } catch (err) {
+    next(err);
+  }
+}
+
+module.exports = {
+  listar,
+  obtenerPorId,
+  crear,
+  actualizar,
+  actualizarParcial,
+  cambiarEstado,
+  cambiarDestacado,
+  eliminar,
+};
+</file>
+
+<file path="backend/controllers/productImage.controller.js">
+// controllers/productImage.controller.js
+const productImageService = require('../services/productImage.service');
+
+async function listar(req, res, next) {
+  try {
+    const imagenes = await productImageService.listar(req.params.id);
+    res.status(200).json(imagenes);
+  } catch (err) {
+    next(err);
+  }
+}
+
+async function agregar(req, res, next) {
+  try {
+    const { imageUrl, orden, esPrincipal } = req.body;
+    const imagen = await productImageService.agregar(req.params.id, { imageUrl, orden, esPrincipal });
+    res.status(201).json(imagen);
+  } catch (err) {
+    next(err);
+  }
+}
+
+async function eliminar(req, res, next) {
+  try {
+    await productImageService.eliminar(req.params.id, req.params.imageId);
+    res.status(204).send();
+  } catch (err) {
+    next(err);
+  }
+}
+
+module.exports = {
+  listar,
+  agregar,
+  eliminar,
+};
+</file>
+
+<file path="backend/middlewares/.gitkeep">
+
+</file>
+
+<file path="backend/middlewares/auth.middleware.js">
+// middlewares/auth.middleware.js
+const { verifyToken } = require('../auth/jwt');
+const db = require('../models');
+const { TokenRevocado } = db;
+
+/**
+ * Autenticación OBLIGATORIA: corta con 401 si no hay token válido.
+ *
+ * Ver clase de ciberseguridad, Investigación 2 (capa 2): cada rama de
+ * error usa 'return' antes de responder, para que la ejecución nunca
+ * siga a la línea siguiente después de haber mandado una respuesta.
+ * Un return faltante ahí fue exactamente el bug que dejaba el middleware
+ * en un estado inconsistente.
+ */
+async function requireAuth(req, res, next) {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.startsWith('Bearer ')
+    ? authHeader.slice(7)
+    : null;
+
+  if (!token) {
+    return res.status(401).json({ error: 'No se proporcionó token de autenticación.' });
+  }
+
+  let decoded;
+  try {
+    decoded = verifyToken(token);
+  } catch (err) {
+    return res.status(401).json({ error: 'Token inválido o expirado.' });
+  }
+
+  const revocado = await TokenRevocado.findOne({ where: { jti: decoded.jti } });
+  if (revocado) {
+    return res.status(401).json({ error: 'Token revocado.' });
+  }
+
+  // A partir de acá, cualquier controller/service puede usar req.userId
+  // y req.userRole SIN volver a decodificar el token. Ver nota de
+  // seguridad: req.userId es la ÚNICA fuente confiable de "quién hace
+  // este request" — nunca un id que venga en el body o en params.
+  req.userId = decoded.id;
+  req.userRole = decoded.rol;
+  req.tokenJti = decoded.jti;
+  req.tokenExp = decoded.exp; // timestamp unix (segundos) de expiración, lo pone jsonwebtoken automáticamente al firmar con expiresIn
+
+  next();
+}
+
+/**
+ * Autenticación OPCIONAL: si hay token válido, carga req.userId/userRole;
+ * si no hay token, o es inválido, sigue igual pero sin esos campos.
+ * Se usa en endpoints públicos que se comportan distinto si el que
+ * pregunta es admin (ej: GET /products, que filtra estado=activo para
+ * quien no está autenticado como admin).
+ */
+async function optionalAuth(req, res, next) {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.startsWith('Bearer ')
+    ? authHeader.slice(7)
+    : null;
+
+  if (!token) {
+    return next(); // sigue sin autenticar, no es un error acá
+  }
+
+  try {
+    const decoded = verifyToken(token);
+    const revocado = await TokenRevocado.findOne({ where: { jti: decoded.jti } });
+    if (!revocado) {
+      req.userId = decoded.id;
+      req.userRole = decoded.rol;
+      req.tokenJti = decoded.jti;
+    }
+  } catch (err) {
+    // Token mal formado o expirado en un endpoint público: no es un
+    // error fatal, simplemente se trata como "no autenticado".
+  }
+
+  next();
+}
+
+/**
+ * Autorización por rol. Se usa DESPUÉS de requireAuth en la cadena de
+ * middlewares: requireAuth llena req.userRole, esto solo lo verifica.
+ * No confunde autenticación con autorización (Investigación 2, capa 1):
+ * tener un token válido no alcanza, hace falta el rol correcto.
+ */
+function requireRole(...rolesPermitidos) {
+  return (req, res, next) => {
+    if (!req.userRole || !rolesPermitidos.includes(req.userRole)) {
+      return res.status(403).json({ error: 'No tenés permisos para esta operación.' });
+    }
+    next();
+  };
+}
+
+module.exports = {
+  requireAuth,
+  optionalAuth,
+  requireRole,
+};
+</file>
+
+<file path="backend/middlewares/validation.middleware.js">
+// middlewares/validation.middleware.js
+const { body, validationResult } = require('express-validator');
+
+/**
+ * Corta la request con 400 si express-validator encontró errores.
+ * Se usa como último elemento de la cadena de validators en la ruta:
+ *   router.post('/register', validarRegistro, manejarValidacion, controller.register);
+ */
+function manejarValidacion(req, res, next) {
+  const errores = validationResult(req);
+  if (!errores.isEmpty()) {
+    return res.status(400).json({
+      error: 'Datos de entrada inválidos',
+      detalles: errores.array().map((e) => ({ campo: e.path, mensaje: e.msg })),
+    });
+  }
+  next();
+}
+
+const validarRegistro = [
+  body('nombre').trim().notEmpty().withMessage('El nombre es obligatorio'),
+  body('apellido').trim().notEmpty().withMessage('El apellido es obligatorio'),
+  body('email').trim().isEmail().withMessage('Email inválido').normalizeEmail(),
+  body('telefono').trim().notEmpty().withMessage('El teléfono es obligatorio'),
+  body('password')
+    .isLength({ min: 8 })
+    .withMessage('La contraseña debe tener al menos 8 caracteres'),
+  body('inviteCode')
+    .notEmpty()
+    .withMessage('Falta el código de invitación'),
+  // Nota importante: NO hay ningún validator para 'rol' acá. Si alguien
+  // manda 'rol' en el body, express-validator no lo bloquea (solo valida
+  // los campos listados), pero el controller/service tampoco lo lee del
+  // body — la allowlist real está en auth.service.js, no acá. Esta
+  // validación es sobre forma de los datos, no sobre seguridad de campos.
+  // La verificación real de que inviteCode sea CORRECTO (no solo que
+  // esté presente) pasa en auth.service.js, comparando contra
+  // process.env.ADMIN_INVITE_CODE.
+];
+
+const validarLogin = [
+  body('email').trim().isEmail().withMessage('Email inválido').normalizeEmail(),
+  body('password').notEmpty().withMessage('La contraseña es obligatoria'),
+];
+
+module.exports = {
+  manejarValidacion,
+  validarRegistro,
+  validarLogin,
+};
+</file>
+
+<file path="backend/migrations/.gitkeep">
+
+</file>
+
+<file path="backend/models/categoria.model.js">
+// models/categoria.model.js
+module.exports = (sequelize, DataTypes) => {
+  const Categoria = sequelize.define(
+    'Categoria',
+    {
+      idCategoria: {
+        type: DataTypes.BIGINT,
+        primaryKey: true,
+        autoIncrement: true,
+        field: 'id_categoria',
+      },
+      nombre: {
+        type: DataTypes.STRING(100),
+        allowNull: false,
+        unique: true,
+      },
+      descripcion: {
+        type: DataTypes.TEXT,
+        allowNull: true,
+      },
+    },
+    {
+      tableName: 'categoria',
+      timestamps: false, // esta tabla no tiene created_at/updated_at en el DER
+    }
+  );
+
+  Categoria.associate = (models) => {
+    // N:N con Producto a través de producto_categoria
+    Categoria.belongsToMany(models.Producto, {
+      through: models.ProductoCategoria,
+      foreignKey: 'idCategoria',
+      otherKey: 'idProducto',
+      as: 'productos',
+    });
+  };
+
+  return Categoria;
+};
+</file>
+
+<file path="backend/models/comercio.model.js">
+// models/comercio.model.js
+module.exports = (sequelize, DataTypes) => {
+  const Comercio = sequelize.define(
+    'Comercio',
+    {
+      idComercio: {
+        type: DataTypes.BIGINT,
+        primaryKey: true,
+        autoIncrement: true,
+      },
+      nombre: {
+        type: DataTypes.STRING(150),
+        allowNull: false,
+      },
+      descripcion: {
+        type: DataTypes.TEXT,
+        allowNull: true,
+      },
+      direccion: {
+        type: DataTypes.TEXT,
+        allowNull: true,
+      },
+      telefono: {
+        type: DataTypes.STRING(30),
+        allowNull: true,
+      },
+      horarios: {
+        type: DataTypes.TEXT,
+        allowNull: true,
+      },
+    },
+    {
+      tableName: 'comercio',
+      underscored: true,
+      timestamps: true,
+      createdAt: false, // comercio solo tiene updated_at en el DER
+      updatedAt: 'updated_at',
+    }
+  );
+
+  Comercio.associate = (models) => {
+    Comercio.hasMany(models.RedSocial, {
+      foreignKey: 'idComercio',
+      as: 'redesSociales',
+    });
+  };
+
+  return Comercio;
+};
+</file>
+
+<file path="backend/models/consulta.model.js">
+// models/consulta.model.js
+module.exports = (sequelize, DataTypes) => {
+  const Consulta = sequelize.define(
+    'Consulta',
+    {
+      idConsulta: {
+        type: DataTypes.BIGINT,
+        primaryKey: true,
+        autoIncrement: true,
+      },
+      nombre: {
+        type: DataTypes.STRING(100),
+        allowNull: false,
+      },
+      email: {
+        type: DataTypes.STRING(255),
+        allowNull: false,
+        validate: {
+          isEmail: true,
+        },
+      },
+      telefono: {
+        type: DataTypes.STRING(30),
+        allowNull: true, // opcional, según la consigna del TPO
+      },
+      asunto: {
+        type: DataTypes.STRING(150),
+        allowNull: false,
+      },
+      mensaje: {
+        type: DataTypes.TEXT,
+        allowNull: false,
+      },
+      estado: {
+        type: DataTypes.STRING(20),
+        allowNull: false,
+        defaultValue: 'pendiente',
+        // El service de creación NUNCA debe aceptar 'estado' del body:
+        // toda consulta nueva entra como 'pendiente' sin excepción,
+        // sin importar qué envíe el cliente (mismo criterio de
+        // mass assignment aplicado acá que en el rol de Usuario).
+        validate: {
+          isIn: [['pendiente', 'respondida', 'leida']],
+        },
+      },
+      fecha: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        defaultValue: DataTypes.NOW,
+      },
+    },
+    {
+      tableName: 'consulta',
+      underscored: true,
+      timestamps: false, // "fecha" ya cumple ese rol
+    }
+  );
+
+  // Sin associate(): consulta es independiente en el DER, no tiene FK
+  // hacia ninguna otra tabla ni ninguna otra tabla apunta hacia ella.
+
+  return Consulta;
+};
+</file>
+
+<file path="backend/models/index.js">
+'use strict';
+
+const fs = require('fs');
+const path = require('path');
+const Sequelize = require('sequelize');
+const process = require('process');
+const basename = path.basename(__filename);
+const env = process.env.NODE_ENV || 'development';
+const config = require(__dirname + '/../config/config.js')[env];
+const db = {};
+
+let sequelize;
+if (config.use_env_variable) {
+  sequelize = new Sequelize(process.env[config.use_env_variable], config);
+} else {
+  sequelize = new Sequelize(config.database, config.username, config.password, config);
+}
+
+fs
+  .readdirSync(__dirname)
+  .filter(file => {
+    return (
+      file.indexOf('.') !== 0 &&
+      file !== basename &&
+      file.slice(-3) === '.js' &&
+      file.indexOf('.test.js') === -1
+    );
+  })
+  .forEach(file => {
+    const model = require(path.join(__dirname, file))(sequelize, Sequelize.DataTypes);
+    db[model.name] = model;
+  });
+
+Object.keys(db).forEach(modelName => {
+  if (db[modelName].associate) {
+    db[modelName].associate(db);
+  }
+});
+
+db.sequelize = sequelize;
+db.Sequelize = Sequelize;
+
+module.exports = db;
+</file>
+
+<file path="backend/models/libro.model.js">
+// models/libro.model.js
+module.exports = (sequelize, DataTypes) => {
+  const Libro = sequelize.define(
+    'Libro',
+    {
+      idProducto: {
+        type: DataTypes.BIGINT,
+        primaryKey: true,
+        // No autoIncrement: este valor viene de producto.id_producto,
+        // no se genera solo (es FK y PK a la vez).
+      },
+      isbn: {
+        type: DataTypes.STRING(20),
+        allowNull: false,
+        unique: true,
+      },
+      autor: {
+        type: DataTypes.TEXT,
+        allowNull: true,
+      },
+      editorial: {
+        type: DataTypes.TEXT,
+        allowNull: true,
+      },
+      anioPublicacion: {
+        type: DataTypes.SMALLINT,
+        allowNull: true,
+      },
+    },
+    {
+      tableName: 'libro',
+      underscored: true,
+      timestamps: false, // libro no tiene columnas de fecha en el DER
+    }
+  );
+
+  Libro.associate = (models) => {
+    // 1:1 inverso: Libro pertenece a un Producto
+    Libro.belongsTo(models.Producto, {
+      foreignKey: 'idProducto',
+      as: 'producto',
+    });
+  };
+
+  return Libro;
+};
+</file>
+
+<file path="backend/models/passwordResetToken.model.js">
+// models/password_reset_token.model.js
+module.exports = (sequelize, DataTypes) => {
+  const PasswordResetToken = sequelize.define(
+    'PasswordResetToken',
+    {
+      idToken: {
+        type: DataTypes.BIGINT,
+        primaryKey: true,
+        autoIncrement: true,
+      },
+      idUsuario: {
+        type: DataTypes.UUID,
+        allowNull: false,
+      },
+      tokenHash: {
+        type: DataTypes.TEXT,
+        allowNull: false,
+        // Nunca se guarda el token en texto plano acá. El flujo correcto:
+        // 1) generar un token random (crypto.randomBytes(32).toString('hex'))
+        // 2) guardar SOLO su hash acá (bcrypt o sha256, no hace falta bcrypt
+        //    porque no es una contraseña de usuario, con sha256 alcanza)
+        // 3) mandar el token en texto plano por EMAIL, nunca por consola/log
+        // 4) al llegar el reset, hashear el token recibido y buscarlo acá
+        //    por tokenHash, nunca comparar el texto plano directamente.
+      },
+      usado: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
+      },
+      fechaCreacion: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        defaultValue: DataTypes.NOW,
+      },
+      fechaExpiracion: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        // Se setea al crear el token, típicamente NOW() + 30 minutos.
+        // No tiene defaultValue acá porque depende de la lógica del
+        // service (la ventana de expiración es una decisión de negocio,
+        // no algo que el modelo deba asumir).
+      },
+    },
+    {
+      tableName: 'password_reset_token',
+      underscored: true,
+      timestamps: false,
+    }
+  );
+
+  // Método de instancia: ¿este token todavía se puede usar?
+  PasswordResetToken.prototype.esValido = function () {
+    return this.usado === false && this.fechaExpiracion > new Date();
+  };
+
+  PasswordResetToken.associate = (models) => {
+    PasswordResetToken.belongsTo(models.Usuario, {
+      foreignKey: 'idUsuario',
+      as: 'usuario',
+    });
+  };
+
+  return PasswordResetToken;
+};
+</file>
+
+<file path="backend/models/producto.model.js">
+// models/producto.model.js
+module.exports = (sequelize, DataTypes) => {
+  const Producto = sequelize.define(
+    'Producto',
+    {
+      idProducto: {
+        type: DataTypes.BIGINT,
+        primaryKey: true,
+        autoIncrement: true,
+      },
+      tipoProducto: {
+        type: DataTypes.STRING(30),
+        allowNull: false,
+        validate: {
+          isIn: [['libro', 'papeleria', 'accesorio', 'otros']],
+        },
+      },
+      nombre: {
+        type: DataTypes.TEXT,
+        allowNull: false,
+      },
+      descripcion: {
+        type: DataTypes.TEXT,
+        allowNull: true,
+      },
+      precio: {
+        type: DataTypes.DECIMAL(10, 2),
+        allowNull: false,
+        defaultValue: 0,
+        validate: {
+          min: 0,
+        },
+      },
+      stock: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 0,
+        validate: {
+          min: 0,
+        },
+      },
+      estado: {
+        type: DataTypes.STRING(20),
+        allowNull: false,
+        defaultValue: 'activo',
+        validate: {
+          isIn: [['activo', 'inactivo', 'agotado']],
+        },
+      },
+      descuento: {
+        type: DataTypes.DECIMAL(5, 2),
+        allowNull: false,
+        defaultValue: 0,
+        validate: {
+          min: 0,
+          max: 100,
+        },
+      },
+      destacado: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
+        // Máximo 6 productos con destacado=true al mismo tiempo — la
+        // regla se valida en el service (product.service.js), no acá,
+        // porque requiere contar filas de la tabla antes de decidir.
+      },
+    },
+    {
+      tableName: 'producto',
+      underscored: true, // idProducto -> id_producto, tipoProducto -> tipo_producto, etc.
+      timestamps: true,
+      createdAt: false, // producto no tiene created_at en el DER, solo updated_at
+      updatedAt: 'updated_at',
+    }
+  );
+
+  // Getter para el precio final (no es una columna real, se calcula al vuelo)
+  Producto.prototype.getPrecioFinal = function () {
+    const precio = parseFloat(this.precio);
+    const descuento = parseFloat(this.descuento);
+    return +(precio - (precio * descuento) / 100).toFixed(2);
+  };
+
+  Producto.associate = (models) => {
+    // 1:1 con Libro (especialización)
+    Producto.hasOne(models.Libro, {
+      foreignKey: 'idProducto',
+      as: 'libro',
+    });
+
+    // N:N con Categoria a través de producto_categoria
+    Producto.belongsToMany(models.Categoria, {
+      through: models.ProductoCategoria,
+      foreignKey: 'idProducto',
+      otherKey: 'idCategoria',
+      as: 'categorias',
+    });
+
+    // 1:N con ProductoImagen
+    Producto.hasMany(models.ProductoImagen, {
+      foreignKey: 'idProducto',
+      as: 'imagenes',
+    });
+  };
+
+  return Producto;
+};
+</file>
+
+<file path="backend/models/productoCategoria.model.js">
+// models/producto_categoria.model.js
+module.exports = (sequelize, DataTypes) => {
+  const ProductoCategoria = sequelize.define(
+    'ProductoCategoria',
+    {
+      idProducto: {
+        type: DataTypes.BIGINT,
+        primaryKey: true,
+        // Parte de la PK compuesta (id_producto, id_categoria) del DER.
+        // No autoIncrement: es FK, no un ID propio.
+      },
+      idCategoria: {
+        type: DataTypes.BIGINT,
+        primaryKey: true,
+        // Segunda mitad de la PK compuesta.
+      },
+    },
+    {
+      tableName: 'producto_categoria',
+      underscored: true,
+      timestamps: false, // tabla puramente intermedia, sin columnas propias en el DER
+    }
+  );
+
+  // Esta tabla intermedia no necesita belongsTo hacia Producto/Categoria
+  // porque no se consulta directamente: Sequelize la usa "por debajo"
+  // cuando llamás a producto.getCategorias() o categoria.getProductos(),
+  // gracias al belongsToMany({ through: ProductoCategoria }) que ya
+  // están definidos en producto.model.js y categoria.model.js.
+  // No hace falta un associate() acá.
+
+  return ProductoCategoria;
+};
+</file>
+
+<file path="backend/models/productoImagen.model.js">
+// models/producto_imagen.model.js
+module.exports = (sequelize, DataTypes) => {
+  const ProductoImagen = sequelize.define(
+    'ProductoImagen',
+    {
+      idImagen: {
+        type: DataTypes.BIGINT,
+        primaryKey: true,
+        autoIncrement: true,
+      },
+      idProducto: {
+        type: DataTypes.BIGINT,
+        allowNull: false,
+      },
+      imagenUrl: {
+        type: DataTypes.TEXT,
+        allowNull: false,
+      },
+      orden: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 0,
+        validate: {
+          min: 0,
+        },
+      },
+      esPrincipal: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
+      },
+    },
+    {
+      tableName: 'producto_imagen',
+      underscored: true,
+      timestamps: false,
+    }
+  );
+
+  ProductoImagen.associate = (models) => {
+    ProductoImagen.belongsTo(models.Producto, {
+      foreignKey: 'idProducto',
+      as: 'producto',
+    });
+  };
+
+  return ProductoImagen;
+};
+</file>
+
+<file path="backend/models/redSocial.model.js">
+// models/red_social.model.js
+module.exports = (sequelize, DataTypes) => {
+  const RedSocial = sequelize.define(
+    'RedSocial',
+    {
+      idRedSocial: {
+        type: DataTypes.BIGINT,
+        primaryKey: true,
+        autoIncrement: true,
+      },
+      idComercio: {
+        type: DataTypes.BIGINT,
+        allowNull: false,
+      },
+      tipo: {
+        type: DataTypes.STRING(50),
+        allowNull: false,
+        // Ej: 'instagram', 'facebook', 'whatsapp'. Sin enum en la base
+        // (es VARCHAR libre), así que no agrego isIn acá tampoco, para
+        // no atarse a una lista cerrada que la base no exige.
+      },
+      url: {
+        type: DataTypes.TEXT,
+        allowNull: false,
+        validate: {
+          isUrl: true,
+        },
+      },
+    },
+    {
+      tableName: 'red_social',
+      underscored: true,
+      timestamps: false,
+      indexes: [
+        {
+          unique: true,
+          fields: ['id_comercio', 'tipo'],
+          // Refleja el UNIQUE (id_comercio, tipo) del SQL: un mismo
+          // comercio no puede tener dos filas con el mismo tipo de red
+          // social (ej. dos Instagram distintos).
+        },
+      ],
+    }
+  );
+
+  RedSocial.associate = (models) => {
+    RedSocial.belongsTo(models.Comercio, {
+      foreignKey: 'idComercio',
+      as: 'comercio',
+    });
+  };
+
+  return RedSocial;
+};
+</file>
+
+<file path="backend/models/tokenRevocado.model.js">
+// models/token_revocado.model.js
+module.exports = (sequelize, DataTypes) => {
+  const TokenRevocado = sequelize.define(
+    'TokenRevocado',
+    {
+      idTokenRevocado: {
+        type: DataTypes.BIGINT,
+        primaryKey: true,
+        autoIncrement: true,
+      },
+      jti: {
+        type: DataTypes.STRING(255),
+        allowNull: false,
+        unique: true,
+        // "JWT ID": claim estándar que identifica unívocamente cada JWT
+        // emitido. Se genera al firmar el token (ej. con uuid.v4()) y se
+        // incluye en su payload. Al hacer logout, se guarda ese jti acá
+        // para invalidar el token antes de su expiración natural.
+      },
+      fechaCreacion: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        defaultValue: DataTypes.NOW,
+      },
+      fechaExpiracion: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        // Igual a la fecha de expiración natural del JWT original.
+        // Sirve para poder purgar filas viejas sin riesgo: una vez pasada
+        // esta fecha, el JWT ya habría expirado solo de todas formas,
+        // así que ya no hace falta seguir guardando su jti acá.
+      },
+    },
+    {
+      tableName: 'token_revocado',
+      underscored: true,
+      timestamps: false,
+    }
+  );
+
+  // Sin associate(): esta tabla no tiene relación declarada con Usuario
+  // en el DER (no guarda idUsuario, solo el jti del token). Se consulta
+  // de forma independiente desde el middleware de autenticación.
+
+  return TokenRevocado;
+};
+</file>
+
+<file path="backend/models/usuario.model.js">
+// models/usuario.model.js
+module.exports = (sequelize, DataTypes) => {
+  const Usuario = sequelize.define(
+    'Usuario',
+    {
+      idUsuario: {
+        type: DataTypes.UUID,
+        primaryKey: true,
+        defaultValue: DataTypes.UUIDV4,
+        // La base ya genera esto con gen_random_uuid() (DEFAULT en el SQL),
+        // pero declararlo también acá permite que Sequelize arme el objeto
+        // completo en memoria antes del INSERT si hiciera falta (por ej.
+        // para usarlo en otra tabla dentro de la misma transacción sin
+        // esperar el round-trip a la base).
+      },
+      nombre: {
+        type: DataTypes.STRING(100),
+        allowNull: false,
+      },
+      apellido: {
+        type: DataTypes.STRING(100),
+        allowNull: true,
+      },
+      email: {
+        type: DataTypes.STRING(255),
+        allowNull: false,
+        unique: true,
+        validate: {
+          isEmail: true,
+        },
+      },
+      telefono: {
+        type: DataTypes.STRING(30),
+        allowNull: true,
+      },
+      passwordHash: {
+        type: DataTypes.TEXT,
+        allowNull: false,
+      },
+      rol: {
+        type: DataTypes.STRING(20),
+        allowNull: false,
+        defaultValue: 'admin',
+        // Único rol del sistema, según la consigna del TPO (que solo
+        // define "visitante" -sin cuenta- y "administrador"). No existe
+        // rol 'cliente': quien no está autenticado es un visitante
+        // implícito, no una fila en esta tabla.
+        // El registro sigue protegido por INVITE_CODE (ver
+        // auth.service.js) en vez de por distinción de roles, ya que
+        // ahora CUALQUIER registro exitoso crea un admin.
+        validate: {
+          isIn: [['admin']],
+        },
+      },
+      direccion: {
+        type: DataTypes.TEXT,
+        allowNull: true,
+      },
+      fechaRegistro: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        defaultValue: DataTypes.NOW,
+      },
+      intentosFallidos: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 0,
+        // Se incrementa en cada login fallido, se resetea a 0 en cada
+        // login exitoso (ver auth.service.js).
+      },
+      bloqueadoHasta: {
+        type: DataTypes.DATE,
+        allowNull: true,
+        // Si tiene un valor y ese valor es futuro, el login se rechaza
+        // sin siquiera comparar la contraseña, hasta que pase esa fecha.
+      },
+    },
+    {
+      tableName: 'usuarios',
+      underscored: true,
+      timestamps: false, // fecha_registro ya cumple ese rol, no created_at/updated_at
+      defaultScope: {
+        // Excluye el hash de password de TODAS las consultas por defecto.
+        // Ver nota de seguridad de la clase de ciberseguridad: nunca debe
+        // viajar en ninguna respuesta salvo que se pida explícitamente.
+        attributes: { exclude: ['passwordHash'] },
+      },
+      scopes: {
+        // Único lugar donde se necesita el hash: al hacer login, para
+        // comparar con bcrypt. Se usa así: Usuario.scope('conPassword').findOne(...)
+        conPassword: {
+          attributes: {},
+        },
+      },
+    }
+  );
+
+  Usuario.associate = (models) => {
+    Usuario.hasMany(models.PasswordResetToken, {
+      foreignKey: 'idUsuario',
+      as: 'tokensRecuperacion',
+    });
+  };
+
+  return Usuario;
+};
+</file>
+
+<file path="backend/routes/.gitkeep">
+
+</file>
+
+<file path="backend/routes/auth.routes.js">
+// routes/auth.routes.js
+const express = require('express');
+const router = express.Router();
+const { body } = require('express-validator');
+
+const authController = require('../controllers/auth.controller');
+const { requireAuth } = require('../middlewares/auth.middleware');
+const {
+  manejarValidacion,
+  validarRegistro,
+  validarLogin,
+} = require('../middlewares/validation.middleware');
+
+const validarUpdateMe = [
+  body('nombre').optional().trim().notEmpty(),
+  body('apellido').optional().trim().notEmpty(),
+  body('telefono').optional().trim().notEmpty(),
+  body('direccion').optional().trim(),
+  // Sin validators para 'rol' ni 'email' a propósito: el controller ni
+  // siquiera los lee del body (ver authService.actualizarPerfil).
+];
+
+const validarForgotPassword = [
+  body('email').trim().isEmail().withMessage('Email inválido').normalizeEmail(),
+];
+
+const validarResetPassword = [
+  body('token').trim().notEmpty().withMessage('Falta el token'),
+  body('password').isLength({ min: 8 }).withMessage('La contraseña debe tener al menos 8 caracteres'),
+];
+
+router.post('/register', validarRegistro, manejarValidacion, authController.register);
+router.post('/login', validarLogin, manejarValidacion, authController.login);
+router.post('/logout', requireAuth, authController.logout);
+
+router.get('/me', requireAuth, authController.me);
+router.patch('/me', requireAuth, validarUpdateMe, manejarValidacion, authController.updateMe);
+
+router.post('/forgot-password', validarForgotPassword, manejarValidacion, authController.forgotPassword);
+router.post('/reset-password', validarResetPassword, manejarValidacion, authController.resetPassword);
+
+module.exports = router;
+</file>
+
+<file path="backend/routes/category.routes.js">
+// routes/category.routes.js
+const express = require('express');
+const router = express.Router();
+
+const categoryController = require('../controllers/category.controller');
+const { requireAuth, requireRole } = require('../middlewares/auth.middleware');
+const { body } = require('express-validator');
+const { manejarValidacion } = require('../middlewares/validation.middleware');
+
+const validarCategoria = [
+  body('name').trim().notEmpty().withMessage('El nombre es obligatorio'),
+  body('description').optional().trim(),
+];
+
+// Públicas
+router.get('/', categoryController.listar);
+router.get('/:id', categoryController.obtenerPorId);
+router.get('/:id/products', categoryController.listarProductos);
+
+// Solo admin
+router.post('/', requireAuth, requireRole('admin'), validarCategoria, manejarValidacion, categoryController.crear);
+router.put('/:id', requireAuth, requireRole('admin'), validarCategoria, manejarValidacion, categoryController.actualizar);
+router.delete('/:id', requireAuth, requireRole('admin'), categoryController.eliminar);
+
+module.exports = router;
+</file>
+
+<file path="backend/routes/comercio.routes.js">
+// routes/comercio.routes.js
+const express = require('express');
+const router = express.Router();
+
+const comercioController = require('../controllers/comercio.controller');
+const { requireAuth, requireRole } = require('../middlewares/auth.middleware');
+const { body } = require('express-validator');
+const { manejarValidacion } = require('../middlewares/validation.middleware');
+
+const validarComercio = [
+  body('nombre').trim().notEmpty().withMessage('El nombre es obligatorio'),
+  body('direccion').trim().notEmpty().withMessage('La dirección es obligatoria'),
+  body('telefono').trim().notEmpty().withMessage('El teléfono es obligatorio'),
+  body('descripcion').optional().trim(),
+  body('horarios').optional().trim(),
+  body('redesSociales').optional().isArray().withMessage('redesSociales debe ser un array'),
+  body('redesSociales.*.tipo').optional().trim().notEmpty().withMessage('Cada red social necesita un tipo'),
+  body('redesSociales.*.url').optional().trim().isURL().withMessage('Cada red social necesita una URL válida'),
+];
+
+router.get('/', comercioController.obtener);
+router.put('/', requireAuth, requireRole('admin'), validarComercio, manejarValidacion, comercioController.guardar);
+
+module.exports = router;
+</file>
+
+<file path="backend/routes/consulta.routes.js">
+// routes/consulta.routes.js
+const express = require('express');
+const router = express.Router();
+
+const consultaController = require('../controllers/consulta.controller');
+const { requireAuth, requireRole } = require('../middlewares/auth.middleware');
+const { body } = require('express-validator');
+const { manejarValidacion } = require('../middlewares/validation.middleware');
+
+const validarConsulta = [
+  body('nombre').trim().notEmpty().withMessage('El nombre es obligatorio'),
+  body('email').trim().isEmail().withMessage('Email inválido').normalizeEmail(),
+  body('telefono').optional().trim(),
+  body('asunto').trim().notEmpty().withMessage('El asunto es obligatorio'),
+  body('mensaje').trim().notEmpty().withMessage('El mensaje es obligatorio'),
+];
+
+const validarCambioEstado = [
+  body('estado').isIn(['pendiente', 'leida', 'respondida']).withMessage('Estado inválido'),
+];
+
+// Público: cualquier visitante puede mandar una consulta
+router.post('/', validarConsulta, manejarValidacion, consultaController.crear);
+
+// Solo admin
+router.get('/', requireAuth, requireRole('admin'), consultaController.listar);
+router.get('/:id', requireAuth, requireRole('admin'), consultaController.obtenerPorId);
+router.patch('/:id/estado', requireAuth, requireRole('admin'), validarCambioEstado, manejarValidacion, consultaController.cambiarEstado);
+router.delete('/:id', requireAuth, requireRole('admin'), consultaController.eliminar);
+
+module.exports = router;
+</file>
+
+<file path="backend/routes/product.routes.js">
+// routes/product.routes.js
+const express = require('express');
+const router = express.Router();
+
+const productController = require('../controllers/product.controller');
+const { requireAuth, optionalAuth, requireRole } = require('../middlewares/auth.middleware');
+const { body } = require('express-validator');
+const { manejarValidacion } = require('../middlewares/validation.middleware');
+
+const validarProducto = [
+  body('tipoProducto').isIn(['libro', 'papeleria', 'accesorio', 'otros']).withMessage('tipoProducto inválido'),
+  body('nombre').trim().notEmpty().withMessage('El nombre es obligatorio'),
+  body('precio').isFloat({ min: 0 }).withMessage('El precio debe ser un número mayor o igual a 0'),
+  body('categoryIds').isArray({ min: 1 }).withMessage('Debe incluir al menos una categoría'),
+  body('descuento').optional().isFloat({ min: 0, max: 100 }),
+  body('stock').optional().isInt({ min: 0 }),
+  body('estado').optional().isIn(['activo', 'inactivo', 'agotado']),
+];
+
+const validarEstado = [
+  body('estado').isIn(['activo', 'inactivo', 'agotado']).withMessage('Estado inválido'),
+];
+
+const validarDestacado = [
+  body('destacado').isBoolean().withMessage('destacado debe ser true o false'),
+];
+
+// Públicas (optionalAuth: cambia el comportamiento si sos admin, pero no bloquea)
+router.get('/', optionalAuth, productController.listar);
+router.get('/:id', optionalAuth, productController.obtenerPorId);
+
+// Solo admin
+router.post('/', requireAuth, requireRole('admin'), validarProducto, manejarValidacion, productController.crear);
+router.put('/:id', requireAuth, requireRole('admin'), validarProducto, manejarValidacion, productController.actualizar);
+router.patch('/:id', requireAuth, requireRole('admin'), productController.actualizarParcial);
+router.patch('/:id/status', requireAuth, requireRole('admin'), validarEstado, manejarValidacion, productController.cambiarEstado);
+router.patch('/:id/destacado', requireAuth, requireRole('admin'), validarDestacado, manejarValidacion, productController.cambiarDestacado);
+router.delete('/:id', requireAuth, requireRole('admin'), productController.eliminar);
+
+// Imágenes: sub-rutas anidadas bajo /:id/images (mergeParams en el
+// router hijo permite que lea req.params.id de esta ruta padre)
+router.use('/:id/images', require('./productImage.routes'));
+
+module.exports = router;
+</file>
+
+<file path="backend/routes/productImage.routes.js">
+// routes/productImage.routes.js
+// Se monta DENTRO de product.routes.js con router.use, o se registra
+// aparte en app.js apuntando a /api/products/:id/images — ver nota al
+// final sobre cómo conectarlo, porque necesita mergeParams para leer
+// :id desde la ruta padre.
+const express = require('express');
+const router = express.Router({ mergeParams: true });
+
+const productImageController = require('../controllers/productImage.controller');
+const { requireAuth, requireRole } = require('../middlewares/auth.middleware');
+const { body } = require('express-validator');
+const { manejarValidacion } = require('../middlewares/validation.middleware');
+
+const validarImagen = [
+  body('imageUrl').trim().notEmpty().withMessage('imageUrl es obligatorio').isURL().withMessage('imageUrl debe ser una URL válida'),
+  body('orden').optional().isInt({ min: 0 }),
+  body('esPrincipal').optional().isBoolean(),
+];
+
+router.get('/', productImageController.listar);
+router.post('/', requireAuth, requireRole('admin'), validarImagen, manejarValidacion, productImageController.agregar);
+router.delete('/:imageId', requireAuth, requireRole('admin'), productImageController.eliminar);
+
+module.exports = router;
+</file>
+
+<file path="backend/seeders/.gitkeep">
+
+</file>
+
+<file path="backend/seeders/20260101000001-categorias.js">
+'use strict';
+
+module.exports = {
+  async up(queryInterface, Sequelize) {
+    // OJO: id_categoria es GENERATED ALWAYS AS IDENTITY (no "BY DEFAULT"),
+    // así que Postgres rechaza cualquier INSERT con un id_categoria
+    // explícito salvo que se use OVERRIDING SYSTEM VALUE. bulkInsert()
+    // no soporta esa cláusula, así que acá usamos SQL crudo en su lugar.
+    await queryInterface.sequelize.query(`
+      INSERT INTO categoria (id_categoria, nombre, descripcion)
+      OVERRIDING SYSTEM VALUE
+      VALUES
+        (1, 'Novela', 'Obras de ficción narrativa'),
+        (2, 'Ciencia Ficción', 'Literatura especulativa y futurista'),
+        (3, 'Papelería', 'Artículos de oficina y escolares');
+    `);
+
+    // Reseteamos la secuencia de autoincremento para que el próximo
+    // INSERT (uno hecho por la app, no por este seeder) continúe desde
+    // el máximo id_categoria insertado acá, y no choque con estos IDs
+    // fijos (mismo problema que viste con test-connection.js).
+    await queryInterface.sequelize.query(`
+      SELECT setval(
+        pg_get_serial_sequence('categoria', 'id_categoria'),
+        (SELECT MAX(id_categoria) FROM categoria)
+      );
+    `);
+  },
+
+  async down(queryInterface, Sequelize) {
+    await queryInterface.bulkDelete('categoria', null, {});
+  },
+};
+</file>
+
+<file path="backend/seeders/20260101000002-comercio.js">
+'use strict';
+
+module.exports = {
+  async up(queryInterface, Sequelize) {
+    // comercio.id_comercio también es GENERATED ALWAYS AS IDENTITY,
+    // así que usamos el mismo patrón de OVERRIDING SYSTEM VALUE + setval
+    // que en el seeder de categorías.
+    await queryInterface.sequelize.query(`
+      INSERT INTO comercio (id_comercio, nombre, descripcion, direccion, telefono, horarios)
+      OVERRIDING SYSTEM VALUE
+      VALUES (
+        1,
+        'MaxiLibrerías Central',
+        'Tu librería de confianza',
+        'Av. Siempre Viva 742',
+        '555-1234',
+        'Lunes a Viernes de 09:00 a 18:00'
+      );
+    `);
+
+    await queryInterface.sequelize.query(`
+      SELECT setval(
+        pg_get_serial_sequence('comercio', 'id_comercio'),
+        (SELECT MAX(id_comercio) FROM comercio)
+      );
+    `);
+
+    // red_social.id_red_social también es GENERATED ALWAYS AS IDENTITY.
+    // Nota: tipo en minúsculas ('instagram', no 'Instagram'), para que
+    // coincida con el criterio del api.yaml y no dependa de mayúsculas
+    // al filtrar/mostrar iconos en el frontend.
+    await queryInterface.sequelize.query(`
+      INSERT INTO red_social (id_red_social, id_comercio, tipo, url)
+      OVERRIDING SYSTEM VALUE
+      VALUES
+        (1, 1, 'instagram', 'https://instagram.com/maxilibros'),
+        (2, 1, 'facebook', 'https://facebook.com/maxilibros'),
+        (3, 1, 'twitter', 'https://twitter.com/maxilibros');
+    `);
+
+    await queryInterface.sequelize.query(`
+      SELECT setval(
+        pg_get_serial_sequence('red_social', 'id_red_social'),
+        (SELECT MAX(id_red_social) FROM red_social)
+      );
+    `);
+  },
+
+  async down(queryInterface, Sequelize) {
+    // Primero red_social (depende de comercio vía FK), después comercio.
+    await queryInterface.bulkDelete('red_social', null, {});
+    await queryInterface.bulkDelete('comercio', null, {});
+  },
+};
+</file>
+
+<file path="backend/seeders/20260101000003-usuarios.js">
+'use strict';
+
+const bcrypt = require('bcrypt');
+
+module.exports = {
+  async up(queryInterface, Sequelize) {
+    // Contraseña de prueba en texto plano: admin123
+    // (documentada acá y en el README/manual de instalación, NUNCA en
+    // el código de producción — este es un seeder de datos de prueba,
+    // no un usuario real).
+    const passwordHash = await bcrypt.hash('admin123', 10);
+
+    // usuarios.id_usuario es UUID con DEFAULT uuid_generate_v4(), así
+    // que podríamos omitirlo y dejar que la base lo genere. Igual lo
+    // fijamos explícito acá, para poder referenciarlo desde otros
+    // seeders si hiciera falta en el futuro (por ejemplo, si más
+    // adelante seedeamos algo que dependa de "el usuario admin").
+    await queryInterface.sequelize.query(`
+      INSERT INTO usuarios (id_usuario, nombre, apellido, email, telefono, password_hash, rol, direccion)
+      VALUES (
+        'a1b2c3d4-e5f6-7890-1234-567890abcdef',
+        'Admin',
+        'MaxiLibrerías',
+        'admin@maxilibros.com',
+        '555-9876',
+        :passwordHash,
+        'admin',
+        'Calle Falsa 123'
+      );
+    `, {
+      replacements: { passwordHash },
+    });
+  },
+
+  async down(queryInterface, Sequelize) {
+    await queryInterface.bulkDelete('usuarios', null, {});
+  },
+};
+</file>
+
+<file path="backend/seeders/20260101000004-productos.js">
+'use strict';
+
+module.exports = {
+  async up(queryInterface, Sequelize) {
+    // Array de datos: cada objeto es un libro completo. Agregar más
+    // productos a futuro es simplemente sumar un objeto acá, no repetir
+    // bloques de INSERT.
+    const libros = [
+      { nombre: 'El Hobbit', descripcion: 'Una aventura inolvidable en la Tierra Media.', precio: 15000.00, stock: 10, estado: 'activo', descuento: 10.00, categoriaId: 1, isbn: '978-0261102217', autor: 'J.R.R. Tolkien', editorial: 'HarperCollins', anio: 1937, imagen: 'https://images.example.com/el-hobbit.jpg' },
+      { nombre: 'Dune', descripcion: 'Epopeya de ciencia ficción en el planeta Arrakis.', precio: 18000.00, stock: 5, estado: 'activo', descuento: 0.00, categoriaId: 2, isbn: '978-0441172719', autor: 'Frank Herbert', editorial: 'Ace Books', anio: 1965, imagen: 'https://images.example.com/dune.jpg' },
+      { nombre: '1984', descripcion: 'Distopía sobre el totalitarismo.', precio: 12000.00, stock: 0, estado: 'agotado', descuento: 0.00, categoriaId: 1, isbn: '978-0451524935', autor: 'George Orwell', editorial: 'Signet Classic', anio: 1949, imagen: 'https://images.example.com/1984.jpg' },
+      { nombre: 'Fundación', descripcion: 'El imperio galáctico comienza a caer.', precio: 14000.00, stock: 8, estado: 'activo', descuento: 5.00, categoriaId: 2, isbn: '978-0553293357', autor: 'Isaac Asimov', editorial: 'Bantam Books', anio: 1951, imagen: 'https://images.example.com/fundacion.jpg' },
+      { nombre: 'Cien años de soledad', descripcion: 'La historia de la familia Buendía.', precio: 16500.00, stock: 12, estado: 'activo', descuento: 0.00, categoriaId: 1, isbn: '978-0307474728', autor: 'Gabriel García Márquez', editorial: 'Sudamericana', anio: 1967, imagen: 'https://images.example.com/cien-anos.jpg' },
+      { nombre: 'Neuromante', descripcion: 'La novela que fundó el ciberpunk.', precio: 13500.00, stock: 7, estado: 'activo', descuento: 0.00, categoriaId: 2, isbn: '978-0441569595', autor: 'William Gibson', editorial: 'Ace Books', anio: 1984, imagen: 'https://images.example.com/neuromante.jpg' },
+      { nombre: 'Crónica de una muerte anunciada', descripcion: 'Un asesinato anunciado que nadie evita.', precio: 11000.00, stock: 15, estado: 'activo', descuento: 0.00, categoriaId: 1, isbn: '978-0307474765', autor: 'Gabriel García Márquez', editorial: 'Sudamericana', anio: 1981, imagen: 'https://images.example.com/cronica-muerte.jpg' },
+      { nombre: 'Un mundo feliz', descripcion: 'Distopía sobre el control social mediante el placer.', precio: 12500.00, stock: 9, estado: 'activo', descuento: 15.00, categoriaId: 2, isbn: '978-0060850524', autor: 'Aldous Huxley', editorial: 'Harper Perennial', anio: 1932, imagen: 'https://images.example.com/mundo-feliz.jpg' },
+      { nombre: 'Rayuela', descripcion: 'Novela experimental de lectura no lineal.', precio: 17000.00, stock: 6, estado: 'activo', descuento: 0.00, categoriaId: 1, isbn: '978-8437604572', autor: 'Julio Cortázar', editorial: 'Cátedra', anio: 1963, imagen: 'https://images.example.com/rayuela.jpg' },
+      { nombre: 'Yo, Robot', descripcion: 'Relatos sobre robots y las tres leyes de la robótica.', precio: 13000.00, stock: 11, estado: 'activo', descuento: 0.00, categoriaId: 2, isbn: '978-0553294385', autor: 'Isaac Asimov', editorial: 'Bantam Books', anio: 1950, imagen: 'https://images.example.com/yo-robot.jpg' },
+      { nombre: 'Pedro Páramo', descripcion: 'Un viaje al pueblo fantasma de Comala.', precio: 10500.00, stock: 4, estado: 'activo', descuento: 0.00, categoriaId: 1, isbn: '978-0802133908', autor: 'Juan Rulfo', editorial: 'Grove Press', anio: 1955, imagen: 'https://images.example.com/pedro-paramo.jpg' },
+      { nombre: 'Fahrenheit 451', descripcion: 'Un futuro donde los libros están prohibidos.', precio: 12800.00, stock: 0, estado: 'agotado', descuento: 0.00, categoriaId: 2, isbn: '978-1451673319', autor: 'Ray Bradbury', editorial: 'Simon & Schuster', anio: 1953, imagen: 'https://images.example.com/fahrenheit451.jpg' },
+      { nombre: 'La casa de los espíritus', descripcion: 'Saga familiar atravesada por lo mágico y lo político.', precio: 15500.00, stock: 8, estado: 'activo', descuento: 0.00, categoriaId: 1, isbn: '978-0525433477', autor: 'Isabel Allende', editorial: 'Plaza & Janés', anio: 1982, imagen: 'https://images.example.com/casa-espiritus.jpg' },
+      { nombre: 'El señor de las moscas', descripcion: 'Un grupo de niños varados descubre su propia naturaleza.', precio: 11500.00, stock: 10, estado: 'activo', descuento: 10.00, categoriaId: 1, isbn: '978-0399501487', autor: 'William Golding', editorial: 'Perigee Books', anio: 1954, imagen: 'https://images.example.com/senor-moscas.jpg' },
+      { nombre: 'Solaris', descripcion: 'Un planeta océano que desafía toda comprensión humana.', precio: 14200.00, stock: 3, estado: 'activo', descuento: 0.00, categoriaId: 2, isbn: '978-0156027601', autor: 'Stanisław Lem', editorial: 'Harcourt', anio: 1961, imagen: 'https://images.example.com/solaris.jpg' },
+      { nombre: 'El túnel', descripcion: 'La obsesión de un pintor narrada en primera persona.', precio: 9800.00, stock: 6, estado: 'activo', descuento: 0.00, categoriaId: 1, isbn: '978-8432217864', autor: 'Ernesto Sábato', editorial: 'Seix Barral', anio: 1948, imagen: 'https://images.example.com/el-tunel.jpg' },
+      { nombre: 'Los futuros peligrosos', descripcion: 'Relatos breves sobre tecnología y sus consecuencias imprevistas.', precio: 10200.00, stock: 14, estado: 'activo', descuento: 0.00, categoriaId: 2, isbn: '978-8420674421', autor: 'Ray Bradbury', editorial: 'Minotauro', anio: 1953, imagen: 'https://images.example.com/futuros-peligrosos.jpg' },
+      { nombre: 'Ficciones', descripcion: 'Cuentos que cuestionan la realidad, el tiempo y el infinito.', precio: 12300.00, stock: 9, estado: 'activo', descuento: 5.00, categoriaId: 1, isbn: '978-8420633106', autor: 'Jorge Luis Borges', editorial: 'Alianza Editorial', anio: 1944, imagen: 'https://images.example.com/ficciones.jpg' },
+      { nombre: 'La guerra de los mundos', descripcion: 'La primera gran invasión marciana de la literatura.', precio: 11800.00, stock: 7, estado: 'activo', descuento: 0.00, categoriaId: 2, isbn: '978-0451530653', autor: 'H.G. Wells', editorial: 'Signet Classic', anio: 1898, imagen: 'https://images.example.com/guerra-mundos.jpg' },
+      { nombre: 'El amor en los tiempos del cólera', descripcion: 'Una historia de amor que resiste el paso de las décadas.', precio: 16000.00, stock: 5, estado: 'activo', descuento: 0.00, categoriaId: 1, isbn: '978-0307389732', autor: 'Gabriel García Márquez', editorial: 'Vintage Español', anio: 1985, imagen: 'https://images.example.com/amor-tiempos-colera.jpg' },
+      { nombre: 'La máquina del tiempo', descripcion: 'El primer gran viaje literario a través del tiempo.', precio: 9500.00, stock: 0, estado: 'agotado', descuento: 0.00, categoriaId: 2, isbn: '978-0141439976', autor: 'H.G. Wells', editorial: 'Penguin Classics', anio: 1895, imagen: 'https://images.example.com/maquina-tiempo.jpg' },
+    ];
+
+    // Productos que NO son libros, para demostrar tipoProducto variado
+    // (papeleria/accesorio), sin la especialización de la tabla libro.
+    const otrosProductos = [
+      { nombre: 'Cuaderno universitario 100 hojas', descripcion: 'Cuaderno rayado tapa dura.', precio: 3200.00, stock: 40, estado: 'activo', descuento: 0.00, tipoProducto: 'papeleria', categoriaId: 3, imagen: 'https://images.example.com/cuaderno.jpg' },
+      { nombre: 'Set de lapiceras Bic x3', descripcion: 'Lapiceras azul, negro y rojo.', precio: 1500.00, stock: 60, estado: 'activo', descuento: 0.00, tipoProducto: 'papeleria', categoriaId: 3, imagen: 'https://images.example.com/lapiceras.jpg' },
+      { nombre: 'Separadores de libro (pack x5)', descripcion: 'Separadores ilustrados de metal.', precio: 2800.00, stock: 25, estado: 'activo', descuento: 20.00, tipoProducto: 'accesorio', categoriaId: 3, imagen: 'https://images.example.com/separadores.jpg' },
+    ];
+
+    const transaction = await queryInterface.sequelize.transaction();
+
+    try {
+      let idProducto = 1;
+      let idImagen = 1;
+
+      // --- Libros ---
+      for (const libro of libros) {
+        await queryInterface.sequelize.query(`
+          INSERT INTO producto (id_producto, tipo_producto, nombre, descripcion, precio, stock, estado, descuento)
+          OVERRIDING SYSTEM VALUE
+          VALUES (:id, 'libro', :nombre, :descripcion, :precio, :stock, :estado, :descuento);
+        `, {
+          replacements: { id: idProducto, ...libro },
+          transaction,
+        });
+
+        await queryInterface.sequelize.query(`
+          INSERT INTO libro (id_producto, isbn, autor, editorial, anio_publicacion)
+          VALUES (:id, :isbn, :autor, :editorial, :anio);
+        `, {
+          replacements: { id: idProducto, isbn: libro.isbn, autor: libro.autor, editorial: libro.editorial, anio: libro.anio },
+          transaction,
+        });
+
+        await queryInterface.sequelize.query(`
+          INSERT INTO producto_categoria (id_producto, id_categoria)
+          VALUES (:idProducto, :idCategoria);
+        `, {
+          replacements: { idProducto, idCategoria: libro.categoriaId },
+          transaction,
+        });
+
+        await queryInterface.sequelize.query(`
+          INSERT INTO producto_imagen (id_imagen, id_producto, imagen_url, orden, es_principal)
+          OVERRIDING SYSTEM VALUE
+          VALUES (:idImagen, :idProducto, :imagenUrl, 1, TRUE);
+        `, {
+          replacements: { idImagen, idProducto, imagenUrl: libro.imagen },
+          transaction,
+        });
+
+        idProducto++;
+        idImagen++;
+      }
+
+      // --- Otros productos (papelería/accesorios, sin tabla libro) ---
+      for (const producto of otrosProductos) {
+        await queryInterface.sequelize.query(`
+          INSERT INTO producto (id_producto, tipo_producto, nombre, descripcion, precio, stock, estado, descuento)
+          OVERRIDING SYSTEM VALUE
+          VALUES (:id, :tipoProducto, :nombre, :descripcion, :precio, :stock, :estado, :descuento);
+        `, {
+          replacements: { id: idProducto, ...producto },
+          transaction,
+        });
+
+        await queryInterface.sequelize.query(`
+          INSERT INTO producto_categoria (id_producto, id_categoria)
+          VALUES (:idProducto, :idCategoria);
+        `, {
+          replacements: { idProducto, idCategoria: producto.categoriaId },
+          transaction,
+        });
+
+        await queryInterface.sequelize.query(`
+          INSERT INTO producto_imagen (id_imagen, id_producto, imagen_url, orden, es_principal)
+          OVERRIDING SYSTEM VALUE
+          VALUES (:idImagen, :idProducto, :imagenUrl, 1, TRUE);
+        `, {
+          replacements: { idImagen, idProducto, imagenUrl: producto.imagen },
+          transaction,
+        });
+
+        idProducto++;
+        idImagen++;
+      }
+
+      // Resetear las 3 secuencias tocadas en este seeder, ahora que
+      // sabemos cuál fue el último ID usado en cada una.
+      await queryInterface.sequelize.query(
+        `SELECT setval(pg_get_serial_sequence('producto', 'id_producto'), (SELECT MAX(id_producto) FROM producto));`,
+        { transaction }
+      );
+      await queryInterface.sequelize.query(
+        `SELECT setval(pg_get_serial_sequence('producto_imagen', 'id_imagen'), (SELECT MAX(id_imagen) FROM producto_imagen));`,
+        { transaction }
+      );
+
+      await transaction.commit();
+    } catch (err) {
+      await transaction.rollback();
+      throw err;
+    }
+  },
+
+  async down(queryInterface, Sequelize) {
+    // El orden importa por las FKs, aunque haya ON DELETE CASCADE:
+    // borramos explícito de la tabla "hija" hacia la "padre" por claridad.
+    await queryInterface.bulkDelete('producto_imagen', null, {});
+    await queryInterface.bulkDelete('producto_categoria', null, {});
+    await queryInterface.bulkDelete('libro', null, {});
+    await queryInterface.bulkDelete('producto', null, {});
+  },
+};
+</file>
+
+<file path="backend/seeders/20260101000005-consultas.js">
+'use strict';
+
+module.exports = {
+  async up(queryInterface, Sequelize) {
+    // Estados corregidos respecto al data_seed.sql original: la consigna
+    // del TPO pide literalmente "Pendiente, Leída, Respondida" — se usa
+    // 'leida' acá, no 'leido' ni 'cerrada' (que no cumplían la consigna
+    // ni coincidían entre bbdd_seed.sql y data_seed.sql).
+    await queryInterface.sequelize.query(`
+      INSERT INTO consulta (id_consulta, nombre, email, telefono, asunto, mensaje, estado)
+      OVERRIDING SYSTEM VALUE
+      VALUES
+        (1, 'Ned Flanders', 'vecinorijillo.religiosillo@springfield-mail.com', '111-2222', 'Disponibilidad de libro', 'Hola, ¿tienen "La Biblia" en stock?', 'pendiente'),
+        (2, 'Martin Prince', 'admiradordehawking123@springfield-mail.com', '333-4444', 'Horarios de atención', '¿Abren los sábados?', 'respondida'),
+        (3, 'Bart Simpson', 'cometemiscalzones@springfield-mail.com', NULL, 'Pedido especial', '¿Tienen algún libro sobre cómo hacer travesuras sin que te descubran?', 'pendiente'),
+        (4, 'Lisa Simpson', 'supersax@springfield-mail.com', '555-6666', 'Devolución', 'Quiero devolver un libro comprado ayer, vino con una página rota.', 'leida'),
+        (5, 'Cletus', 'redneck@springfield-mail.com', '777-8888', 'Descuentos', '¿Tienen descuentos por compras grandes en efectivo?', 'pendiente');
+    `);
+
+    await queryInterface.sequelize.query(`
+      SELECT setval(
+        pg_get_serial_sequence('consulta', 'id_consulta'),
+        (SELECT MAX(id_consulta) FROM consulta)
+      );
+    `);
+  },
+
+  async down(queryInterface, Sequelize) {
+    await queryInterface.bulkDelete('consulta', null, {});
+  },
+};
+</file>
+
+<file path="backend/services/.gitkeep">
+
+</file>
+
+<file path="backend/services/auth.service.js">
+// services/auth.service.js
+const crypto = require('crypto');
+const db = require('../models');
+const { Usuario, PasswordResetToken, TokenRevocado } = db;
+const { hashPassword, comparePassword } = require('../auth/hash');
+const { generateToken } = require('../auth/jwt');
+const { enviarEmailRecuperacion, enviarAlertaIntentosFallidos } = require('./email.service');
+
+const MAX_INTENTOS_FALLIDOS = 3;
+const MINUTOS_BLOQUEO = 15;
+
+/**
+ * Registra un nuevo usuario administrador.
+ *
+ * En este proyecto el único rol persistido es 'admin' (ver nota en
+ * usuario.model.js: la consigna del TPO solo define "visitante" -sin
+ * cuenta- y "administrador"). Como CUALQUIER registro exitoso otorga
+ * rol admin, el endpoint deja de ser público sin control: exige un
+ * inviteCode que coincide con process.env.ADMIN_INVITE_CODE, conocido
+ * solo por el dueño del comercio. Esto reemplaza la defensa de "rol
+ * cliente por defecto" que tendría sentido si hubiera más de un rol.
+ *
+ * Sigue habiendo allowlist explícita igual: el objeto que se pasa a
+ * Usuario.create() se arma campo por campo, nunca Usuario.create(req.body).
+ */
+async function registrar({ nombre, apellido, email, telefono, direccion, password, inviteCode }) {
+  if (inviteCode !== process.env.ADMIN_INVITE_CODE) {
+    const error = new Error('Código de invitación inválido.');
+    error.status = 403;
+    throw error;
+  }
+
+  const existente = await Usuario.findOne({ where: { email } });
+  if (existente) {
+    const error = new Error('El email ya está registrado.');
+    error.status = 409;
+    throw error;
+  }
+
+  const passwordHash = await hashPassword(password);
+
+  const usuario = await Usuario.create({
+    nombre,
+    apellido,
+    email,
+    telefono,
+    direccion: direccion || null,
+    passwordHash,
+    rol: 'admin', // único rol del sistema, explícito de todas formas
+  });
+
+  const { token } = generateToken(usuario);
+
+  return { token, usuario };
+}
+
+/**
+ * Login. Usa el scope 'conPassword' porque el defaultScope de Usuario
+ * excluye passwordHash de toda consulta (ver models/usuario.model.js) —
+ * este es el único lugar de todo el backend donde se necesita el hash.
+ *
+ * Rate limiting por email: tras 3 intentos fallidos consecutivos, la
+ * cuenta queda bloqueada 15 minutos (bloqueadoHasta) y se manda un mail
+ * de alerta UNA sola vez, al momento de llegar al umbral — no en cada
+ * intento adicional mientras dure el bloqueo. El contador se resetea a
+ * 0 en cualquier login exitoso.
+ */
+async function login({ email, password }) {
+  const usuario = await Usuario.scope('conPassword').findOne({ where: { email } });
+
+  // Mismo mensaje de error tanto si el email no existe como si el
+  // password no coincide — no hay que darle a un atacante la pista de
+  // "este email sí existe, probá otra contraseña".
+  const credencialesInvalidas = () => {
+    const error = new Error('Email o contraseña incorrectos.');
+    error.status = 401;
+    return error;
+  };
+
+  if (!usuario) {
+    throw credencialesInvalidas();
+  }
+
+  // Si está bloqueado y el bloqueo todavía no venció, cortar ACÁ, sin
+  // siquiera comparar la contraseña (evita gastar el costo de bcrypt
+  // en un intento que ya sabemos que va a ser rechazado).
+  if (usuario.bloqueadoHasta && usuario.bloqueadoHasta > new Date()) {
+    const minutosRestantes = Math.ceil((usuario.bloqueadoHasta - new Date()) / 60000);
+    const error = new Error(
+      `Cuenta bloqueada temporalmente por intentos fallidos. Probá de nuevo en ${minutosRestantes} minuto(s).`
+    );
+    error.status = 423; // 423 Locked
+    throw error;
+  }
+
+  const passwordCorrecta = await comparePassword(password, usuario.passwordHash);
+
+  if (!passwordCorrecta) {
+    const nuevosIntentos = usuario.intentosFallidos + 1;
+
+    if (nuevosIntentos >= MAX_INTENTOS_FALLIDOS) {
+      const bloqueadoHasta = new Date(Date.now() + MINUTOS_BLOQUEO * 60 * 1000);
+      await usuario.update({ intentosFallidos: nuevosIntentos, bloqueadoHasta });
+      await enviarAlertaIntentosFallidos(usuario.email, {
+        intentos: nuevosIntentos,
+        minutosBloqueo: MINUTOS_BLOQUEO,
+      });
+    } else {
+      await usuario.update({ intentosFallidos: nuevosIntentos });
+    }
+
+    throw credencialesInvalidas();
+  }
+
+  // Login exitoso: resetear el contador y cualquier bloqueo previo.
+  if (usuario.intentosFallidos > 0 || usuario.bloqueadoHasta) {
+    await usuario.update({ intentosFallidos: 0, bloqueadoHasta: null });
+  }
+
+  const { token } = generateToken(usuario);
+
+  // Recargamos sin el scope conPassword antes de devolver el usuario,
+  // para no filtrar el hash en la respuesta del login.
+  const usuarioSinPassword = await Usuario.findByPk(usuario.idUsuario);
+
+  return { token, usuario: usuarioSinPassword };
+}
+
+module.exports = {
+  registrar,
+  login,
+  obtenerPerfil,
+  actualizarPerfil,
+  logout,
+  solicitarRecuperacion,
+  restablecerContrasena,
+};
+
+/**
+ * GET /auth/me. userId viene SIEMPRE del token verificado (req.userId
+ * en el middleware), nunca de un parámetro de la URL o del body — así
+ * no hay forma de pedir el perfil de otro usuario.
+ */
+async function obtenerPerfil(userId) {
+  const usuario = await Usuario.findByPk(userId);
+  if (!usuario) {
+    const error = new Error('Usuario no encontrado.');
+    error.status = 404;
+    throw error;
+  }
+  return usuario;
+}
+
+/**
+ * PATCH /auth/me. Mismo criterio: el ID a modificar es SIEMPRE
+ * req.userId del token, nunca un id que venga en el body. No existe (ni
+ * debe existir) un endpoint para que un usuario modifique a otro por id
+ * — eso sería exactamente el bug de IDOR visto en la clase de
+ * ciberseguridad (Investigación 2: "estoy autenticado como el usuario 25
+ * y borro al usuario 26").
+ *
+ * No incluye 'rol' ni 'email' entre los campos aceptados — cambiar el
+ * email requeriría un flujo de verificación aparte que no está
+ * implementado, y 'rol' nunca debe poder auto-asignarse.
+ */
+async function actualizarPerfil(userId, { nombre, apellido, telefono, direccion }) {
+  const usuario = await Usuario.findByPk(userId);
+  if (!usuario) {
+    const error = new Error('Usuario no encontrado.');
+    error.status = 404;
+    throw error;
+  }
+
+  await usuario.update({
+    nombre: nombre ?? usuario.nombre,
+    apellido: apellido ?? usuario.apellido,
+    telefono: telefono ?? usuario.telefono,
+    direccion: direccion !== undefined ? direccion : usuario.direccion,
+  });
+
+  return usuario;
+}
+
+/**
+ * POST /auth/logout. Agrega el jti del token actual a token_revocado,
+ * para que ese JWT puntual deje de ser válido antes de su expiración
+ * natural (ver auth/jwt.js y middlewares/auth.middleware.js).
+ */
+async function logout(jti, tokenExpiraEn) {
+  await TokenRevocado.create({
+    jti,
+    fechaExpiracion: tokenExpiraEn,
+  });
+}
+
+/**
+ * POST /auth/forgot-password.
+ *
+ * Seguridad: si el email no existe, la función retorna sin hacer nada
+ * (silenciosamente) — el controller responde 200 en cualquier caso, para
+ * no filtrar qué emails están registrados en el sistema (mismo criterio
+ * que el mensaje genérico de login).
+ *
+ * El token en texto plano viaja SOLO por email (enviarEmailRecuperacion),
+ * nunca se loguea ni se devuelve en la respuesta HTTP. Solo se persiste
+ * su hash (sha256), nunca el token real — si la tabla se filtrara, nadie
+ * podría reconstruir tokens válidos a partir de los hashes.
+ */
+async function solicitarRecuperacion(email) {
+  const usuario = await Usuario.findOne({ where: { email } });
+  if (!usuario) return; // no revelamos si el email existe o no
+
+  const tokenPlano = crypto.randomBytes(32).toString('hex');
+  const tokenHash = crypto.createHash('sha256').update(tokenPlano).digest('hex');
+
+  await PasswordResetToken.create({
+    idUsuario: usuario.idUsuario,
+    tokenHash,
+    fechaExpiracion: new Date(Date.now() + 30 * 60 * 1000), // 30 minutos
+  });
+
+  await enviarEmailRecuperacion(usuario.email, tokenPlano);
+}
+
+/**
+ * POST /auth/reset-password. Busca el token por su HASH (nunca por el
+ * texto plano recibido), valida que sea válido (ver
+ * PasswordResetToken.esValido() en el modelo: no usado y no vencido), y
+ * si todo está bien, actualiza la contraseña y marca el token como
+ * usado para que no pueda reutilizarse.
+ */
+async function restablecerContrasena(tokenPlano, nuevaPassword) {
+  const tokenHash = crypto.createHash('sha256').update(tokenPlano).digest('hex');
+
+  const registroToken = await PasswordResetToken.findOne({ where: { tokenHash } });
+
+  const tokenInvalido = () => {
+    const error = new Error('Token inválido, ya usado o expirado.');
+    error.status = 400;
+    return error;
+  };
+
+  if (!registroToken || !registroToken.esValido()) {
+    throw tokenInvalido();
+  }
+
+  const usuario = await Usuario.findByPk(registroToken.idUsuario);
+  if (!usuario) {
+    throw tokenInvalido();
+  }
+
+  const passwordHash = await hashPassword(nuevaPassword);
+
+  await usuario.update({ passwordHash });
+  await registroToken.update({ usado: true });
+}
+</file>
+
+<file path="backend/services/category.service.js">
+// services/category.service.js
+const db = require('../models');
+const { Categoria, Producto } = db;
+
+async function listar() {
+  const categorias = await Categoria.findAll({
+    order: [['nombre', 'ASC']],
+  });
+
+  // productCount no es una columna real (ver api.yaml: Category.productCount),
+  // se calcula contando la relación N:N vía producto_categoria.
+  const conConteo = await Promise.all(
+    categorias.map(async (cat) => {
+      const productCount = await cat.countProductos();
+      return { ...cat.toJSON(), productCount };
+    })
+  );
+
+  return conConteo;
+}
+
+async function obtenerPorId(id) {
+  const categoria = await Categoria.findByPk(id);
+  if (!categoria) {
+    const error = new Error('Categoría no encontrada.');
+    error.status = 404;
+    throw error;
+  }
+  const productCount = await categoria.countProductos();
+  return { ...categoria.toJSON(), productCount };
+}
+
+async function crear({ name, description }) {
+  const existente = await Categoria.findOne({ where: { nombre: name } });
+  if (existente) {
+    const error = new Error('Ya existe una categoría con ese nombre.');
+    error.status = 409;
+    throw error;
+  }
+
+  const categoria = await Categoria.create({
+    nombre: name,
+    descripcion: description || null,
+  });
+
+  return { ...categoria.toJSON(), productCount: 0 };
+}
+
+async function actualizar(id, { name, description }) {
+  const categoria = await Categoria.findByPk(id);
+  if (!categoria) {
+    const error = new Error('Categoría no encontrada.');
+    error.status = 404;
+    throw error;
+  }
+
+  if (name && name !== categoria.nombre) {
+    const existente = await Categoria.findOne({ where: { nombre: name } });
+    if (existente) {
+      const error = new Error('Ya existe una categoría con ese nombre.');
+      error.status = 409;
+      throw error;
+    }
+  }
+
+  await categoria.update({
+    nombre: name ?? categoria.nombre,
+    descripcion: description !== undefined ? description : categoria.descripcion,
+  });
+
+  const productCount = await categoria.countProductos();
+  return { ...categoria.toJSON(), productCount };
+}
+
+/**
+ * Eliminar una categoría, respetando la regla de negocio (y el trigger
+ * fn_check_categoria_on_delete de la base): ningún producto puede
+ * quedarse sin categorías. Se verifica ANTES de intentar borrar, para
+ * poder devolver un 409 con mensaje claro en vez de que el trigger de
+ * Postgres tire una excepción genérica.
+ */
+async function eliminar(id) {
+  const categoria = await Categoria.findByPk(id);
+  if (!categoria) {
+    const error = new Error('Categoría no encontrada.');
+    error.status = 404;
+    throw error;
+  }
+
+  const productos = await categoria.getProductos();
+
+  for (const producto of productos) {
+    const categoriasDelProducto = await producto.countCategorias();
+    if (categoriasDelProducto <= 1) {
+      const error = new Error(
+        `El producto "${producto.nombre}" quedaría sin categorías. No se puede eliminar.`
+      );
+      error.status = 409;
+      throw error;
+    }
+  }
+
+  await categoria.destroy();
+}
+
+async function listarProductosDeCategoria(id, { page = 1, limit = 20 } = {}) {
+  const categoria = await Categoria.findByPk(id);
+  if (!categoria) {
+    const error = new Error('Categoría no encontrada.');
+    error.status = 404;
+    throw error;
+  }
+
+  const offset = (page - 1) * limit;
+  const { count, rows } = await Producto.findAndCountAll({
+    include: [
+      {
+        model: Categoria,
+        as: 'categorias',
+        where: { idCategoria: id },
+        attributes: [],
+      },
+    ],
+    limit,
+    offset,
+    order: [['nombre', 'ASC']],
+  });
+
+  return {
+    total: count,
+    page,
+    limit,
+    totalPages: Math.ceil(count / limit),
+    data: rows,
+  };
+}
+
+module.exports = {
+  listar,
+  obtenerPorId,
+  crear,
+  actualizar,
+  eliminar,
+  listarProductosDeCategoria,
+};
+</file>
+
+<file path="backend/services/comercio.service.js">
+// services/comercio.service.js
+const db = require('../models');
+const { Comercio, RedSocial, sequelize } = db;
+
+async function obtener() {
+  const comercio = await Comercio.findOne({
+    include: { model: RedSocial, as: 'redesSociales' },
+    order: [['idComercio', 'ASC']], // por si alguna vez hubiera más de uno, tomamos el primero
+  });
+
+  if (!comercio) {
+    const error = new Error('Todavía no se cargó la información del comercio.');
+    error.status = 404;
+    throw error;
+  }
+
+  return comercio;
+}
+
+/**
+ * Upsert: si ya existe un comercio, lo actualiza; si no, lo crea.
+ * El array redesSociales SIEMPRE reemplaza el set completo existente
+ * (se borran todas las filas viejas y se insertan las nuevas), dentro
+ * de una transacción — no hace merge campo por campo.
+ */
+async function guardar({ nombre, descripcion, direccion, telefono, horarios, redesSociales }) {
+  const t = await sequelize.transaction();
+
+  try {
+    let comercio = await Comercio.findOne({ transaction: t });
+
+    if (comercio) {
+      await comercio.update({ nombre, descripcion, direccion, telefono, horarios }, { transaction: t });
+    } else {
+      comercio = await Comercio.create({ nombre, descripcion, direccion, telefono, horarios }, { transaction: t });
+    }
+
+    if (redesSociales) {
+      await RedSocial.destroy({ where: { idComercio: comercio.idComercio }, transaction: t });
+
+      if (redesSociales.length > 0) {
+        await RedSocial.bulkCreate(
+          redesSociales.map((rs) => ({
+            idComercio: comercio.idComercio,
+            tipo: rs.tipo,
+            url: rs.url,
+          })),
+          { transaction: t }
+        );
+      }
+    }
+
+    await t.commit();
+
+    return Comercio.findByPk(comercio.idComercio, {
+      include: { model: RedSocial, as: 'redesSociales' },
+    });
+  } catch (err) {
+    await t.rollback();
+    // El UNIQUE (id_comercio, tipo) rechazaría dos redes sociales del
+    // mismo tipo en el mismo array del body.
+    if (err.name === 'SequelizeUniqueConstraintError') {
+      const error = new Error('No puede haber dos redes sociales del mismo tipo.');
+      error.status = 409;
+      throw error;
+    }
+    throw err;
+  }
+}
+
+module.exports = {
+  obtener,
+  guardar,
+};
+</file>
+
+<file path="backend/services/consulta.service.js">
+// services/consulta.service.js
+const db = require('../models');
+const { Consulta } = db;
+const { enviarNotificacionConsulta } = require('./email.service');
+
+/**
+ * Crea una consulta pública. 'estado' NUNCA se lee del input — se
+ * asigna 'pendiente' de forma explícita, sin importar qué mande el
+ * cliente (mismo criterio de allowlist que en auth.service.js).
+ *
+ * Envía notificación por mail al comercio (funcionalidad extra de la
+ * consigna: "Envío de correos electrónicos desde el formulario de
+ * contacto"). El fallo del envío de mail NO hace fallar la creación de
+ * la consulta: la consulta ya quedó guardada en la base (que es el
+ * requisito obligatorio), el mail es un extra — si Gmail está caído o
+ * hay un problema de red, el visitante igual recibe su 201 y la
+ * consulta queda registrada para que el admin la vea desde el panel.
+ */
+async function crear({ nombre, email, telefono, asunto, mensaje }) {
+  const consulta = await Consulta.create({
+    nombre,
+    email,
+    telefono: telefono || null,
+    asunto,
+    mensaje,
+    estado: 'pendiente',
+  });
+
+  try {
+    await enviarNotificacionConsulta(consulta);
+  } catch (err) {
+    console.error('No se pudo enviar el mail de notificación de consulta:', err.message);
+  }
+
+  return consulta;
+}
+
+async function listar({ page = 1, limit = 20, estado } = {}) {
+  const where = {};
+  if (estado) where.estado = estado;
+
+  const offset = (page - 1) * limit;
+  const { count, rows } = await Consulta.findAndCountAll({
+    where,
+    limit,
+    offset,
+    order: [['fecha', 'DESC']],
+  });
+
+  return {
+    items: rows,
+    total: count,
+    page,
+    limit,
+  };
+}
+
+async function obtenerPorId(id) {
+  const consulta = await Consulta.findByPk(id);
+  if (!consulta) {
+    const error = new Error('Consulta no encontrada.');
+    error.status = 404;
+    throw error;
+  }
+  return consulta;
+}
+
+async function cambiarEstado(id, estado) {
+  const consulta = await obtenerPorId(id);
+  await consulta.update({ estado });
+  return consulta;
+}
+
+async function eliminar(id) {
+  const consulta = await obtenerPorId(id);
+  await consulta.destroy();
+}
+
+module.exports = {
+  crear,
+  listar,
+  obtenerPorId,
+  cambiarEstado,
+  eliminar,
+};
+</file>
+
+<file path="backend/services/email.service.js">
+// services/email.service.js
+const nodemailer = require('nodemailer');
+
+const transporter = nodemailer.createTransport({
+  host: process.env.EMAIL_HOST,
+  port: process.env.EMAIL_PORT,
+  secure: false, // true solo si usás el puerto 465
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASSWORD,
+  },
+});
+
+/**
+ * Envía un email de recuperación de contraseña.
+ * @param {string} destinatario - email del usuario
+ * @param {string} tokenPlano - token en texto plano (NO el hash guardado en la DB)
+ */
+async function enviarEmailRecuperacion(destinatario, tokenPlano) {
+  const resetUrl = `${process.env.FRONTEND_URL}/reset-password?token=${tokenPlano}`;
+
+  await transporter.sendMail({
+    from: process.env.EMAIL_FROM,
+    to: destinatario,
+    subject: 'Recuperación de contraseña — Maxilibros',
+    html: `
+      <p>Recibimos una solicitud para restablecer tu contraseña.</p>
+      <p>Hacé clic en el siguiente enlace (válido por 30 minutos):</p>
+      <p><a href="${resetUrl}">${resetUrl}</a></p>
+      <p>Si no solicitaste este cambio, podés ignorar este mensaje.</p>
+    `,
+  });
+}
+
+/**
+ * Envía una notificación al comercio cuando llega una consulta nueva
+ * (funcionalidad extra: "Envío de correos desde el formulario de contacto").
+ */
+async function enviarNotificacionConsulta(consulta) {
+  await transporter.sendMail({
+    from: process.env.EMAIL_FROM,
+    to: process.env.EMAIL_COMERCIO || process.env.EMAIL_USER,
+    subject: `Nueva consulta: ${consulta.asunto}`,
+    html: `
+      <p><strong>De:</strong> ${consulta.nombre} (${consulta.email})</p>
+      <p><strong>Teléfono:</strong> ${consulta.telefono || 'No especificado'}</p>
+      <p><strong>Mensaje:</strong></p>
+      <p>${consulta.mensaje}</p>
+    `,
+  });
+}
+
+/**
+ * Alerta al dueño de la cuenta cuando se detectan intentos fallidos de
+ * login consecutivos contra su email. Se envía UNA vez al llegar al
+ * umbral (no en cada intento posterior mientras dure el bloqueo), para
+ * no inundar la bandeja de entrada si alguien insiste.
+ */
+async function enviarAlertaIntentosFallidos(destinatario, { intentos, minutosBloqueo }) {
+  await transporter.sendMail({
+    from: process.env.EMAIL_FROM,
+    to: destinatario,
+    subject: 'Actividad sospechosa en tu cuenta — Maxilibros',
+    html: `
+      <p>Detectamos ${intentos} intentos fallidos de inicio de sesión
+      seguidos en tu cuenta.</p>
+      <p>Por seguridad, bloqueamos temporalmente el inicio de sesión de
+      esta cuenta durante ${minutosBloqueo} minutos.</p>
+      <p>Si fuiste vos, simplemente esperá y volvé a intentar. Si no
+      fuiste vos, te recomendamos cambiar tu contraseña apenas puedas
+      volver a entrar.</p>
+    `,
+  });
+}
+
+module.exports = {
+  enviarEmailRecuperacion,
+  enviarNotificacionConsulta,
+  enviarAlertaIntentosFallidos,
+};
+</file>
+
+<file path="backend/services/product.service.js">
+// services/product.service.js
+const db = require('../models');
+const { Producto, Libro, Categoria, ProductoImagen, sequelize } = db;
+const { Op } = require('sequelize');
+
+/**
+ * Arma el include estándar para traer un producto "completo": sus
+ * categorías (N:N), sus imágenes (1:N) y su fila de libro (1:1, si
+ * corresponde). Se reutiliza en varias funciones para no repetir esto
+ * cinco veces.
+ */
+const includeCompleto = [
+  { model: Categoria, as: 'categorias', through: { attributes: [] } },
+  { model: ProductoImagen, as: 'imagenes', order: [['orden', 'ASC']] },
+  { model: Libro, as: 'libro' },
+];
+
+function calcularPrecioFinal(producto) {
+  const precio = parseFloat(producto.precio);
+  const descuento = parseFloat(producto.descuento);
+  return +(precio - (precio * descuento) / 100).toFixed(2);
+}
+
+function serializarProducto(producto) {
+  const json = producto.toJSON();
+  return {
+    ...json,
+    precioFinal: calcularPrecioFinal(producto),
+  };
+}
+
+/**
+ * Listado paginado con filtros. isAdmin decide si se respeta el filtro
+ * 'estado' que pide el cliente o si se fuerza 'activo' — la misma regla
+ * documentada en el api.yaml: un visitante nunca debe poder ver
+ * productos inactivos, sin importar qué pida.
+ */
+async function listar({
+  page = 1,
+  limit = 20,
+  categoryId,
+  search,
+  minPrice,
+  maxPrice,
+  inStock,
+  estado,
+  tipoProducto,
+  onSale,
+  destacado,
+  sort = 'newest',
+  isAdmin = false,
+}) {
+  const where = {};
+  const offset = (page - 1) * limit;
+
+  where.estado = isAdmin && estado ? estado : 'activo';
+
+  if (tipoProducto) where.tipoProducto = tipoProducto;
+  if (destacado === true) where.destacado = true;
+  if (search) {
+    where[Op.or] = [
+      { nombre: { [Op.iLike]: `%${search}%` } },
+      { descripcion: { [Op.iLike]: `%${search}%` } },
+    ];
+  }
+  if (minPrice !== undefined) where.precio = { ...where.precio, [Op.gte]: minPrice };
+  if (maxPrice !== undefined) where.precio = { ...where.precio, [Op.lte]: maxPrice };
+  if (inStock === true) where.stock = { [Op.gt]: 0 };
+  if (onSale === true) where.descuento = { [Op.gt]: 0 };
+
+  const include = [
+    { model: Categoria, as: 'categorias', through: { attributes: [] } },
+    { model: ProductoImagen, as: 'imagenes' },
+  ];
+
+  if (categoryId) {
+    include[0].where = { idCategoria: categoryId };
+  }
+
+  const orderMap = {
+    price_asc: [['precio', 'ASC']],
+    price_desc: [['precio', 'DESC']],
+    title_asc: [['nombre', 'ASC']],
+    newest: [['idProducto', 'DESC']],
+  };
+
+  const { count, rows } = await Producto.findAndCountAll({
+    where,
+    include,
+    limit,
+    offset,
+    distinct: true, // necesario por el include N:N, si no count() cuenta filas duplicadas del JOIN
+    order: orderMap[sort] || orderMap.newest,
+  });
+
+  const data = rows.map((producto) => {
+    const json = producto.toJSON();
+    const imagenPrincipal = json.imagenes?.find((img) => img.esPrincipal) || json.imagenes?.[0];
+    return {
+      id: json.idProducto,
+      nombre: json.nombre,
+      tipoProducto: json.tipoProducto,
+      precio: json.precio,
+      descuento: json.descuento,
+      precioFinal: calcularPrecioFinal(producto),
+      imagenPrincipal: imagenPrincipal?.imagenUrl || null,
+      stock: json.stock,
+      categories: json.categorias,
+      destacado: json.destacado,
+      estado: json.estado,
+    };
+  });
+
+  return {
+    total: count,
+    page,
+    limit,
+    totalPages: Math.ceil(count / limit),
+    data,
+  };
+}
+
+/**
+ * Detalle completo. isAdmin decide si un producto inactivo se muestra
+ * o se responde 404 (no filtrar su existencia a un visitante).
+ */
+async function obtenerPorId(id, { isAdmin = false } = {}) {
+  const producto = await Producto.findByPk(id, { include: includeCompleto });
+
+  if (!producto || (producto.estado !== 'activo' && !isAdmin)) {
+    const error = new Error('Producto no encontrado.');
+    error.status = 404;
+    throw error;
+  }
+
+  return serializarProducto(producto);
+}
+
+/**
+ * Crea un producto, y dentro de la MISMA transacción: su fila en libro
+ * (si tipoProducto='libro'), sus categorías (producto_categoria) y sus
+ * imágenes iniciales, si vinieron en el input. Si cualquier paso falla
+ * (ej. ISBN duplicado), se revierte todo — no queda un producto a medias
+ * sin categoría o sin su fila de libro.
+ */
+async function crear({ tipoProducto, nombre, descripcion, precio, descuento, stock, estado, categoryIds, images, libro }) {
+  const t = await sequelize.transaction();
+
+  try {
+    const producto = await Producto.create(
+      {
+        tipoProducto,
+        nombre,
+        descripcion: descripcion || null,
+        precio,
+        descuento: descuento || 0,
+        stock: stock || 0,
+        estado: estado || 'activo',
+      },
+      { transaction: t }
+    );
+
+    if (tipoProducto === 'libro') {
+      if (!libro || !libro.isbn) {
+        const error = new Error('Los datos de libro (isbn) son obligatorios cuando tipoProducto es "libro".');
+        error.status = 400;
+        throw error;
+      }
+      await Libro.create(
+        {
+          idProducto: producto.idProducto,
+          isbn: libro.isbn,
+          autor: libro.autor || null,
+          editorial: libro.editorial || null,
+          anioPublicacion: libro.anioPublicacion || null,
+        },
+        { transaction: t }
+      );
+    }
+
+    await producto.setCategorias(categoryIds, { transaction: t });
+
+    if (images && images.length > 0) {
+      await ProductoImagen.bulkCreate(
+        images.map((img, index) => ({
+          idProducto: producto.idProducto,
+          imagenUrl: img.imageUrl,
+          orden: img.orden ?? index,
+          esPrincipal: img.esPrincipal ?? index === 0,
+        })),
+        { transaction: t }
+      );
+    }
+
+    await t.commit();
+
+    return obtenerPorId(producto.idProducto, { isAdmin: true });
+  } catch (err) {
+    await t.rollback();
+    // Traducir el error de constraint UNIQUE de isbn a un mensaje claro
+    if (err.name === 'SequelizeUniqueConstraintError' && err.fields?.isbn) {
+      const error = new Error('Ya existe un producto con ese ISBN.');
+      error.status = 409;
+      throw error;
+    }
+    throw err;
+  }
+}
+
+/**
+ * PUT: reemplaza todos los campos, incluyendo el set completo de
+ * categorías (setCategorias reemplaza, no agrega).
+ */
+async function actualizar(id, { tipoProducto, nombre, descripcion, precio, descuento, stock, estado, categoryIds, libro }) {
+  const t = await sequelize.transaction();
+
+  try {
+    const producto = await Producto.findByPk(id, { transaction: t });
+    if (!producto) {
+      const error = new Error('Producto no encontrado.');
+      error.status = 404;
+      throw error;
+    }
+
+    await producto.update(
+      { tipoProducto, nombre, descripcion, precio, descuento, stock, estado },
+      { transaction: t }
+    );
+
+    if (categoryIds) {
+      await producto.setCategorias(categoryIds, { transaction: t });
+    }
+
+    if (tipoProducto === 'libro' && libro) {
+      const [libroRow] = await Libro.findOrCreate({
+        where: { idProducto: id },
+        defaults: { idProducto: id, ...libro },
+        transaction: t,
+      });
+      await libroRow.update(libro, { transaction: t });
+    }
+
+    await t.commit();
+    return obtenerPorId(id, { isAdmin: true });
+  } catch (err) {
+    await t.rollback();
+    throw err;
+  }
+}
+
+/**
+ * PATCH: solo actualiza los campos enviados. Reusa actualizar() con los
+ * valores actuales como default para los campos no enviados.
+ */
+async function actualizarParcial(id, cambios) {
+  const producto = await Producto.findByPk(id);
+  if (!producto) {
+    const error = new Error('Producto no encontrado.');
+    error.status = 404;
+    throw error;
+  }
+
+  const t = await sequelize.transaction();
+  try {
+    await producto.update(cambios, { transaction: t });
+
+    if (cambios.categoryIds) {
+      await producto.setCategorias(cambios.categoryIds, { transaction: t });
+    }
+
+    await t.commit();
+    return obtenerPorId(id, { isAdmin: true });
+  } catch (err) {
+    await t.rollback();
+    throw err;
+  }
+}
+
+async function cambiarEstado(id, estado) {
+  const producto = await Producto.findByPk(id);
+  if (!producto) {
+    const error = new Error('Producto no encontrado.');
+    error.status = 404;
+    throw error;
+  }
+  await producto.update({ estado });
+  return obtenerPorId(id, { isAdmin: true });
+}
+
+const MAX_DESTACADOS = 6;
+
+/**
+ * Marca o desmarca un producto como destacado. Al marcar (destacado=true),
+ * si ya hay MAX_DESTACADOS productos destacados, rechaza con 409 — el
+ * admin tiene que desmarcar uno manualmente antes de agregar otro (en
+ * vez de reemplazar automáticamente el más viejo, que sería una
+ * sorpresa para el admin).
+ */
+async function cambiarDestacado(id, destacado) {
+  const producto = await Producto.findByPk(id);
+  if (!producto) {
+    const error = new Error('Producto no encontrado.');
+    error.status = 404;
+    throw error;
+  }
+
+  if (destacado && !producto.destacado) {
+    const cantidadActual = await Producto.count({ where: { destacado: true } });
+    if (cantidadActual >= MAX_DESTACADOS) {
+      const error = new Error(
+        `Ya hay ${MAX_DESTACADOS} productos destacados (el máximo permitido). Desmarcá alguno antes de agregar otro.`
+      );
+      error.status = 409;
+      throw error;
+    }
+  }
+
+  await producto.update({ destacado });
+  return obtenerPorId(id, { isAdmin: true });
+}
+
+async function eliminar(id) {
+  const producto = await Producto.findByPk(id);
+  if (!producto) {
+    const error = new Error('Producto no encontrado.');
+    error.status = 404;
+    throw error;
+  }
+  // ON DELETE CASCADE en la base se encarga de libro, producto_categoria
+  // y producto_imagen — no hace falta borrarlos a mano acá.
+  await producto.destroy();
+}
+
+module.exports = {
+  listar,
+  obtenerPorId,
+  crear,
+  actualizar,
+  actualizarParcial,
+  cambiarEstado,
+  cambiarDestacado,
+  eliminar,
+};
+</file>
+
+<file path="backend/services/productImage.service.js">
+// services/productImage.service.js
+const db = require('../models');
+const { Producto, ProductoImagen, sequelize } = db;
+
+async function listar(idProducto) {
+  const producto = await Producto.findByPk(idProducto);
+  if (!producto) {
+    const error = new Error('Producto no encontrado.');
+    error.status = 404;
+    throw error;
+  }
+
+  return ProductoImagen.findAll({
+    where: { idProducto },
+    order: [['orden', 'ASC']],
+  });
+}
+
+/**
+ * Agrega una imagen. Si esPrincipal=true, desmarca cualquier otra imagen
+ * principal del mismo producto ANTES de insertar la nueva — la base
+ * tiene un índice único parcial (uq_producto_imagen_principal) que
+ * rechazaría el INSERT si hubiera dos con esPrincipal=true al mismo
+ * tiempo, así que este orden importa.
+ */
+async function agregar(idProducto, { imageUrl, orden, esPrincipal }) {
+  const producto = await Producto.findByPk(idProducto);
+  if (!producto) {
+    const error = new Error('Producto no encontrado.');
+    error.status = 404;
+    throw error;
+  }
+
+  const t = await sequelize.transaction();
+  try {
+    if (esPrincipal) {
+      await ProductoImagen.update(
+        { esPrincipal: false },
+        { where: { idProducto, esPrincipal: true }, transaction: t }
+      );
+    }
+
+    const imagen = await ProductoImagen.create(
+      {
+        idProducto,
+        imagenUrl: imageUrl,
+        orden: orden ?? 0,
+        esPrincipal: esPrincipal ?? false,
+      },
+      { transaction: t }
+    );
+
+    await t.commit();
+    return imagen;
+  } catch (err) {
+    await t.rollback();
+    throw err;
+  }
+}
+
+async function eliminar(idProducto, idImagen) {
+  const imagen = await ProductoImagen.findOne({
+    where: { idImagen, idProducto },
+  });
+
+  if (!imagen) {
+    const error = new Error('Imagen no encontrada.');
+    error.status = 404;
+    throw error;
+  }
+
+  await imagen.destroy();
+  // Nota: si la imagen borrada era la esPrincipal, el producto queda
+  // sin imagen principal hasta que el admin marque otra. No se elige
+  // automáticamente una nueva principal, para no sorprender al admin
+  // con un cambio que no pidió explícitamente.
+}
+
+module.exports = {
+  listar,
+  agregar,
+  eliminar,
+};
+</file>
+
+<file path="backend/app.js">
+// Cargar variables de .env
+require('dotenv').config();
+
+var express = require('express');
+var cors = require('cors');
+
+// Instancia de Express
+var app = express();
+
+// Habilita CORS para todas las rutas
+app.use(cors());
+
+
+// Middleware para interpretar JSON y datos de formularios URL-encoded
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// Ruta de prueba (Etapa 1: confirmar que el server responde)
+app.get('/api/health', (req, res) => {
+  res.status(200).json({ status: 'ok' });
+});
+
+
+app.use('/api/auth', require('./routes/auth.routes'));
+app.use('/api/categories', require('./routes/category.routes'));
+app.use('/api/products', require('./routes/product.routes'));
+app.use('/api/consultas', require('./routes/consulta.routes'));
+app.use('/api/comercio', require('./routes/comercio.routes'));
+
+// Manejo de rutas no encontradas (404) — conviene tenerlo desde ya
+app.use((req, res) => {
+  res.status(404).json({ error: 'Ruta no encontrada' });
+});
+
+// Middleware de manejo de errores centralizado (Express lo reconoce por tener 4 parámetros)
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(err.status || 500).json({ error: err.message || 'Error interno del servidor' });
+});
+
+module.exports = app;
+</file>
+
+<file path="backend/bbdd_seed.sql">
+-- Extensión para generar identificadores UUID
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+-- ==========================================
+-- 1. TABLAS PRINCIPALES Y CATÁLOGO
+-- ==========================================
+
+CREATE TABLE categoria (
+    id_categoria BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL UNIQUE,
+    descripcion TEXT
+);
+
+CREATE TABLE producto (
+    id_producto BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    tipo_producto VARCHAR(30) NOT NULL CHECK (tipo_producto IN ('libro', 'papeleria', 'accesorio', 'otros')),
+    nombre TEXT NOT NULL,
+    descripcion TEXT,
+    precio NUMERIC(10,2) NOT NULL DEFAULT 0 CHECK (precio >= 0),
+    stock INTEGER NOT NULL DEFAULT 0 CHECK (stock >= 0),
+    estado VARCHAR(20) NOT NULL DEFAULT 'activo' CHECK (estado IN ('activo', 'inactivo', 'agotado')),
+    descuento NUMERIC(5,2) NOT NULL DEFAULT 0 CHECK (descuento >= 0 AND descuento <= 100),
+    updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+    destacado BOOLEAN NOT NULL DEFAULT FALSE
+);
+
+-- Especialización de Libro (1:0..1)
+CREATE TABLE libro (
+    id_producto BIGINT PRIMARY KEY,
+    isbn VARCHAR(20) NOT NULL UNIQUE,
+    autor TEXT,
+    editorial TEXT,
+    anio_publicacion SMALLINT,
+    FOREIGN KEY (id_producto) REFERENCES producto(id_producto) ON DELETE CASCADE
+);
+
+-- Relación N:M Producto - Categoría
+CREATE TABLE producto_categoria (
+    id_producto BIGINT NOT NULL,
+    id_categoria BIGINT NOT NULL,
+    PRIMARY KEY (id_producto, id_categoria),
+    FOREIGN KEY (id_producto) REFERENCES producto(id_producto) ON DELETE CASCADE,
+    FOREIGN KEY (id_categoria) REFERENCES categoria(id_categoria) ON DELETE CASCADE
+);
+
+-- Múltiples imágenes por producto
+CREATE TABLE producto_imagen (
+    id_imagen BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    id_producto BIGINT NOT NULL,
+    imagen_url TEXT NOT NULL,
+    orden INTEGER NOT NULL DEFAULT 0 CHECK (orden >= 0),
+    es_principal BOOLEAN NOT NULL DEFAULT FALSE,
+    FOREIGN KEY (id_producto) REFERENCES producto(id_producto) ON DELETE CASCADE
+);
+
+-- Índice único parcial para asegurar una sola imagen principal por producto
+CREATE UNIQUE INDEX uq_producto_imagen_principal 
+ON producto_imagen (id_producto) 
+WHERE es_principal = TRUE;
+
+-- ==========================================
+-- 2. COMERCIO Y REDES SOCIALES
+-- ==========================================
+
+CREATE TABLE comercio (
+    id_comercio BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    nombre VARCHAR(150) NOT NULL,
+    descripcion TEXT,
+    direccion TEXT,
+    telefono VARCHAR(30),
+    horarios TEXT, -- Texto libre según tu decisión
+    updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE red_social (
+    id_red_social BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    id_comercio BIGINT NOT NULL,
+    tipo VARCHAR(50) NOT NULL,
+    url TEXT NOT NULL,
+    FOREIGN KEY (id_comercio) REFERENCES comercio(id_comercio) ON DELETE CASCADE,
+    UNIQUE (id_comercio, tipo) -- Evita duplicar la misma red social para el mismo comercio
+);
+
+-- ==========================================
+-- 3. USUARIOS, AUTENTICACIÓN Y CONSULTAS
+-- ==========================================
+
+CREATE TABLE usuarios (
+    id_usuario UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    nombre VARCHAR(100) NOT NULL,
+    apellido VARCHAR(100),
+    email VARCHAR(255) NOT NULL UNIQUE,
+    telefono VARCHAR(30),
+    password_hash TEXT NOT NULL,
+    rol VARCHAR(20) NOT NULL DEFAULT 'admin' CHECK (rol IN ('admin')),
+    direccion TEXT,
+    fecha_registro TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    intentos_fallidos INTEGER NOT NULL DEFAULT 0,
+    bloqueado_hasta TIMESTAMPTZ
+);
+
+CREATE TABLE password_reset_token (
+    id_token BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    id_usuario UUID NOT NULL,
+    token_hash TEXT NOT NULL,
+    usado BOOLEAN NOT NULL DEFAULT FALSE,
+    fecha_creacion TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    fecha_expiracion TIMESTAMPTZ NOT NULL,
+    FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario) ON DELETE CASCADE
+);
+
+CREATE TABLE token_revocado (
+    id_token_revocado BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    jti VARCHAR(255) NOT NULL UNIQUE,
+    fecha_creacion TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    fecha_expiracion TIMESTAMPTZ NOT NULL
+);
+
+CREATE TABLE consulta (
+    id_consulta BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    telefono VARCHAR(30),
+    asunto VARCHAR(150) NOT NULL,
+    mensaje TEXT NOT NULL,
+    estado VARCHAR(20) NOT NULL DEFAULT 'pendiente' CHECK (estado IN ('pendiente', 'respondida', 'leida')),
+    fecha TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- ==========================================
+-- 4. TRIGGERS DE INTEGRIDAD COMPLEJA
+-- ==========================================
+
+-- 1. Función para validar que un producto tipo 'libro' tenga su especialización
+CREATE OR REPLACE FUNCTION fn_check_libro_on_producto()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF NEW.tipo_producto = 'libro' AND NOT EXISTS (SELECT 1 FROM libro WHERE id_producto = NEW.id_producto) THEN
+        RAISE EXCEPTION 'El producto % es de tipo "libro", por lo que debe existir un registro asociado en la tabla libro.', NEW.id_producto;
+    ELSIF NEW.tipo_producto != 'libro' AND EXISTS (SELECT 1 FROM libro WHERE id_producto = NEW.id_producto) THEN
+        RAISE EXCEPTION 'El producto % cambió de tipo y no puede tener registros huérfanos en la tabla libro.', NEW.id_producto;
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- 2. Función para validar que la tabla libro solo apunte a productos tipo 'libro'
+CREATE OR REPLACE FUNCTION fn_check_producto_on_libro()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM producto WHERE id_producto = NEW.id_producto AND tipo_producto = 'libro') THEN
+        RAISE EXCEPTION 'No se puede agregar el libro % porque el producto no existe o su tipo_producto no es "libro".', NEW.id_producto;
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- 3. Función para validar categorías al crear producto
+CREATE OR REPLACE FUNCTION fn_check_categoria_on_producto()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM producto_categoria WHERE id_producto = NEW.id_producto) THEN
+        RAISE EXCEPTION 'El producto % debe tener asignada al menos una categoría al momento de crearlo.', NEW.id_producto;
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- 4. Función para impedir borrar la última categoría de un producto
+CREATE OR REPLACE FUNCTION fn_check_categoria_on_delete()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM producto_categoria WHERE id_producto = OLD.id_producto) THEN
+        RAISE EXCEPTION 'El producto % debe tener asignada al menos una categoría. No se puede eliminar la última.', OLD.id_producto;
+    END IF;
+    RETURN OLD;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Triggers para la obligatoriedad de categorías (Deferred para transacciones)
+DROP TRIGGER IF EXISTS trg_producto_libro_check ON producto;
+DROP TRIGGER IF EXISTS trg_libro_producto_check ON libro;
+DROP TRIGGER IF EXISTS trg_producto_categoria_check ON producto;
+DROP TRIGGER IF EXISTS trg_producto_categoria_delete_check ON producto_categoria;
+
+CREATE CONSTRAINT TRIGGER trg_producto_libro_check
+AFTER INSERT OR UPDATE OF tipo_producto ON producto
+DEFERRABLE INITIALLY DEFERRED
+FOR EACH ROW EXECUTE FUNCTION fn_check_libro_on_producto();
+
+CREATE CONSTRAINT TRIGGER trg_libro_producto_check
+AFTER INSERT ON libro
+DEFERRABLE INITIALLY DEFERRED
+FOR EACH ROW EXECUTE FUNCTION fn_check_producto_on_libro();
+
+CREATE CONSTRAINT TRIGGER trg_producto_categoria_check
+AFTER INSERT ON producto
+DEFERRABLE INITIALLY DEFERRED
+FOR EACH ROW EXECUTE FUNCTION fn_check_categoria_on_producto();
+
+CREATE TRIGGER trg_producto_categoria_delete_check
+AFTER DELETE ON producto_categoria
+FOR EACH ROW EXECUTE FUNCTION fn_check_categoria_on_delete();
+</file>
+
+<file path="backend/package.json">
+{
+  "name": "Maxilibrerias",
+  "version": "1.0.0",
+  "description": "Trabajo practico integrador de materia Aplicaciones Interactivas curso 4121",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MdelgadoUADE/aplicaciones-interactivas-4121.git"
+  },
+  "keywords": [],
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/MdelgadoUADE/aplicaciones-interactivas-4121/issues"
+  },
+  "homepage": "https://github.com/MdelgadoUADE/aplicaciones-interactivas-4121#readme",
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "cors": "^2.8.6",
+    "dotenv": "^18.0.0",
+    "express": "^5.2.1",
+    "express-validator": "^7.3.2",
+    "jsonwebtoken": "^9.0.3",
+    "nodemailer": "^10.0.10",
+    "pg": "^8.23.0",
+    "pg-hstore": "^2.3.4",
+    "sequelize": "^6.37.8"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14",
+    "sequelize-cli": "^6.6.5"
+  },
+  "allowScripts": {
+    "bcrypt@6.0.0": true
+  }
+}
+</file>
+
+<file path="backend/server.js">
+const app = require('./app');
+
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+  console.log(`Servidor corriendo en http://localhost:${PORT}`);
+});
+</file>
+
+<file path=".gitignore">
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Diagnostic reports (https://nodejs.org/api/report.html)
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Directory for instrumented libs generated by jscoverage/JSCover
+lib-cov
+
+# Coverage directory used by tools like istanbul
+coverage
+*.lcov
+
+# nyc test coverage
+.nyc_output
+
+# Grunt intermediate storage (https://gruntjs.com/creating-plugins#storing-task-files)
+.grunt
+
+# Bower dependency directory (https://bower.io/)
+bower_components
+
+# node-waf configuration
+.lock-wscript
+
+# Compiled binary addons (https://nodejs.org/api/addons.html)
+build/Release
+
+# Dependency directories
+node_modules/
+jspm_packages/
+
+# Snowpack dependency directory (https://snowpack.dev/)
+web_modules/
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Optional stylelint cache
+.stylelintcache
+
+# Optional REPL history
+.node_repl_history
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity file
+.yarn-integrity
+
+# dotenv environment variable files
+.env
+.env.*
+!.env.example
+
+# parcel-bundler cache (https://parceljs.org/)
+.cache
+.parcel-cache
+
+# Next.js build output
+.next
+out
+
+# Nuxt.js build / generate output
+.nuxt
+dist
+.output
+
+# Gatsby files
+.cache/
+# Comment in the public line in if your project uses Gatsby and not Next.js
+# https://nextjs.org/blog/next-9-1#public-directory-support
+# public
+
+# vuepress build output
+.vuepress/dist
+
+# vuepress v2.x temp directory
+.temp
+
+# Sveltekit cache directory
+.svelte-kit/
+
+# vitepress build output
+**/.vitepress/dist
+
+# vitepress cache directory
+**/.vitepress/cache
+
+# Docusaurus cache and generated files
+.docusaurus
+
+# Serverless directories
+.serverless/
+
+# FuseBox cache
+.fusebox/
+
+# DynamoDB Local files
+.dynamodb/
+
+# Firebase cache directory
+.firebase/
+
+# TernJS port file
+.tern-port
+
+# Stores VSCode versions used for testing VSCode extensions
+.vscode-test
+
+# pnpm
+.pnpm-store
+
+# yarn v3
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+
+# Vite files
+vite.config.js.timestamp-*
+vite.config.ts.timestamp-*
+.vite/
+</file>
+
+<file path="package.json">
+{
+  "dependencies": {
+    "pg": "^8.23.0"
+  }
+}
+</file>
+
+<file path="README.md">
+# aplicaciones-interactivas-4121
+Trabajo practico integrador de materia Aplicaciones Interactivas curso 4121
+
+# Seeder
+
+- Comando para correr todos los seeders y popular la db:
+    - `npx sequelize-cli db:seed:all`
+- Comando para deshacer todo
+    - `npx sequelize-cli db:seed:undo:all`
+
+
+
+## Usuario admin de prueba (seeder)
+- Email: admin@maxilibros.com
+- Contraseña: admin123
+</file>
+
+<file path="setup.md">
+# Setup del proyecto — Venta de Libros
+
+Guía para levantar el backend, la base de datos y el frontend en local, sin Docker.
+
+## Stack
+
+- **Frontend:** React
+- **Backend:** Node.js + Express
+- **ORM:** Sequelize
+- **Base de datos:** PostgreSQL
+
+## Requisitos previos
+
+Cada integrante del equipo necesita instalar esto en su máquina:
+
+- **Node.js** (v18 o superior) — [nodejs.org](https://nodejs.org)
+- **PostgreSQL** (v14 o superior):
+  - Windows/Mac: instalador oficial en [postgresql.org/download](https://www.postgresql.org/download/)
+  - Linux (Debian/Ubuntu): `sudo apt install postgresql postgresql-contrib`
+  - Durante la instalación en Windows/Mac se define una contraseña para el usuario `postgres`. **Anotala**, la vas a necesitar en el `.env`.
+- **Postman** (o Insomnia) para probar los endpoints — [postman.com/downloads](https://www.postman.com/downloads/)
+- Un cliente visual para la DB (opcional pero recomendado): **pgAdmin** (viene con el instalador de Postgres) o **DBeaver**.
+
+## Estructura del repositorio
+
+```
+proyecto-libros/
+├── backend/
+│   ├── app.js               # arma la instancia de Express (middlewares + rutas)
+│   ├── server.js            # importa app.js y hace app.listen()
+│   ├── config/
+│   │    └── config.js       # datos de conexión leídos desde .env
+│   ├── auth/                # generación/verificación de JWT, hash de contraseñas
+│   ├── controllers/         # reciben el request, llaman a services, responden
+│   ├── services/            # lógica de negocio (antes de tocar los models)
+│   ├── models/              # definiciones de Sequelize
+│   ├── migrations/          # generadas por sequelize-cli
+│   ├── seeders/             # datos de prueba 
+│   ├── routes/ 
+│   ├── middlewares/         # validaciones, manejo de errores, auth guard
+│   ├── .env.example
+│   ├── .gitignore
+│   ├── package.json
+├── frontend/
+│   └── (proyecto de React)
+└── SETUP.md
+```
+
+
+## 1. Clonar el repositorio
+
+```bash
+git clone <url-del-repo>
+cd proyecto-libros
+```
+
+## 2. Configurar la base de datos local
+
+Abrí una consola de PostgreSQL (`psql -U postgres`) y creá la base para el proyecto (podés usar el usuario `postgres` directo si preferís no complicarte con roles nuevos):
+
+```sql
+CREATE DATABASE libreria_db;
+```
+
+## 3. Configurar variables de entorno del backend
+
+Dentro de `backend/`, copiá el archivo de ejemplo y completá tus datos locales:
+
+```bash
+cd backend
+cp .env.example .env
+```
+
+Contenido de `.env` (cada uno pone SUS credenciales locales, este archivo **no se sube a Git**):
+
+```
+PORT=3001
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=libreria_db
+DB_USER=postgres
+DB_PASSWORD=tu_contraseña_local
+DB_DIALECT=postgres
+JWT_SECRET=una_clave_secreta_para_los_tokens
+```
+
+> **Importante:** `.env` va en `.gitignore`. Lo que sí se sube al repo es `.env.example`, con las mismas claves pero sin valores reales, para que cada uno sepa qué variables tiene que definir.
+
+## 4. Instalar dependencias
+
+```bash
+# Backend
+cd backend
+npm install
+
+# Frontend (en otra terminal)
+cd frontend
+npm install
+```
+
+## 5. Crear la base de datos y correr las migraciones
+
+Con Sequelize CLI ya instalado como dependencia de desarrollo:
+
+```bash
+cd backend
+npx sequelize-cli db:create      # crea la DB si no existe todavía
+npx sequelize-cli db:migrate     # crea las tablas según las migraciones
+npx sequelize-cli db:seed:all    # carga los datos de prueba (los 20+ libros precargados)
+```
+
+Si en algún momento necesitás resetear todo desde cero:
+
+```bash
+npx sequelize-cli db:migrate:undo:all
+npx sequelize-cli db:migrate
+npx sequelize-cli db:seed:all
+```
+
+## 6. Levantar el backend
+
+```bash
+cd backend
+npm run dev
+```
+
+Esto debería levantar el servidor Express en `http://localhost:3001` (o el puerto que hayas puesto en `.env`), usando `nodemon` para reiniciar automáticamente con cada cambio.
+
+Agregá este script en tu `package.json` si todavía no está:
+
+```json
+"scripts": {
+  "start": "node server.js",
+  "dev": "nodemon server.js"
+}
+```
+
+## 7. Levantar el frontend
+
+```bash
+cd frontend
+npm start
+```
+
+Por defecto React corre en `http://localhost:3000`. Asegurate de tener `cors` configurado en el backend para aceptar peticiones desde ese origen.
+
+## 8. Probar los endpoints en Postman
+
+- Armá una **Collection** en Postman llamada "Venta de Libros API", con una carpeta por módulo: Auth, Libros, Categorías, Pedidos, Consultas.
+- Creá un **Environment** en Postman con una variable `base_url = http://localhost:3001/api`, así los requests quedan como `{{base_url}}/libros` y no hay que reescribir la URL en cada uno.
+- Para las rutas protegidas (las que pasan por el middleware de autenticación), guardá el token JWT que devuelve el login en una variable de entorno de Postman (`token`) y usalo en el header `Authorization: Bearer {{token}}` del resto de los requests.
+- Exportá la Collection (`.json`) y subila al repo en `backend/postman/` para que todo el equipo pruebe con los mismos requests.
+
+## Notas sobre Git
+
+Como van a coordinarse subiendo cosas a GitHub aunque no sea 100% mejor práctica, tené en cuenta esto para no romperle el entorno a nadie:
+
+- **Nunca subas `node_modules/`** — cada uno lo genera con `npm install`. Tiene que estar en `.gitignore`.
+- **Nunca subas `.env`** con contraseñas reales — solo `.env.example` con las claves vacías o con valores de ejemplo.
+- Si alguien cambia el modelo de datos, que lo haga con una **migración nueva** de Sequelize (`npx sequelize-cli migration:generate --name nombre-del-cambio`) y no editando una migración vieja que otro ya corrió — si no, cada uno va a tener su base desincronizada de la del resto.
+- Antes de hacer `git pull`, correr `npm install` y `npx sequelize-cli db:migrate` por si hay dependencias o migraciones nuevas.
+
+## `.gitignore` sugerido para `backend/`
+
+```
+node_modules/
+.env
+*.log
+```
+</file>
+
+</files>
