@@ -30,6 +30,46 @@ function serializarProducto(producto) {
 }
 
 /**
+ * Arma la condición de búsqueda "todas las palabras deben aparecer, en
+ * cualquier orden, en cualquiera de los campos buscables". No es fuzzy
+ * (no tolera errores de tipeo) — es substring matching por palabra,
+ * insensible a mayúsculas/minúsculas Y a tildes (usando unaccent() de
+ * Postgres en ambos lados de la comparación, columna y término
+ * buscado), para que "garcia" encuentre "García".
+ *
+ * Requiere la extensión unaccent activada en la base:
+ *   CREATE EXTENSION IF NOT EXISTS unaccent;
+ *
+ * Ejemplo: buscar "garcia marquez" arma (conceptualmente):
+ *   (unaccent(nombre) ILIKE unaccent(%garcia%) OR ... OR unaccent(libro.autor) ILIKE unaccent(%garcia%))
+ *   AND
+ *   (unaccent(nombre) ILIKE unaccent(%marquez%) OR ... )
+ * Así "Márquez, García" (orden invertido, con o sin tildes en la
+ * búsqueda) también matchea.
+ */
+function condicionUnaccent(columna, palabra) {
+  return sequelize.where(
+    sequelize.fn('unaccent', sequelize.col(columna)),
+    { [Op.iLike]: sequelize.fn('unaccent', `%${palabra}%`) }
+  );
+}
+
+function armarCondicionBusqueda(search) {
+  const palabras = search.trim().split(/\s+/).filter(Boolean);
+  if (palabras.length === 0) return null;
+
+  return {
+    [Op.and]: palabras.map((palabra) => ({
+      [Op.or]: [
+        condicionUnaccent('Producto.nombre', palabra),
+        condicionUnaccent('Producto.descripcion', palabra),
+        condicionUnaccent('libro.autor', palabra),
+      ],
+    })),
+  };
+}
+
+/**
  * Listado paginado con filtros. isAdmin decide si se respeta el filtro
  * 'estado' que pide el cliente o si se fuerza 'activo' — la misma regla
  * documentada en el api.yaml: un visitante nunca debe poder ver
@@ -57,12 +97,12 @@ async function listar({
 
   if (tipoProducto) where.tipoProducto = tipoProducto;
   if (destacado === true) where.destacado = true;
-  if (search) {
-    where[Op.or] = [
-      { nombre: { [Op.iLike]: `%${search}%` } },
-      { descripcion: { [Op.iLike]: `%${search}%` } },
-    ];
+
+  const condicionBusqueda = search ? armarCondicionBusqueda(search) : null;
+  if (condicionBusqueda) {
+    Object.assign(where, condicionBusqueda);
   }
+
   if (minPrice !== undefined) where.precio = { ...where.precio, [Op.gte]: minPrice };
   if (maxPrice !== undefined) where.precio = { ...where.precio, [Op.lte]: maxPrice };
   if (inStock === true) where.stock = { [Op.gt]: 0 };
@@ -71,6 +111,9 @@ async function listar({
   const include = [
     { model: Categoria, as: 'categorias', through: { attributes: [] } },
     { model: ProductoImagen, as: 'imagenes' },
+    // required: false -> LEFT JOIN, así los productos que no son libros
+    // (sin fila en Libro) no quedan excluidos cuando hay búsqueda activa.
+    { model: Libro, as: 'libro', required: false },
   ];
 
   if (categoryId) {
@@ -90,6 +133,7 @@ async function listar({
     limit,
     offset,
     distinct: true, // necesario por el include N:N, si no count() cuenta filas duplicadas del JOIN
+    subQuery: false, // necesario para que el filtro '$libro.autor$' funcione junto con limit/offset
     order: orderMap[sort] || orderMap.newest,
   });
 
