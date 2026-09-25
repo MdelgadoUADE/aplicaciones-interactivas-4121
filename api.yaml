@@ -5,7 +5,7 @@ info:
     API para la gestión de venta de libros. Alineada al DER con
     producto_categoria (N:N), producto_imagen (múltiples imágenes) y
     estados en español.
-  version: 2.1.0
+  version: 2.2.0
 
 servers:
   - url: http://localhost:3000/api
@@ -22,6 +22,8 @@ tags:
     description: Información institucional del comercio
   - name: Consultas
     description: Formulario de contacto y gestión de consultas
+  - name: Dashboard
+    description: Métricas y estadísticas del comercio (admin-only)
 
 paths:
   /products:
@@ -87,6 +89,14 @@ paths:
           required: false
           schema:
             type: boolean
+        - name: novedades
+          in: query
+          required: false
+          description: >
+            Si es true, devuelve solo productos creados en los últimos 7
+            días (según producto.created_at).
+          schema:
+            type: boolean
         - name: sort
           in: query
           required: false
@@ -136,6 +146,12 @@ paths:
   /products/{id}:
     get:
       summary: Obtener el detalle completo de un producto
+      description: >
+        Sitio público sin token, o panel admin con token: en ambos casos
+        devuelve el detalle. Efecto secundario (Etapa 16): si quien pide
+        NO es admin, incrementa en 1 producto.visitas — las visitas del
+        propio admin revisando su panel no cuentan como interés real de
+        un visitante y no suman.
       security:
         - bearerAuth: []
         - {}
@@ -838,6 +854,41 @@ paths:
         "404":
           $ref: "#/components/responses/NotFound"
 
+  /dashboard/metricas:
+    get:
+      summary: Obtener métricas y estadísticas del comercio
+      description: >
+        Admin-only. No depende de lógica de compras (fuera de scope del
+        TPO): son estadísticas sobre el catálogo, las consultas y las
+        vistas de producto. umbralStockBajo es configurable; si no se
+        envía, el backend usa 5 por defecto.
+      tags:
+        - Dashboard
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: umbralStockBajo
+          in: query
+          required: false
+          description: >
+            Un producto activo con stock menor a este valor se cuenta
+            como "stock bajo".
+          schema:
+            type: integer
+            minimum: 0
+            default: 5
+      responses:
+        "200":
+          description: Métricas del comercio
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardMetricas"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+
 components:
   securitySchemes:
     bearerAuth:
@@ -1059,6 +1110,12 @@ components:
           $ref: "#/components/schemas/ProductoEstado"
         stock:
           type: integer
+        visitas:
+          type: integer
+          readOnly: true
+          description: >
+            Contador de vistas (Etapa 16). Se incrementa en cada GET de
+            este producto hecho por un visitante sin token admin.
         updatedAt:
           type: string
           format: date-time
@@ -1418,3 +1475,94 @@ components:
           type: integer
         limit:
           type: integer
+
+    DashboardMetricas:
+      type: object
+      description: Respuesta de GET /dashboard/metricas (Etapa 16).
+      properties:
+        totales:
+          type: object
+          properties:
+            productos:
+              type: integer
+            categorias:
+              type: integer
+            consultas:
+              type: integer
+        productosPorEstado:
+          type: object
+          description: >
+            Mapa estado -> cantidad, ej. activo 21, inactivo 1, agotado 3.
+          additionalProperties:
+            type: integer
+        consultasPorEstado:
+          type: object
+          description: >
+            Mapa estado -> cantidad, ej. pendiente 5, leida 1, respondida 1.
+          additionalProperties:
+            type: integer
+        productosStockBajo:
+          type: object
+          properties:
+            umbral:
+              type: integer
+            cantidad:
+              type: integer
+        distribucionPorCategoria:
+          type: array
+          items:
+            type: object
+            properties:
+              idCategoria:
+                type: integer
+              nombre:
+                type: string
+              cantidadProductos:
+                type: integer
+        precioPromedio:
+          type: object
+          properties:
+            general:
+              type: number
+            porCategoria:
+              type: array
+              items:
+                type: object
+                properties:
+                  idCategoria:
+                    type: integer
+                  nombre:
+                    type: string
+                  precioPromedio:
+                    type: number
+        consultasRecientes:
+          type: object
+          properties:
+            ultimos7Dias:
+              type: integer
+            ultimos30Dias:
+              type: integer
+        productosConDescuento:
+          type: integer
+        productosDestacados:
+          type: object
+          properties:
+            cantidad:
+              type: integer
+            maximo:
+              type: integer
+              description: Tope fijo de productos destacados simultáneos (Etapa 13).
+        productoMasVisitado:
+          nullable: true
+          description: >
+            null si todavía no hay ninguna vista registrada en el
+            catálogo (producto.visitas=0 en todas las filas).
+          allOf:
+            - type: object
+              properties:
+                id:
+                  type: integer
+                nombre:
+                  type: string
+                visitas:
+                  type: integer
