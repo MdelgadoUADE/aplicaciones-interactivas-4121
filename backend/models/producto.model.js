@@ -69,7 +69,7 @@ module.exports = (sequelize, DataTypes) => {
       tableName: 'producto',
       underscored: true, // idProducto -> id_producto, tipoProducto -> tipo_producto, etc.
       timestamps: true,
-      createdAt: false, // producto no tiene created_at en el DER, solo updated_at
+      createdAt: 'created_at', // Etapa 15: usado para el filtro de "novedades" (últimos 7 días)
       updatedAt: 'updated_at',
     }
   );

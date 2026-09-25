@@ -11,7 +11,7 @@ async function listar(req, res, next) {
     const isAdmin = req.userRole === 'admin';
     const {
       page, limit, categoryId, search, minPrice, maxPrice,
-      inStock, estado, tipoProducto, onSale, destacado, sort,
+      inStock, estado, tipoProducto, onSale, destacado, novedades, sort,
     } = req.query;
 
     const resultado = await productService.listar({
@@ -26,6 +26,7 @@ async function listar(req, res, next) {
       tipoProducto,
       onSale: parseBool(onSale),
       destacado: parseBool(destacado),
+      novedades: parseBool(novedades),
       sort,
       isAdmin,
     });

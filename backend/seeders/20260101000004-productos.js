@@ -29,6 +29,26 @@ module.exports = {
       { nombre: 'La máquina del tiempo', descripcion: 'El primer gran viaje literario a través del tiempo.', precio: 9500.00, stock: 0, estado: 'agotado', descuento: 0.00, categoriaId: 2, isbn: '978-0141439976', autor: 'H.G. Wells', editorial: 'Penguin Classics', anio: 1895, imagen: 'https://images.example.com/maquina-tiempo.jpg' },
     ];
 
+    // Etapa 15 (novedades): el INSERT crudo de más abajo no pasa por
+    // Sequelize, así que created_at NO se completa solo con NOW() salvo
+    // que lo mandemos explícito — y si lo dejamos vacío, TODOS los
+    // productos quedan con el mismo timestamp (el momento del seed) y
+    // el filtro ?novedades=true no tiene nada que excluir. Por eso acá
+    // generamos una fecha distinta por producto, según su posición en
+    // el array: los primeros quedan "viejos" (fuera de la ventana de 7
+    // días) y el resto "recientes" (dentro), para poder demostrar el
+    // filtro con datos reales apenas se corre el seeder.
+    const AHORA = new Date();
+    const DIAS_VIEJOS = 20; // fuera de la ventana de "novedades" (7 días)
+    const DIAS_RECIENTES = 2; // dentro de la ventana
+
+    function fechaSeed(indice, cantidadViejos) {
+      const diasAtras = indice < cantidadViejos ? DIAS_VIEJOS : DIAS_RECIENTES;
+      const fecha = new Date(AHORA);
+      fecha.setDate(fecha.getDate() - diasAtras);
+      return fecha;
+    }
+
     // Productos que NO son libros, para demostrar tipoProducto variado
     // (papeleria/accesorio), sin la especialización de la tabla libro.
     const otrosProductos = [
@@ -44,13 +64,18 @@ module.exports = {
       let idImagen = 1;
 
       // --- Libros ---
-      for (const libro of libros) {
+      // Primeros 5 libros del array: created_at "viejo" (excluidos de
+      // novedades). Resto: created_at "reciente" (incluidos).
+      for (let i = 0; i < libros.length; i++) {
+        const libro = libros[i];
+        const createdAt = fechaSeed(i, 5);
+
         await queryInterface.sequelize.query(`
-          INSERT INTO producto (id_producto, tipo_producto, nombre, descripcion, precio, stock, estado, descuento)
+          INSERT INTO producto (id_producto, tipo_producto, nombre, descripcion, precio, stock, estado, descuento, created_at, updated_at)
           OVERRIDING SYSTEM VALUE
-          VALUES (:id, 'libro', :nombre, :descripcion, :precio, :stock, :estado, :descuento);
+          VALUES (:id, 'libro', :nombre, :descripcion, :precio, :stock, :estado, :descuento, :createdAt, :createdAt);
         `, {
-          replacements: { id: idProducto, ...libro },
+          replacements: { id: idProducto, ...libro, createdAt },
           transaction,
         });
 
@@ -84,13 +109,18 @@ module.exports = {
       }
 
       // --- Otros productos (papelería/accesorios, sin tabla libro) ---
-      for (const producto of otrosProductos) {
+      // Todos quedan con created_at "reciente" (dentro de novedades);
+      // ya tenemos suficientes productos "viejos" entre los libros.
+      for (let i = 0; i < otrosProductos.length; i++) {
+        const producto = otrosProductos[i];
+        const createdAt = fechaSeed(i, 0);
+
         await queryInterface.sequelize.query(`
-          INSERT INTO producto (id_producto, tipo_producto, nombre, descripcion, precio, stock, estado, descuento)
+          INSERT INTO producto (id_producto, tipo_producto, nombre, descripcion, precio, stock, estado, descuento, created_at, updated_at)
           OVERRIDING SYSTEM VALUE
-          VALUES (:id, :tipoProducto, :nombre, :descripcion, :precio, :stock, :estado, :descuento);
+          VALUES (:id, :tipoProducto, :nombre, :descripcion, :precio, :stock, :estado, :descuento, :createdAt, :createdAt);
         `, {
-          replacements: { id: idProducto, ...producto },
+          replacements: { id: idProducto, ...producto, createdAt },
           transaction,
         });
 

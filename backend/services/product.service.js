@@ -54,20 +54,7 @@ function condicionUnaccent(columna, palabra) {
   );
 }
 
-function armarCondicionBusqueda(search) {
-  const palabras = search.trim().split(/\s+/).filter(Boolean);
-  if (palabras.length === 0) return null;
-
-  return {
-    [Op.and]: palabras.map((palabra) => ({
-      [Op.or]: [
-        condicionUnaccent('Producto.nombre', palabra),
-        condicionUnaccent('Producto.descripcion', palabra),
-        condicionUnaccent('libro.autor', palabra),
-      ],
-    })),
-  };
-}
+const DIAS_NOVEDAD = 7;
 
 /**
  * Listado paginado con filtros. isAdmin decide si se respeta el filtro
@@ -87,6 +74,7 @@ async function listar({
   tipoProducto,
   onSale,
   destacado,
+  novedades,
   sort = 'newest',
   isAdmin = false,
 }) {
@@ -97,6 +85,20 @@ async function listar({
 
   if (tipoProducto) where.tipoProducto = tipoProducto;
   if (destacado === true) where.destacado = true;
+  if (novedades === true) {
+    const desde = new Date();
+    desde.setDate(desde.getDate() - DIAS_NOVEDAD);
+    // OJO: acá usamos el nombre de columna FÍSICO ('created_at'), no el
+    // atributo del modelo ('createdAt'). Sequelize.count()/aggregate()
+    // no traduce bien underscored:true dentro de un where con
+    // comparación de rango en algunas versiones — usar sequelize.col()
+    // con el nombre real evita el error "column Producto.createdAt
+    // does not exist" que sí aparecía con { createdAt: { [Op.gte]: ... } }.
+    where[Op.and] = [
+      ...(where[Op.and] || []),
+      sequelize.where(sequelize.col('Producto.created_at'), { [Op.gte]: desde }),
+    ];
+  }
 
   const condicionBusqueda = search ? armarCondicionBusqueda(search) : null;
   if (condicionBusqueda) {
@@ -124,7 +126,12 @@ async function listar({
     price_asc: [['precio', 'ASC']],
     price_desc: [['precio', 'DESC']],
     title_asc: [['nombre', 'ASC']],
-    newest: [['idProducto', 'DESC']],
+    // Nombre de columna física ('created_at'), no el atributo del
+    // modelo ('createdAt') — mismo motivo que en el filtro de
+    // novedades más arriba: con subQuery:false y los includes actuales,
+    // Sequelize no traduce automáticamente el atributo camelCase al
+    // nombre real de columna dentro del ORDER BY.
+    newest: [[sequelize.col('Producto.created_at'), 'DESC']],
   };
 
   const { count, rows } = await Producto.findAndCountAll({
@@ -152,6 +159,7 @@ async function listar({
       categories: json.categorias,
       destacado: json.destacado,
       estado: json.estado,
+      createdAt: json.createdAt,
     };
   });
 
@@ -161,6 +169,21 @@ async function listar({
     limit,
     totalPages: Math.ceil(count / limit),
     data,
+  };
+}
+
+function armarCondicionBusqueda(search) {
+  const palabras = search.trim().split(/\s+/).filter(Boolean);
+  if (palabras.length === 0) return null;
+
+  return {
+    [Op.and]: palabras.map((palabra) => ({
+      [Op.or]: [
+        condicionUnaccent('Producto.nombre', palabra),
+        condicionUnaccent('Producto.descripcion', palabra),
+        condicionUnaccent('libro.autor', palabra),
+      ],
+    })),
   };
 }
 
