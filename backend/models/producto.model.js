@@ -64,6 +64,22 @@ module.exports = (sequelize, DataTypes) => {
         // regla se valida en el service (product.service.js), no acá,
         // porque requiere contar filas de la tabla antes de decidir.
       },
+      visitas: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 0,
+        validate: {
+          min: 0,
+        },
+        // Etapa 16 (dashboard): contador simple, sin tabla de detalle.
+        // Se incrementa en product.controller.js (obtenerPorId), NO acá
+        // ni en product.service.js — ese service se reutiliza también
+        // para devolver el producto recién creado/editado desde crear(),
+        // actualizar(), cambiarEstado(), cambiarDestacado(), etc., y
+        // esas operaciones de admin no deben sumar una "vista". El
+        // controller es el único lugar que sabe si el request original
+        // era GET /products/:id de un visitante real.
+      },
     },
     {
       tableName: 'producto',

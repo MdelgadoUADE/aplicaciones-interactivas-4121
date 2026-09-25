@@ -204,6 +204,23 @@ async function obtenerPorId(id, { isAdmin = false } = {}) {
 }
 
 /**
+ * Etapa 16 (dashboard): incrementa en 1 el contador de vistas de un
+ * producto. A propósito NO llama a obtenerPorId ni se usa desde ahí —
+ * ver la nota grande en product.controller.js (obtenerPorId) sobre por
+ * qué el incremento vive en el controller y no acá: este service se
+ * reutiliza desde crear/actualizar/cambiarEstado/cambiarDestacado, que
+ * son siempre operaciones de admin y no deben sumar una "vista".
+ *
+ * Sequelize.increment() hace un UPDATE ... SET visitas = visitas + 1
+ * atómico a nivel de base (no un read-modify-write en JS), así que no
+ * hay condición de carrera si dos visitantes piden el mismo producto
+ * al mismo tiempo.
+ */
+async function incrementarVisitas(id) {
+  await Producto.increment('visitas', { where: { idProducto: id } });
+}
+
+/**
  * Crea un producto, y dentro de la MISMA transacción: su fila en libro
  * (si tipoProducto='libro'), sus categorías (producto_categoria) y sus
  * imágenes iniciales, si vinieron en el input. Si cualquier paso falla
@@ -401,6 +418,7 @@ async function eliminar(id) {
 module.exports = {
   listar,
   obtenerPorId,
+  incrementarVisitas,
   crear,
   actualizar,
   actualizarParcial,

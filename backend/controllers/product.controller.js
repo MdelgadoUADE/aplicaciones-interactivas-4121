@@ -41,6 +41,24 @@ async function obtenerPorId(req, res, next) {
   try {
     const isAdmin = req.userRole === 'admin';
     const producto = await productService.obtenerPorId(req.params.id, { isAdmin });
+
+    // Etapa 16 (dashboard): contador de vistas. Se incrementa acá, no
+    // dentro de productService.obtenerPorId(), porque esa función se
+    // reutiliza también para devolver el producto actualizado desde
+    // crear(), actualizar(), cambiarEstado(), cambiarDestacado(), etc.
+    // — todas operaciones de admin que NO deben contar como "interés
+    // real" de un visitante. Este controller es el único lugar que
+    // sabe con certeza que el request original fue un GET /products/:id.
+    //
+    // No se espera (await) la promesa a propósito: incrementar el
+    // contador es un efecto secundario que no debe demorar ni poder
+    // romper la respuesta al visitante si por lo que sea falla.
+    if (!isAdmin) {
+      productService.incrementarVisitas(req.params.id).catch((err) => {
+        console.error('No se pudo incrementar el contador de vistas:', err.message);
+      });
+    }
+
     res.status(200).json(producto);
   } catch (err) {
     next(err);
