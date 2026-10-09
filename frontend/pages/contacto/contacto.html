@@ -1,935 +1,942 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <title>Contacto — Libros Libros Librería Editorial</title>
-
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-
-    <!-- Google Fonts: Playfair Display & Plus Jakarta Sans -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;0,800;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
 
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        serif: ['"Playfair Display"', 'Georgia', 'serif'],
-                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
-                    },
-                    colors: {
-                        brand: {
-                            terracotta: '#C05621',
-                            dark: '#1C1917',
-                            paper: '#FAF8F5',
-                            cream: '#F4EFE6',
-                            muted: '#78716C',
-                        }
-                    }
-                }
-            }
-        }
-    </script>
-
     <style>
-        body {
-            background-color: #FAF8F5;
-            color: #1C1917;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-        }
+      body {
+        background-color: #faf8f5;
+        color: #1c1917;
+        font-family: "Plus Jakarta Sans", sans-serif;
+      }
 
-        .font-editorial {
-            font-family: 'Playfair Display', Georgia, serif;
-        }
+      .font-editorial {
+        font-family: "Playfair Display", Georgia, serif;
+      }
     </style>
-</head>
+  </head>
 
-<body class="min-h-screen flex flex-col antialiased selection:bg-[#C05621] selection:text-white">
-
+  <body
+    class="min-h-screen flex flex-col antialiased selection:bg-[#C05621] selection:text-white"
+  >
     <!-- Cinta superior de anuncios -->
-    <div class="bg-[#1C1917] text-[#FAF8F5] text-xs py-2 px-4 text-center tracking-wide border-b border-stone-800 flex items-center justify-center gap-2">
-        <i data-lucide="truck" class="w-3.5 h-3.5 text-[#C05621]"></i>
-        <span>Envíos sin cargo en compras superiores a $35.000 • Entregas a todo el país</span>
+    <div
+      class="bg-[#1C1917] text-[#FAF8F5] text-xs py-2 px-4 text-center tracking-wide border-b border-stone-800 flex items-center justify-center gap-2"
+    >
+      <i data-lucide="truck" class="w-3.5 h-3.5 text-[#C05621]"></i>
+      <span
+        >Envíos sin cargo en compras superiores a $35.000 • Entregas a todo el
+        país</span
+      >
     </div>
 
     <!-- Header / Barra de navegación principal (Unificada con Inicio y Sobre Nosotros) -->
-    <header class="sticky top-0 z-40 bg-[#FAF8F5]/95 backdrop-blur-md border-b border-stone-200">
+    <header
+      class="sticky top-0 z-40 bg-[#FAF8F5]/95 backdrop-blur-md border-b border-stone-200"
+    >
+      <div
+        class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-6"
+      >
+        <!-- Logotipo de la marca -->
+        <a href="index.html" class="flex items-center gap-3 group">
+          <div
+            class="w-10 h-10 rounded-lg bg-[#1C1917] text-amber-50 flex items-center justify-center shadow-sm group-hover:bg-[#C05621] transition-colors"
+          >
+            <i data-lucide="book-open" class="w-5 h-5 text-[#FAF8F5]"></i>
+          </div>
 
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-6">
+          <div class="flex flex-col">
+            <span
+              class="font-editorial text-2xl font-bold tracking-tight text-stone-900 leading-none"
+            >
+              Libros<span class="text-[#C05621]">Libros</span>
+            </span>
 
-            <!-- Logotipo de la marca -->
-            <a href="index.html" class="flex items-center gap-3 group">
+            <span
+              class="text-[10px] tracking-[0.2em] uppercase font-semibold text-stone-500 mt-1"
+            >
+              Librería Editorial
+            </span>
+          </div>
+        </a>
 
-                <div class="w-10 h-10 rounded-lg bg-[#1C1917] text-amber-50 flex items-center justify-center shadow-sm group-hover:bg-[#C05621] transition-colors">
-                    <i data-lucide="book-open" class="w-5 h-5 text-[#FAF8F5]"></i>
-                </div>
+        <!-- Menú de navegación principal -->
+        <nav
+          class="hidden md:flex items-center gap-8 text-sm font-medium text-stone-700"
+        >
+          <a href="index.html" class="hover:text-[#C05621] transition-colors">
+            Inicio
+          </a>
 
-                <div class="flex flex-col">
+          <a
+            href="categorias.html"
+            class="hover:text-[#C05621] transition-colors"
+          >
+            Categorías
+          </a>
 
-                    <span class="font-editorial text-2xl font-bold tracking-tight text-stone-900 leading-none">
-                        Libros<span class="text-[#C05621]">Libros</span>
-                    </span>
+          <a
+            href="productos.html"
+            class="hover:text-[#C05621] transition-colors"
+          >
+            Catálogo
+          </a>
 
-                    <span class="text-[10px] tracking-[0.2em] uppercase font-semibold text-stone-500 mt-1">
-                        Librería Editorial
-                    </span>
+          <a href="acerca.html" class="hover:text-[#C05621] transition-colors">
+            Sobre Nosotros
+          </a>
 
-                </div>
-            </a>
+          <a
+            href="#"
+            class="text-[#C05621] font-semibold border-b-2 border-[#C05621] pb-1"
+          >
+            Contacto
+          </a>
+        </nav>
 
-            <!-- Menú de navegación principal -->
-            <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-stone-700">
+        <!-- Buscador e inicio de sesión unificado con Inicio -->
+        <div class="flex items-center gap-4 flex-1 md:flex-initial justify-end">
+          <div class="relative w-full max-w-xs hidden sm:block">
+            <input
+              type="search"
+              placeholder="Buscar libro, autor..."
+              class="w-full pl-9 pr-4 py-2 bg-stone-100/80 border border-stone-300 rounded-full text-xs placeholder:text-stone-400 focus:outline-none focus:border-[#C05621] focus:bg-white transition-all"
+            />
 
-                <a href="index.html" class="hover:text-[#C05621] transition-colors">
-                    Inicio
-                </a>
+            <i
+              data-lucide="search"
+              class="w-4 h-4 text-stone-400 absolute left-3 top-2.5"
+            ></i>
+          </div>
 
-                <a href="categorias.html" class="hover:text-[#C05621] transition-colors">
-                    Categorías
-                </a>
-
-                <a href="productos.html" class="hover:text-[#C05621] transition-colors">
-                    Catálogo
-                </a>
-
-                <a href="acerca.html" class="hover:text-[#C05621] transition-colors">
-                    Sobre Nosotros
-                </a>
-
-                <a href="#" class="text-[#C05621] font-semibold border-b-2 border-[#C05621] pb-1">
-                    Contacto
-                </a>
-
-            </nav>
-
-            <!-- Buscador e inicio de sesión unificado con Inicio -->
-            <div class="flex items-center gap-4 flex-1 md:flex-initial justify-end">
-
-                <div class="relative w-full max-w-xs hidden sm:block">
-
-                    <input
-                        type="search"
-                        placeholder="Buscar libro, autor..."
-                        class="w-full pl-9 pr-4 py-2 bg-stone-100/80 border border-stone-300 rounded-full text-xs placeholder:text-stone-400 focus:outline-none focus:border-[#C05621] focus:bg-white transition-all"
-                    >
-
-                    <i data-lucide="search" class="w-4 h-4 text-stone-400 absolute left-3 top-2.5"></i>
-
-                </div>
-
-                <a
-                    href="login.html"
-                    class="flex items-center gap-2 text-sm font-medium text-stone-800 hover:text-[#C05621] px-3 py-1.5 rounded-full hover:bg-stone-100 transition-colors"
-                >
-
-                    <div class="w-8 h-8 rounded-full bg-stone-200 flex items-center justify-center text-stone-700">
-                        <i data-lucide="user" class="w-4 h-4"></i>
-                    </div>
-
-                    <span class="hidden lg:inline text-xs font-semibold">
-                        Iniciar Sesión
-                    </span>
-
-                </a>
-
+          <a
+            href="login.html"
+            class="flex items-center gap-2 text-sm font-medium text-stone-800 hover:text-[#C05621] px-3 py-1.5 rounded-full hover:bg-stone-100 transition-colors"
+          >
+            <div
+              class="w-8 h-8 rounded-full bg-stone-200 flex items-center justify-center text-stone-700"
+            >
+              <i data-lucide="user" class="w-4 h-4"></i>
             </div>
 
+            <span class="hidden lg:inline text-xs font-semibold">
+              Iniciar Sesión
+            </span>
+          </a>
         </div>
-
+      </div>
     </header>
 
     <main class="flex-grow">
-
-        <!-- Encabezado / Migas de pan y Título principal -->
-        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-6">
-
-            <nav class="flex items-center gap-2 text-xs text-stone-500 mb-4">
-
-                <a href="index.html" class="hover:text-[#C05621] transition-colors">
-                    Inicio
-                </a>
-
-                <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-stone-400"></i>
-
-                <span class="text-stone-900 font-medium">
-                    Contacto
-                </span>
-
-            </nav>
-
-            <div class="max-w-3xl">
-
-                <div class="flex items-center gap-2 mb-3">
-
-                    <span class="w-2 h-2 rounded-full bg-[#C05621]"></span>
-
-                    <span class="text-[11px] font-bold uppercase tracking-widest text-stone-500">
-                        Canales de Encuentro &amp; Consultoría Lectora
-                    </span>
-
-                </div>
-
-                <h1 class="font-editorial text-4xl sm:text-5xl font-bold text-stone-900 leading-[1.15] mb-4">
-                    Contacto &amp;
-                    <span class="italic font-normal text-[#C05621]">
-                        Atención al Lector
-                    </span>
-                </h1>
-
-                <p class="text-stone-600 text-base sm:text-lg font-light leading-relaxed">
-                    ¿Tenés alguna consulta sobre un título descatalogado, ediciones especiales, envíos o querés visitarnos en nuestra librería? Escribinos o acercate a nuestra sede central.
-                </p>
-
-                <div class="mt-4 inline-flex items-center gap-2 bg-stone-100/90 border border-stone-200/90 rounded-full px-4 py-1.5 text-xs text-stone-700">
-
-                    <span class="font-semibold text-emerald-700">
-                        Respuesta Garantizada en menos de 24 horas hábiles
-                    </span>
-
-                    <span class="text-stone-300">
-                        •
-                    </span>
-
-                    <span class="text-stone-500">
-                        Atención directa por libreros profesionales
-                    </span>
-
-                </div>
-
-            </div>
-
-        </section>
-
-        <!-- Bloque principal: Formulario + Datos y Mapa -->
-        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
-
-                <!-- Formulario Lector (7 columnas) -->
-                <div class="lg:col-span-7 bg-white border border-stone-200 rounded-2xl p-6 sm:p-8 shadow-sm">
-
-                    <div class="border-b border-stone-100 pb-5 mb-6 flex items-center justify-between">
-
-                        <div>
-
-                            <h2 class="font-editorial text-2xl font-bold text-stone-900">
-                                Envianos tu consulta
-                            </h2>
-
-                            <p class="text-xs text-stone-500 mt-1">
-                                Completá los campos y te asignaremos al librero especializado más indicado para dar seguimiento a tu requerimiento.
-                            </p>
-
-                        </div>
-
-                        <span class="hidden sm:inline-block text-[10px] font-bold uppercase tracking-widest bg-stone-100 text-stone-500 px-2.5 py-1 rounded">
-                            Formulario Lector
-                        </span>
-
-                    </div>
-
-                    <form
-                        class="space-y-5"
-                        onsubmit="event.preventDefault(); alert('¡Muchas gracias por contactarnos! Tu mensaje fue recibido y te responderemos en breve.');"
-                    >
-
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-
-                            <div>
-
-                                <label for="nombre" class="block text-xs font-semibold text-stone-700 mb-1.5">
-                                    Nombre completo *
-                                </label>
-
-                                <input
-                                    type="text"
-                                    id="nombre"
-                                    required
-                                    placeholder="Ej. Victoria Ocampo"
-                                    class="w-full px-3.5 py-2.5 bg-stone-50 border border-stone-200 rounded-lg text-xs text-stone-800 focus:outline-none focus:border-[#C05621] focus:bg-white transition-all"
-                                >
-
-                            </div>
-
-                            <div>
-
-                                <label for="email" class="block text-xs font-semibold text-stone-700 mb-1.5">
-                                    Correo electrónico *
-                                </label>
-
-                                <input
-                                    type="email"
-                                    id="email"
-                                    required
-                                    placeholder="lector@ejemplo.com"
-                                    class="w-full px-3.5 py-2.5 bg-stone-50 border border-stone-200 rounded-lg text-xs text-stone-800 focus:outline-none focus:border-[#C05621] focus:bg-white transition-all"
-                                >
-
-                            </div>
-
-                        </div>
-
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-
-                            <div>
-
-                                <label for="telefono" class="block text-xs font-semibold text-stone-700 mb-1.5">
-                                    Teléfono / WhatsApp
-                                </label>
-
-                                <input
-                                    type="tel"
-                                    id="telefono"
-                                    placeholder="+54 9 11..."
-                                    class="w-full px-3.5 py-2.5 bg-stone-50 border border-stone-200 rounded-lg text-xs text-stone-800 focus:outline-none focus:border-[#C05621] focus:bg-white transition-all"
-                                >
-
-                            </div>
-
-                            <div>
-
-                                <label for="asunto" class="block text-xs font-semibold text-stone-700 mb-1.5">
-                                    Asunto principal *
-                                </label>
-
-                                <select
-                                    id="asunto"
-                                    required
-                                    class="w-full px-3.5 py-2.5 bg-stone-50 border border-stone-200 rounded-lg text-xs text-stone-800 focus:outline-none focus:border-[#C05621] focus:bg-white transition-all"
-                                >
-                                    <option value="">Seleccioná un tema</option>
-                                    <option value="catalogo">Búsqueda de libro o edición especial</option>
-                                    <option value="envios">Estado de envío o compra</option>
-                                    <option value="retiro">Retiro en sede central</option>
-                                    <option value="prensa">Prensa, autores y editoriales</option>
-                                    <option value="otro">Otras consultas</option>
-                                </select>
-
-                            </div>
-
-                        </div>
-
-                        <div>
-
-                            <label for="mensaje" class="block text-xs font-semibold text-stone-700 mb-1.5">
-                                Mensaje o consulta detallada *
-                            </label>
-
-                            <textarea
-                                id="mensaje"
-                                rows="5"
-                                required
-                                placeholder="Escribinos con el mayor detalle posible: título, autor, año de edición deseada o tu duda de servicio..."
-                                class="w-full px-3.5 py-2.5 bg-stone-50 border border-stone-200 rounded-lg text-xs text-stone-800 focus:outline-none focus:border-[#C05621] focus:bg-white transition-all"
-                            ></textarea>
-
-                        </div>
-
-                        <div class="flex items-center gap-2 pt-1">
-
-                            <input
-                                type="checkbox"
-                                id="copia"
-                                checked
-                                class="w-4 h-4 text-[#C05621] rounded border-stone-300 focus:ring-[#C05621]"
-                            >
-
-                            <label for="copia" class="text-xs text-stone-600">
-                                Recibir copia y respuesta detallada en mi casilla de correo electrónico.
-                            </label>
-
-                        </div>
-
-                        <div class="pt-2">
-
-                            <button
-                                type="submit"
-                                class="w-full sm:w-auto px-8 py-3 bg-[#C05621] hover:bg-[#a34415] text-white font-medium text-xs rounded-lg transition-colors flex items-center justify-center gap-2 shadow-sm"
-                            >
-                                <span>Enviar mensaje</span>
-                                <i data-lucide="send" class="w-3.5 h-3.5"></i>
-                            </button>
-
-                        </div>
-
-                    </form>
-
-                    <div class="mt-8 pt-5 border-t border-stone-100 flex items-center gap-3 text-stone-500 text-xs">
-
-                        <div class="w-8 h-8 rounded-full bg-amber-50 text-[#C05621] flex items-center justify-center shrink-0">
-                            <i data-lucide="coffee" class="w-4 h-4"></i>
-                        </div>
-
-                        <p>
-                            <strong>¿Preferís visitarnos personalmente?</strong>
-                            Nuestra sala de lectura te espera con café de especialidad, sillones de lectura y el asesoramiento de nuestros libreros de salón.
-                        </p>
-
-                    </div>
-
-                </div>
-
-                <!-- Columna lateral: Dirección, Mapa, Horarios y Canales (5 columnas) -->
-                <div class="lg:col-span-5 space-y-6">
-
-                    <!-- Dirección & Mapa -->
-                    <div class="bg-white border border-stone-200 rounded-2xl p-6 shadow-sm">
-
-                        <div class="flex items-start justify-between mb-4">
-
-                            <div>
-
-                                <h3 class="font-editorial text-xl font-bold text-stone-900">
-                                    Dirección &amp; Sede Central
-                                </h3>
-
-                                <p class="text-xs text-stone-600 mt-1 flex items-center gap-1.5">
-
-                                    <i data-lucide="map-pin" class="w-3.5 h-3.5 text-[#C05621]"></i>
-
-                                    <span>
-                                        Av. Corrientes 1450, CABA, Argentina
-                                    </span>
-
-                                </p>
-
-                                <p class="text-[11px] text-stone-400 pl-5">
-                                    (esq. Paraná — San Nicolás)
-                                </p>
-
-                            </div>
-
-                            <span class="text-[10px] font-bold uppercase tracking-wider text-[#C05621] bg-amber-50 px-2 py-1 rounded">
-                                Sede Central
-                            </span>
-
-                        </div>
-
-                        <!-- Mapa visual ilustrativo / interactivo -->
-                        <div class="relative rounded-xl overflow-hidden border border-stone-200 bg-stone-100 h-52 group">
-
-                            <img
-                                src="https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?q=80&w=800&auto=format&fit=crop"
-                                alt="Mapa satelital de ubicación de la librería"
-                                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                            >
-
-                            <div class="absolute inset-0 bg-stone-900/30"></div>
-
-                            <div class="absolute inset-0 flex items-center justify-center">
-
-                                <div class="bg-white/95 backdrop-blur-sm px-4 py-2 rounded-full shadow-lg border border-stone-200 flex items-center gap-2">
-
-                                    <div class="w-2.5 h-2.5 rounded-full bg-[#C05621] animate-ping"></div>
-
-                                    <span class="text-xs font-bold text-stone-800">
-                                        Libros Libros Corrientes
-                                    </span>
-
-                                </div>
-
-                            </div>
-
-                            <a
-                                href="https://maps.google.com"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                class="absolute bottom-3 right-3 bg-[#1C1917]/90 hover:bg-[#C05621] text-white text-[11px] font-medium px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-colors shadow"
-                            >
-                                <span>Cómo llegar</span>
-                                <i data-lucide="external-link" class="w-3 h-3"></i>
-                            </a>
-
-                        </div>
-
-                    </div>
-
-                    <!-- Horarios de Atención -->
-                    <div class="bg-white border border-stone-200 rounded-2xl p-6 shadow-sm">
-
-                        <h3 class="font-editorial text-xl font-bold text-stone-900 mb-3">
-                            Horarios de Atención
-                        </h3>
-
-                        <ul class="space-y-2 text-xs text-stone-600">
-
-                            <li class="flex justify-between pb-2 border-b border-stone-100">
-
-                                <span class="font-medium text-stone-700">
-                                    Lunes a Sábados
-                                </span>
-
-                                <span class="text-stone-900 font-semibold">
-                                    10:00 — 20:00 hs
-                                </span>
-
-                            </li>
-
-                            <li class="flex justify-between pb-1">
-
-                                <span class="font-medium text-stone-700">
-                                    Domingos y feriados
-                                </span>
-
-                                <span class="text-stone-900 font-semibold">
-                                    14:00 — 19:00 hs
-                                </span>
-
-                            </li>
-
-                        </ul>
-
-                        <div class="mt-4 p-2.5 bg-emerald-50 border border-emerald-200/80 rounded-lg flex items-center gap-2 text-[11px] text-emerald-800">
-
-                            <span class="w-2 h-2 rounded-full bg-emerald-600"></span>
-
-                            <span>
-                                Tienda física abierta en este momento con cafetería disponible
-                            </span>
-
-                        </div>
-
-                    </div>
-
-                    <!-- Canales Directos -->
-                    <div class="bg-white border border-stone-200 rounded-2xl p-6 shadow-sm space-y-3">
-
-                        <h3 class="font-editorial text-xl font-bold text-stone-900 mb-1">
-                            Canales Directos
-                        </h3>
-
-                        <a
-                            href="tel:+541148219000"
-                            class="flex items-center justify-between p-3 rounded-xl bg-stone-50 hover:bg-stone-100 border border-stone-200/80 transition-colors group"
-                        >
-
-                            <div class="flex items-center gap-3">
-
-                                <div class="w-8 h-8 rounded-lg bg-white border border-stone-200 flex items-center justify-center text-[#C05621] group-hover:bg-[#C05621] group-hover:text-white transition-colors">
-                                    <i data-lucide="phone" class="w-4 h-4"></i>
-                                </div>
-
-                                <div>
-
-                                    <p class="text-[10px] font-bold uppercase tracking-wider text-stone-400">
-                                        Atención telefónica
-                                    </p>
-
-                                    <p class="text-xs font-semibold text-stone-800">
-                                        +54 11 4821-9000
-                                    </p>
-
-                                </div>
-
-                            </div>
-
-                            <i data-lucide="chevron-right" class="w-4 h-4 text-stone-400 group-hover:translate-x-0.5 transition-transform"></i>
-
-                        </a>
-
-                        <a
-                            href="https://wa.me/5491148219900"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            class="flex items-center justify-between p-3 rounded-xl bg-stone-50 hover:bg-stone-100 border border-stone-200/80 transition-colors group"
-                        >
-
-                            <div class="flex items-center gap-3">
-
-                                <div class="w-8 h-8 rounded-lg bg-white border border-stone-200 flex items-center justify-center text-emerald-700 group-hover:bg-emerald-700 group-hover:text-white transition-colors">
-                                    <i data-lucide="message-circle" class="w-4 h-4"></i>
-                                </div>
-
-                                <div>
-
-                                    <div class="flex items-center gap-1.5">
-
-                                        <p class="text-[10px] font-bold uppercase tracking-wider text-stone-400">
-                                            WhatsApp Librería
-                                        </p>
-
-                                        <span class="bg-emerald-100 text-emerald-800 text-[9px] font-bold px-1.5 py-0.2 rounded">
-                                            Chat directo
-                                        </span>
-
-                                    </div>
-
-                                    <p class="text-xs font-semibold text-stone-800">
-                                        +54 9 11 4821-9900
-                                    </p>
-
-                                </div>
-
-                            </div>
-
-                            <i data-lucide="external-link" class="w-4 h-4 text-stone-400"></i>
-
-                        </a>
-
-                        <a
-                            href="mailto:info@libroslibros.com.ar"
-                            class="flex items-center justify-between p-3 rounded-xl bg-stone-50 hover:bg-stone-100 border border-stone-200/80 transition-colors group"
-                        >
-
-                            <div class="flex items-center gap-3">
-
-                                <div class="w-8 h-8 rounded-lg bg-white border border-stone-200 flex items-center justify-center text-[#C05621] group-hover:bg-[#C05621] group-hover:text-white transition-colors">
-                                    <i data-lucide="mail" class="w-4 h-4"></i>
-                                </div>
-
-                                <div>
-
-                                    <p class="text-[10px] font-bold uppercase tracking-wider text-stone-400">
-                                        Consultas por escrito
-                                    </p>
-
-                                    <p class="text-xs font-semibold text-stone-800">
-                                        info@libroslibros.com.ar
-                                    </p>
-
-                                </div>
-
-                            </div>
-
-                            <i data-lucide="arrow-up-right" class="w-4 h-4 text-stone-400"></i>
-
-                        </a>
-
-                        <div class="pt-3 border-t border-stone-100 flex items-center justify-between text-xs text-stone-500">
-
-                            <span class="text-[10px] font-bold uppercase tracking-wider text-stone-400">
-                                Redes &amp; Comunidad Lectora
-                            </span>
-
-                            <div class="flex items-center gap-3">
-
-                                <a href="#" class="hover:text-[#C05621] transition-colors" title="Instagram">
-                                    @libroslibros
-                                </a>
-
-                                <a href="#" class="hover:text-[#C05621] transition-colors" title="Goodreads">
-                                    Goodreads Club
-                                </a>
-
-                                <a href="#" class="hover:text-[#C05621] transition-colors" title="X">
-                                    X / Twitter
-                                </a>
-
-                                <a href="#" class="hover:text-[#C05621] transition-colors" title="YouTube">
-                                    YouTube Clases
-                                </a>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </section>
-
-        <!-- Sección de Dudas Frecuentes antes de consultar -->
-        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 border-t border-stone-200">
-
-            <div class="text-center max-w-2xl mx-auto mb-10">
-
-                <span class="text-xs uppercase font-bold tracking-widest text-[#C05621] block mb-2">
-                    Respuestas Inmediatas
-                </span>
-
-                <h2 class="font-editorial text-3xl font-bold text-stone-900">
-                    Dudas Frecuentes antes de consultar
+      <!-- Encabezado / Migas de pan y Título principal -->
+      <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-6">
+        <nav class="flex items-center gap-2 text-xs text-stone-500 mb-4">
+          <a href="index.html" class="hover:text-[#C05621] transition-colors">
+            Inicio
+          </a>
+
+          <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-stone-400"></i>
+
+          <span class="text-stone-900 font-medium"> Contacto </span>
+        </nav>
+
+        <div class="max-w-3xl">
+          <div class="flex items-center gap-2 mb-3">
+            <span class="w-2 h-2 rounded-full bg-[#C05621]"></span>
+
+            <span
+              class="text-[11px] font-bold uppercase tracking-widest text-stone-500"
+            >
+              Canales de Encuentro &amp; Consultoría Lectora
+            </span>
+          </div>
+
+          <h1
+            class="font-editorial text-4xl sm:text-5xl font-bold text-stone-900 leading-[1.15] mb-4"
+          >
+            Contacto &amp;
+            <span class="italic font-normal text-[#C05621]">
+              Atención al Lector
+            </span>
+          </h1>
+
+          <p
+            class="text-stone-600 text-base sm:text-lg font-light leading-relaxed"
+          >
+            ¿Tenés alguna consulta sobre un título descatalogado, ediciones
+            especiales, envíos o querés visitarnos en nuestra librería?
+            Escribinos o acercate a nuestra sede central.
+          </p>
+
+          <div
+            class="mt-4 inline-flex items-center gap-2 bg-stone-100/90 border border-stone-200/90 rounded-full px-4 py-1.5 text-xs text-stone-700"
+          >
+            <span class="font-semibold text-emerald-700">
+              Respuesta Garantizada en menos de 24 horas hábiles
+            </span>
+
+            <span class="text-stone-300"> • </span>
+
+            <span class="text-stone-500">
+              Atención directa por libreros profesionales
+            </span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Bloque principal: Formulario + Datos y Mapa -->
+      <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
+          <!-- Formulario Lector (7 columnas) -->
+          <div
+            class="lg:col-span-7 bg-white border border-stone-200 rounded-2xl p-6 sm:p-8 shadow-sm"
+          >
+            <div
+              class="border-b border-stone-100 pb-5 mb-6 flex items-center justify-between"
+            >
+              <div>
+                <h2 class="font-editorial text-2xl font-bold text-stone-900">
+                  Envianos tu consulta
                 </h2>
 
-                <p class="text-stone-500 text-xs sm:text-sm mt-1">
-                    Respuestas a las preguntas habituales de nuestra comunidad de lectores.
+                <p class="text-xs text-stone-500 mt-1">
+                  Completá los campos y te asignaremos al librero especializado
+                  más indicado para dar seguimiento a tu requerimiento.
                 </p>
+              </div>
 
+              <span
+                class="hidden sm:inline-block text-[10px] font-bold uppercase tracking-widest bg-stone-100 text-stone-500 px-2.5 py-1 rounded"
+              >
+                Formulario Lector
+              </span>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <form
+              class="space-y-5"
+              onsubmit="
+                event.preventDefault();
+                alert(
+                  '¡Muchas gracias por contactarnos! Tu mensaje fue recibido y te responderemos en breve.',
+                );
+              "
+            >
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                <div>
+                  <label
+                    for="nombre"
+                    class="block text-xs font-semibold text-stone-700 mb-1.5"
+                  >
+                    Nombre completo *
+                  </label>
 
-                <div class="bg-white border border-stone-200 rounded-xl p-6 shadow-sm">
-
-                    <div class="w-8 h-8 rounded-lg bg-stone-100 text-[#C05621] flex items-center justify-center mb-3">
-                        <i data-lucide="clock" class="w-4 h-4"></i>
-                    </div>
-
-                    <h3 class="font-editorial text-base font-bold text-stone-900 mb-2">
-                        ¿Cuánto demoran en responder?
-                    </h3>
-
-                    <p class="text-xs text-stone-600 leading-relaxed">
-                        Nuestro equipo editorial responde todas las consultas por formulario o correo en un plazo máximo de <strong>24 horas hábiles</strong>. Si es una urgencia de catálogo, sugerimos escribirnos vía WhatsApp.
-                    </p>
-
+                  <input
+                    type="text"
+                    id="nombre"
+                    required
+                    placeholder="Ej. Victoria Ocampo"
+                    class="w-full px-3.5 py-2.5 bg-stone-50 border border-stone-200 rounded-lg text-xs text-stone-800 focus:outline-none focus:border-[#C05621] focus:bg-white transition-all"
+                  />
                 </div>
-
-                <div class="bg-white border border-stone-200 rounded-xl p-6 shadow-sm">
-
-                    <div class="w-8 h-8 rounded-lg bg-stone-100 text-[#C05621] flex items-center justify-center mb-3">
-                        <i data-lucide="truck" class="w-4 h-4"></i>
-                    </div>
-
-                    <h3 class="font-editorial text-base font-bold text-stone-900 mb-2">
-                        ¿Hacen envíos al interior del país?
-                    </h3>
-
-                    <p class="text-xs text-stone-600 leading-relaxed">
-                        Sí, enviamos con embalaje rígido especial para libros a todas las provincias argentinas. Con compras mayores a $35.000 el despacho a domicilio es 100% gratuito.
-                    </p>
-
-                </div>
-
-                <div class="bg-white border border-stone-200 rounded-xl p-6 shadow-sm">
-
-                    <div class="w-8 h-8 rounded-lg bg-stone-100 text-[#C05621] flex items-center justify-center mb-3">
-                        <i data-lucide="store" class="w-4 h-4"></i>
-                    </div>
-
-                    <h3 class="font-editorial text-base font-bold text-stone-900 mb-2">
-                        ¿Cómo coordino el retiro en local?
-                    </h3>
-
-                    <p class="text-xs text-stone-600 leading-relaxed">
-                        Podés solicitar reservar cualquier ejemplar por este medio o teléfono y retirarlo sin cargo por nuestra Sede Central de Av. Corrientes dentro de los 7 días corridos.
-                    </p>
-
-                </div>
-
-            </div>
-
-        </section>
-
-        <!-- Newsletter: El Correo del Lector -->
-        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-
-            <div class="bg-stone-100 border border-stone-200/90 rounded-2xl p-8 text-center sm:text-left flex flex-col sm:flex-row items-center justify-between gap-6">
 
                 <div>
+                  <label
+                    for="email"
+                    class="block text-xs font-semibold text-stone-700 mb-1.5"
+                  >
+                    Correo electrónico *
+                  </label>
 
-                    <h4 class="font-editorial text-2xl font-bold text-stone-900">
-                        El Correo del Lector
-                    </h4>
+                  <input
+                    type="email"
+                    id="email"
+                    required
+                    placeholder="lector@ejemplo.com"
+                    class="w-full px-3.5 py-2.5 bg-stone-50 border border-stone-200 rounded-lg text-xs text-stone-800 focus:outline-none focus:border-[#C05621] focus:bg-white transition-all"
+                  />
+                </div>
+              </div>
 
-                    <p class="text-xs text-stone-500 mt-1">
-                        Suscribite para recibir recomendaciones exclusivas, notas críticas y novedades literarias cada semana.
-                    </p>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                <div>
+                  <label
+                    for="telefono"
+                    class="block text-xs font-semibold text-stone-700 mb-1.5"
+                  >
+                    Teléfono / WhatsApp
+                  </label>
 
+                  <input
+                    type="tel"
+                    id="telefono"
+                    placeholder="+54 9 11..."
+                    class="w-full px-3.5 py-2.5 bg-stone-50 border border-stone-200 rounded-lg text-xs text-stone-800 focus:outline-none focus:border-[#C05621] focus:bg-white transition-all"
+                  />
                 </div>
 
-                <form
-                    class="flex w-full sm:w-auto max-w-md gap-2"
-                    onsubmit="event.preventDefault(); alert('¡Gracias por suscribirte al Correo del Lector!');"
+                <div>
+                  <label
+                    for="asunto"
+                    class="block text-xs font-semibold text-stone-700 mb-1.5"
+                  >
+                    Asunto principal *
+                  </label>
+
+                  <select
+                    id="asunto"
+                    required
+                    class="w-full px-3.5 py-2.5 bg-stone-50 border border-stone-200 rounded-lg text-xs text-stone-800 focus:outline-none focus:border-[#C05621] focus:bg-white transition-all"
+                  >
+                    <option value="">Seleccioná un tema</option>
+                    <option value="catalogo">
+                      Búsqueda de libro o edición especial
+                    </option>
+                    <option value="envios">Estado de envío o compra</option>
+                    <option value="retiro">Retiro en sede central</option>
+                    <option value="prensa">
+                      Prensa, autores y editoriales
+                    </option>
+                    <option value="otro">Otras consultas</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label
+                  for="mensaje"
+                  class="block text-xs font-semibold text-stone-700 mb-1.5"
                 >
+                  Mensaje o consulta detallada *
+                </label>
 
-                    <input
-                        type="email"
-                        placeholder="Ingresá tu correo electrónico"
-                        required
-                        class="px-4 py-2.5 rounded-lg border border-stone-300 bg-white text-xs focus:outline-none focus:border-[#C05621] flex-1 min-w-[220px]"
-                    >
+                <textarea
+                  id="mensaje"
+                  rows="5"
+                  required
+                  placeholder="Escribinos con el mayor detalle posible: título, autor, año de edición deseada o tu duda de servicio..."
+                  class="w-full px-3.5 py-2.5 bg-stone-50 border border-stone-200 rounded-lg text-xs text-stone-800 focus:outline-none focus:border-[#C05621] focus:bg-white transition-all"
+                ></textarea>
+              </div>
 
-                    <button
-                        type="submit"
-                        class="px-5 py-2.5 bg-[#C05621] hover:bg-[#a34415] text-white text-xs font-bold rounded-lg transition-colors shrink-0"
-                    >
-                        Suscribirme
-                    </button>
+              <div class="flex items-center gap-2 pt-1">
+                <input
+                  type="checkbox"
+                  id="copia"
+                  checked
+                  class="w-4 h-4 text-[#C05621] rounded border-stone-300 focus:ring-[#C05621]"
+                />
 
-                </form>
+                <label for="copia" class="text-xs text-stone-600">
+                  Recibir copia y respuesta detallada en mi casilla de correo
+                  electrónico.
+                </label>
+              </div>
 
+              <div class="pt-2">
+                <button
+                  type="submit"
+                  class="w-full sm:w-auto px-8 py-3 bg-[#C05621] hover:bg-[#a34415] text-white font-medium text-xs rounded-lg transition-colors flex items-center justify-center gap-2 shadow-sm"
+                >
+                  <span>Enviar mensaje</span>
+                  <i data-lucide="send" class="w-3.5 h-3.5"></i>
+                </button>
+              </div>
+            </form>
+
+            <div
+              class="mt-8 pt-5 border-t border-stone-100 flex items-center gap-3 text-stone-500 text-xs"
+            >
+              <div
+                class="w-8 h-8 rounded-full bg-amber-50 text-[#C05621] flex items-center justify-center shrink-0"
+              >
+                <i data-lucide="coffee" class="w-4 h-4"></i>
+              </div>
+
+              <p>
+                <strong>¿Preferís visitarnos personalmente?</strong>
+                Nuestra sala de lectura te espera con café de especialidad,
+                sillones de lectura y el asesoramiento de nuestros libreros de
+                salón.
+              </p>
+            </div>
+          </div>
+
+          <!-- Columna lateral: Dirección, Mapa, Horarios y Canales (5 columnas) -->
+          <div class="lg:col-span-5 space-y-6">
+            <!-- Dirección & Mapa -->
+            <div
+              class="bg-white border border-stone-200 rounded-2xl p-6 shadow-sm"
+            >
+              <div class="flex items-start justify-between mb-4">
+                <div>
+                  <h3 class="font-editorial text-xl font-bold text-stone-900">
+                    Dirección &amp; Sede Central
+                  </h3>
+
+                  <p
+                    class="text-xs text-stone-600 mt-1 flex items-center gap-1.5"
+                  >
+                    <i
+                      data-lucide="map-pin"
+                      class="w-3.5 h-3.5 text-[#C05621]"
+                    ></i>
+
+                    <span> Av. Corrientes 1450, CABA, Argentina </span>
+                  </p>
+
+                  <p class="text-[11px] text-stone-400 pl-5">
+                    (esq. Paraná — San Nicolás)
+                  </p>
+                </div>
+
+                <span
+                  class="text-[10px] font-bold uppercase tracking-wider text-[#C05621] bg-amber-50 px-2 py-1 rounded"
+                >
+                  Sede Central
+                </span>
+              </div>
+
+              <!-- Mapa visual ilustrativo / interactivo -->
+              <div
+                class="relative rounded-xl overflow-hidden border border-stone-200 bg-stone-100 h-52 group"
+              >
+                <img
+                  src="https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?q=80&w=800&auto=format&fit=crop"
+                  alt="Mapa satelital de ubicación de la librería"
+                  class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                />
+
+                <div class="absolute inset-0 bg-stone-900/30"></div>
+
+                <div class="absolute inset-0 flex items-center justify-center">
+                  <div
+                    class="bg-white/95 backdrop-blur-sm px-4 py-2 rounded-full shadow-lg border border-stone-200 flex items-center gap-2"
+                  >
+                    <div
+                      class="w-2.5 h-2.5 rounded-full bg-[#C05621] animate-ping"
+                    ></div>
+
+                    <span class="text-xs font-bold text-stone-800">
+                      Libros Libros Corrientes
+                    </span>
+                  </div>
+                </div>
+
+                <a
+                  href="https://maps.google.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="absolute bottom-3 right-3 bg-[#1C1917]/90 hover:bg-[#C05621] text-white text-[11px] font-medium px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-colors shadow"
+                >
+                  <span>Cómo llegar</span>
+                  <i data-lucide="external-link" class="w-3 h-3"></i>
+                </a>
+              </div>
             </div>
 
-        </section>
+            <!-- Horarios de Atención -->
+            <div
+              class="bg-white border border-stone-200 rounded-2xl p-6 shadow-sm"
+            >
+              <h3 class="font-editorial text-xl font-bold text-stone-900 mb-3">
+                Horarios de Atención
+              </h3>
 
+              <ul class="space-y-2 text-xs text-stone-600">
+                <li class="flex justify-between pb-2 border-b border-stone-100">
+                  <span class="font-medium text-stone-700">
+                    Lunes a Sábados
+                  </span>
+
+                  <span class="text-stone-900 font-semibold">
+                    10:00 — 20:00 hs
+                  </span>
+                </li>
+
+                <li class="flex justify-between pb-1">
+                  <span class="font-medium text-stone-700">
+                    Domingos y feriados
+                  </span>
+
+                  <span class="text-stone-900 font-semibold">
+                    14:00 — 19:00 hs
+                  </span>
+                </li>
+              </ul>
+
+              <div
+                class="mt-4 p-2.5 bg-emerald-50 border border-emerald-200/80 rounded-lg flex items-center gap-2 text-[11px] text-emerald-800"
+              >
+                <span class="w-2 h-2 rounded-full bg-emerald-600"></span>
+
+                <span>
+                  Tienda física abierta en este momento con cafetería disponible
+                </span>
+              </div>
+            </div>
+
+            <!-- Canales Directos -->
+            <div
+              class="bg-white border border-stone-200 rounded-2xl p-6 shadow-sm space-y-3"
+            >
+              <h3 class="font-editorial text-xl font-bold text-stone-900 mb-1">
+                Canales Directos
+              </h3>
+
+              <a
+                href="tel:+541148219000"
+                class="flex items-center justify-between p-3 rounded-xl bg-stone-50 hover:bg-stone-100 border border-stone-200/80 transition-colors group"
+              >
+                <div class="flex items-center gap-3">
+                  <div
+                    class="w-8 h-8 rounded-lg bg-white border border-stone-200 flex items-center justify-center text-[#C05621] group-hover:bg-[#C05621] group-hover:text-white transition-colors"
+                  >
+                    <i data-lucide="phone" class="w-4 h-4"></i>
+                  </div>
+
+                  <div>
+                    <p
+                      class="text-[10px] font-bold uppercase tracking-wider text-stone-400"
+                    >
+                      Atención telefónica
+                    </p>
+
+                    <p class="text-xs font-semibold text-stone-800">
+                      +54 11 4821-9000
+                    </p>
+                  </div>
+                </div>
+
+                <i
+                  data-lucide="chevron-right"
+                  class="w-4 h-4 text-stone-400 group-hover:translate-x-0.5 transition-transform"
+                ></i>
+              </a>
+
+              <a
+                href="https://wa.me/5491148219900"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="flex items-center justify-between p-3 rounded-xl bg-stone-50 hover:bg-stone-100 border border-stone-200/80 transition-colors group"
+              >
+                <div class="flex items-center gap-3">
+                  <div
+                    class="w-8 h-8 rounded-lg bg-white border border-stone-200 flex items-center justify-center text-emerald-700 group-hover:bg-emerald-700 group-hover:text-white transition-colors"
+                  >
+                    <i data-lucide="message-circle" class="w-4 h-4"></i>
+                  </div>
+
+                  <div>
+                    <div class="flex items-center gap-1.5">
+                      <p
+                        class="text-[10px] font-bold uppercase tracking-wider text-stone-400"
+                      >
+                        WhatsApp Librería
+                      </p>
+
+                      <span
+                        class="bg-emerald-100 text-emerald-800 text-[9px] font-bold px-1.5 py-0.2 rounded"
+                      >
+                        Chat directo
+                      </span>
+                    </div>
+
+                    <p class="text-xs font-semibold text-stone-800">
+                      +54 9 11 4821-9900
+                    </p>
+                  </div>
+                </div>
+
+                <i
+                  data-lucide="external-link"
+                  class="w-4 h-4 text-stone-400"
+                ></i>
+              </a>
+
+              <a
+                href="mailto:info@libroslibros.com.ar"
+                class="flex items-center justify-between p-3 rounded-xl bg-stone-50 hover:bg-stone-100 border border-stone-200/80 transition-colors group"
+              >
+                <div class="flex items-center gap-3">
+                  <div
+                    class="w-8 h-8 rounded-lg bg-white border border-stone-200 flex items-center justify-center text-[#C05621] group-hover:bg-[#C05621] group-hover:text-white transition-colors"
+                  >
+                    <i data-lucide="mail" class="w-4 h-4"></i>
+                  </div>
+
+                  <div>
+                    <p
+                      class="text-[10px] font-bold uppercase tracking-wider text-stone-400"
+                    >
+                      Consultas por escrito
+                    </p>
+
+                    <p class="text-xs font-semibold text-stone-800">
+                      info@libroslibros.com.ar
+                    </p>
+                  </div>
+                </div>
+
+                <i
+                  data-lucide="arrow-up-right"
+                  class="w-4 h-4 text-stone-400"
+                ></i>
+              </a>
+
+              <div
+                class="pt-3 border-t border-stone-100 flex items-center justify-between text-xs text-stone-500"
+              >
+                <span
+                  class="text-[10px] font-bold uppercase tracking-wider text-stone-400"
+                >
+                  Redes &amp; Comunidad Lectora
+                </span>
+
+                <div class="flex items-center gap-3">
+                  <a
+                    href="#"
+                    class="hover:text-[#C05621] transition-colors"
+                    title="Instagram"
+                  >
+                    @libroslibros
+                  </a>
+
+                  <a
+                    href="#"
+                    class="hover:text-[#C05621] transition-colors"
+                    title="Goodreads"
+                  >
+                    Goodreads Club
+                  </a>
+
+                  <a
+                    href="#"
+                    class="hover:text-[#C05621] transition-colors"
+                    title="X"
+                  >
+                    X / Twitter
+                  </a>
+
+                  <a
+                    href="#"
+                    class="hover:text-[#C05621] transition-colors"
+                    title="YouTube"
+                  >
+                    YouTube Clases
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Sección de Dudas Frecuentes antes de consultar -->
+      <section
+        class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 border-t border-stone-200"
+      >
+        <div class="text-center max-w-2xl mx-auto mb-10">
+          <span
+            class="text-xs uppercase font-bold tracking-widest text-[#C05621] block mb-2"
+          >
+            Respuestas Inmediatas
+          </span>
+
+          <h2 class="font-editorial text-3xl font-bold text-stone-900">
+            Dudas Frecuentes antes de consultar
+          </h2>
+
+          <p class="text-stone-500 text-xs sm:text-sm mt-1">
+            Respuestas a las preguntas habituales de nuestra comunidad de
+            lectores.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div
+            class="bg-white border border-stone-200 rounded-xl p-6 shadow-sm"
+          >
+            <div
+              class="w-8 h-8 rounded-lg bg-stone-100 text-[#C05621] flex items-center justify-center mb-3"
+            >
+              <i data-lucide="clock" class="w-4 h-4"></i>
+            </div>
+
+            <h3 class="font-editorial text-base font-bold text-stone-900 mb-2">
+              ¿Cuánto demoran en responder?
+            </h3>
+
+            <p class="text-xs text-stone-600 leading-relaxed">
+              Nuestro equipo editorial responde todas las consultas por
+              formulario o correo en un plazo máximo de
+              <strong>24 horas hábiles</strong>. Si es una urgencia de catálogo,
+              sugerimos escribirnos vía WhatsApp.
+            </p>
+          </div>
+
+          <div
+            class="bg-white border border-stone-200 rounded-xl p-6 shadow-sm"
+          >
+            <div
+              class="w-8 h-8 rounded-lg bg-stone-100 text-[#C05621] flex items-center justify-center mb-3"
+            >
+              <i data-lucide="truck" class="w-4 h-4"></i>
+            </div>
+
+            <h3 class="font-editorial text-base font-bold text-stone-900 mb-2">
+              ¿Hacen envíos al interior del país?
+            </h3>
+
+            <p class="text-xs text-stone-600 leading-relaxed">
+              Sí, enviamos con embalaje rígido especial para libros a todas las
+              provincias argentinas. Con compras mayores a $35.000 el despacho a
+              domicilio es 100% gratuito.
+            </p>
+          </div>
+
+          <div
+            class="bg-white border border-stone-200 rounded-xl p-6 shadow-sm"
+          >
+            <div
+              class="w-8 h-8 rounded-lg bg-stone-100 text-[#C05621] flex items-center justify-center mb-3"
+            >
+              <i data-lucide="store" class="w-4 h-4"></i>
+            </div>
+
+            <h3 class="font-editorial text-base font-bold text-stone-900 mb-2">
+              ¿Cómo coordino el retiro en local?
+            </h3>
+
+            <p class="text-xs text-stone-600 leading-relaxed">
+              Podés solicitar reservar cualquier ejemplar por este medio o
+              teléfono y retirarlo sin cargo por nuestra Sede Central de Av.
+              Corrientes dentro de los 7 días corridos.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Newsletter: El Correo del Lector -->
+      <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <div
+          class="bg-stone-100 border border-stone-200/90 rounded-2xl p-8 text-center sm:text-left flex flex-col sm:flex-row items-center justify-between gap-6"
+        >
+          <div>
+            <h4 class="font-editorial text-2xl font-bold text-stone-900">
+              El Correo del Lector
+            </h4>
+
+            <p class="text-xs text-stone-500 mt-1">
+              Suscribite para recibir recomendaciones exclusivas, notas críticas
+              y novedades literarias cada semana.
+            </p>
+          </div>
+
+          <form
+            class="flex w-full sm:w-auto max-w-md gap-2"
+            onsubmit="
+              event.preventDefault();
+              alert('¡Gracias por suscribirte al Correo del Lector!');
+            "
+          >
+            <input
+              type="email"
+              placeholder="Ingresá tu correo electrónico"
+              required
+              class="px-4 py-2.5 rounded-lg border border-stone-300 bg-white text-xs focus:outline-none focus:border-[#C05621] flex-1 min-w-[220px]"
+            />
+
+            <button
+              type="submit"
+              class="px-5 py-2.5 bg-[#C05621] hover:bg-[#a34415] text-white text-xs font-bold rounded-lg transition-colors shrink-0"
+            >
+              Suscribirme
+            </button>
+          </form>
+        </div>
+      </section>
     </main>
 
     <!-- Footer Editorial -->
-    <footer class="bg-stone-100 border-t border-stone-200 text-stone-600 text-xs mt-auto">
-
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 grid grid-cols-1 md:grid-cols-4 gap-8">
-
-            <!-- Identidad y bio -->
-            <div class="space-y-3">
-
-                <div class="flex items-center gap-2">
-
-                    <div class="w-7 h-7 rounded bg-[#1C1917] text-white flex items-center justify-center">
-                        <i data-lucide="book-open" class="w-4 h-4 text-[#FAF8F5]"></i>
-                    </div>
-
-                    <span class="font-editorial font-bold text-base text-stone-900">
-                        Libros Libros
-                    </span>
-
-                </div>
-
-                <p class="text-stone-500 leading-relaxed text-[11px]">
-                    Una librería independiente y espacio de encuentro pensado para amantes de la palabra escrita, las primeras ediciones y la lectura pausada.
-                </p>
-
-                <span class="inline-flex items-center gap-1.5 text-stone-500 text-[10px]">
-
-                    <i data-lucide="library" class="w-3.5 h-3.5 text-[#C05621]"></i>
-
-                    Curaduría Editorial
-
-                </span>
-
+    <footer
+      class="bg-stone-100 border-t border-stone-200 text-stone-600 text-xs mt-auto"
+    >
+      <div
+        class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 grid grid-cols-1 md:grid-cols-4 gap-8"
+      >
+        <!-- Identidad y bio -->
+        <div class="space-y-3">
+          <div class="flex items-center gap-2">
+            <div
+              class="w-7 h-7 rounded bg-[#1C1917] text-white flex items-center justify-center"
+            >
+              <i data-lucide="book-open" class="w-4 h-4 text-[#FAF8F5]"></i>
             </div>
 
-            <!-- Navegación -->
-            <div>
+            <span class="font-editorial font-bold text-base text-stone-900">
+              Libros Libros
+            </span>
+          </div>
 
-                <h5 class="font-bold text-stone-900 text-xs uppercase tracking-wider mb-3">
-                    Navegación
-                </h5>
+          <p class="text-stone-500 leading-relaxed text-[11px]">
+            Una librería independiente y espacio de encuentro pensado para
+            amantes de la palabra escrita, las primeras ediciones y la lectura
+            pausada.
+          </p>
 
-                <ul class="space-y-2 text-[11px]">
+          <span
+            class="inline-flex items-center gap-1.5 text-stone-500 text-[10px]"
+          >
+            <i data-lucide="library" class="w-3.5 h-3.5 text-[#C05621]"></i>
 
-                    <li>
-                        <a href="inicio.html" class="hover:text-[#C05621] transition-colors">
-                            Inicio
-                        </a>
-                    </li>
-
-                    <li>
-                        <a href="categorias.html" class="hover:text-[#C05621] transition-colors">
-                            Categorías
-                        </a>
-                    </li>
-
-                    <li>
-                        <a href="catalogo.html" class="hover:text-[#C05621] transition-colors">
-                            Catálogo
-                        </a>
-                    </li>
-
-                    <li>
-                        <a href="sobre-nosotros.html" class="hover:text-[#C05621] transition-colors">
-                            Sobre Nosotros
-                        </a>
-                    </li>
-
-                </ul>
-
-            </div>
-
-            <!-- Atención al Lector -->
-            <div>
-
-                <h5 class="font-bold text-stone-900 text-xs uppercase tracking-wider mb-3">
-                    Atención al Lector
-                </h5>
-
-                <ul class="space-y-2 text-[11px]">
-
-                    <li>
-                        <a href="contacto.html" class="text-[#C05621] font-semibold">
-                            Contacto &amp; Consultas
-                        </a>
-                    </li>
-
-                    <li>
-                        <a href="#" class="hover:text-[#C05621] transition-colors">
-                            Términos y Condiciones
-                        </a>
-                    </li>
-
-                    <li>
-                        <a href="#" class="hover:text-[#C05621] transition-colors">
-                            Políticas de Envíos
-                        </a>
-                    </li>
-
-                    <li>
-                        <a href="#" class="hover:text-[#C05621] transition-colors">
-                            Preguntas Frecuentes
-                        </a>
-                    </li>
-
-                </ul>
-
-            </div>
-
-            <!-- Ubicación física -->
-            <div>
-
-                <h5 class="font-bold text-stone-900 text-xs uppercase tracking-wider mb-3">
-                    Nuestra Librería
-                </h5>
-
-                <ul class="space-y-2 text-[11px] text-stone-500">
-
-                    <li class="flex items-start gap-2">
-
-                        <i data-lucide="map-pin" class="w-3.5 h-3.5 text-[#C05621] shrink-0 mt-0.5"></i>
-
-                        <span>
-                            Av. de las Letras 1420, Barrio Antiguo, Ciudad
-                        </span>
-
-                    </li>
-
-                    <li class="flex items-center gap-2">
-
-                        <i data-lucide="phone" class="w-3.5 h-3.5 text-[#C05621] shrink-0"></i>
-
-                        <span>
-                            +54 11 4821-9000
-                        </span>
-
-                    </li>
-
-                    <li class="flex items-center gap-2">
-
-                        <i data-lucide="clock" class="w-3.5 h-3.5 text-[#C05621] shrink-0"></i>
-
-                        <span>
-                            Lunes a Sábado: 10:00 — 20:30<br>
-                            Domingos: 14:00 — 19:30
-                        </span>
-
-                    </li>
-
-                </ul>
-
-            </div>
-
+            Curaduría Editorial
+          </span>
         </div>
 
-        <div class="border-t border-stone-200/80 py-4 px-4 text-center text-[10px] text-stone-400 max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-2">
+        <!-- Navegación -->
+        <div>
+          <h5
+            class="font-bold text-stone-900 text-xs uppercase tracking-wider mb-3"
+          >
+            Navegación
+          </h5>
 
-            <p>
-                © 2025 Libros Libros. Hecho con pasión por los libros.
-            </p>
+          <ul class="space-y-2 text-[11px]">
+            <li>
+              <a
+                href="inicio.html"
+                class="hover:text-[#C05621] transition-colors"
+              >
+                Inicio
+              </a>
+            </li>
 
-            <p class="tracking-widest uppercase text-stone-400 font-medium">
-                Ediciones Clásicas &amp; Contemporáneas
-            </p>
+            <li>
+              <a
+                href="categorias.html"
+                class="hover:text-[#C05621] transition-colors"
+              >
+                Categorías
+              </a>
+            </li>
 
+            <li>
+              <a
+                href="catalogo.html"
+                class="hover:text-[#C05621] transition-colors"
+              >
+                Catálogo
+              </a>
+            </li>
+
+            <li>
+              <a
+                href="sobre-nosotros.html"
+                class="hover:text-[#C05621] transition-colors"
+              >
+                Sobre Nosotros
+              </a>
+            </li>
+          </ul>
         </div>
 
+        <!-- Atención al Lector -->
+        <div>
+          <h5
+            class="font-bold text-stone-900 text-xs uppercase tracking-wider mb-3"
+          >
+            Atención al Lector
+          </h5>
+
+          <ul class="space-y-2 text-[11px]">
+            <li>
+              <a href="contacto.html" class="text-[#C05621] font-semibold">
+                Contacto &amp; Consultas
+              </a>
+            </li>
+
+            <li>
+              <a href="#" class="hover:text-[#C05621] transition-colors">
+                Términos y Condiciones
+              </a>
+            </li>
+
+            <li>
+              <a href="#" class="hover:text-[#C05621] transition-colors">
+                Políticas de Envíos
+              </a>
+            </li>
+
+            <li>
+              <a href="#" class="hover:text-[#C05621] transition-colors">
+                Preguntas Frecuentes
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Ubicación física -->
+        <div>
+          <h5
+            class="font-bold text-stone-900 text-xs uppercase tracking-wider mb-3"
+          >
+            Nuestra Librería
+          </h5>
+
+          <ul class="space-y-2 text-[11px] text-stone-500">
+            <li class="flex items-start gap-2">
+              <i
+                data-lucide="map-pin"
+                class="w-3.5 h-3.5 text-[#C05621] shrink-0 mt-0.5"
+              ></i>
+
+              <span> Av. de las Letras 1420, Barrio Antiguo, Ciudad </span>
+            </li>
+
+            <li class="flex items-center gap-2">
+              <i
+                data-lucide="phone"
+                class="w-3.5 h-3.5 text-[#C05621] shrink-0"
+              ></i>
+
+              <span> +54 11 4821-9000 </span>
+            </li>
+
+            <li class="flex items-center gap-2">
+              <i
+                data-lucide="clock"
+                class="w-3.5 h-3.5 text-[#C05621] shrink-0"
+              ></i>
+
+              <span>
+                Lunes a Sábado: 10:00 — 20:30<br />
+                Domingos: 14:00 — 19:30
+              </span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div
+        class="border-t border-stone-200/80 py-4 px-4 text-center text-[10px] text-stone-400 max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-2"
+      >
+        <p>© 2025 Libros Libros. Hecho con pasión por los libros.</p>
+
+        <p class="tracking-widest uppercase text-stone-400 font-medium">
+          Ediciones Clásicas &amp; Contemporáneas
+        </p>
+      </div>
     </footer>
 
     <!-- Inicialización de iconos de Lucide -->
     <script>
-        lucide.createIcons();
+      lucide.createIcons();
     </script>
-
-</body>
-
+  </body>
 </html>

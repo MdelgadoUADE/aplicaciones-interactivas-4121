@@ -1,1005 +1,1118 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Categorías — Libros Libros Librería Editorial</title>
-
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-
-    <!-- Google Fonts: Playfair Display & Plus Jakarta Sans -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;0,800;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
 
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        serif: ['"Playfair Display"', 'Georgia', 'serif'],
-                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
-                    },
-                    colors: {
-                        brand: {
-                            terracotta: '#C05621',
-                            dark: '#1C1917',
-                            paper: '#FAF8F5',
-                            cream: '#F4EFE6',
-                            muted: '#78716C',
-                        }
-                    }
-                }
-            }
-        }
-    </script>
+    <link rel="stylesheet" href="../../styles/main.css" />
+  </head>
 
-    <style>
-        body {
-            background-color: #FAF8F5;
-            color: #1C1917;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-        }
-
-        .font-editorial {
-            font-family: 'Playfair Display', Georgia, serif;
-        }
-    </style>
-</head>
-
-<body class="min-h-screen flex flex-col antialiased selection:bg-[#C05621] selection:text-white">
-
+  <body
+    class="min-h-screen flex flex-col antialiased selection:bg-[#C05621] selection:text-white"
+  >
     <!-- Cinta superior de anuncios -->
     <div
-        class="bg-[#1C1917] text-[#FAF8F5] text-xs py-2 px-4 text-center tracking-wide border-b border-stone-800 flex items-center justify-center gap-2">
-        <i data-lucide="truck" class="w-3.5 h-3.5 text-[#C05621]"></i>
-        <span>Envíos sin cargo en compras superiores a $35.000 • Entregas a todo el país</span>
+      class="bg-[#1C1917] text-[#FAF8F5] text-xs py-2 px-4 text-center tracking-wide border-b border-stone-800 flex items-center justify-center gap-2"
+    >
+      <i data-lucide="truck" class="w-3.5 h-3.5 text-[#C05621]"></i>
+      <span
+        >Envíos sin cargo en compras superiores a $35.000 • Entregas a todo el
+        país</span
+      >
     </div>
 
     <!-- Header / Barra de navegación principal -->
-    <header class="sticky top-0 z-40 bg-[#FAF8F5]/95 backdrop-blur-md border-b border-stone-200">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-6">
+    <header
+      class="sticky top-0 z-40 bg-[#FAF8F5]/95 backdrop-blur-md border-b border-stone-200"
+    >
+      <div
+        class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-6"
+      >
+        <!-- Logotipo de la marca -->
+        <a href="inicio.html" class="flex items-center gap-3 group">
+          <div
+            class="w-10 h-10 rounded-lg bg-[#C05621] text-white flex items-center justify-center shadow-sm group-hover:bg-[#a34415] transition-colors"
+          >
+            <i data-lucide="book-open" class="w-5 h-5 text-[#FAF8F5]"></i>
+          </div>
 
-            <!-- Logotipo de la marca -->
-            <a href="inicio.html" class="flex items-center gap-3 group">
-                <div
-                    class="w-10 h-10 rounded-lg bg-[#C05621] text-white flex items-center justify-center shadow-sm group-hover:bg-[#a34415] transition-colors">
-                    <i data-lucide="book-open" class="w-5 h-5 text-[#FAF8F5]"></i>
-                </div>
+          <div class="flex flex-col">
+            <span
+              class="font-editorial text-2xl font-bold tracking-tight text-stone-900 leading-none"
+            >
+              Libros<span class="text-[#C05621]">Libros</span>
+            </span>
 
-                <div class="flex flex-col">
-                    <span class="font-editorial text-2xl font-bold tracking-tight text-stone-900 leading-none">
-                        Libros<span class="text-[#C05621]">Libros</span>
-                    </span>
+            <span
+              class="text-[10px] tracking-[0.2em] uppercase font-semibold text-stone-500 mt-1"
+            >
+              Librería Editorial
+            </span>
+          </div>
+        </a>
 
-                    <span class="text-[10px] tracking-[0.2em] uppercase font-semibold text-stone-500 mt-1">
-                        Librería Editorial
-                    </span>
-                </div>
-            </a>
+        <!-- Menú de navegación principal -->
+        <nav
+          class="hidden md:flex items-center gap-8 text-sm font-medium text-stone-700"
+        >
+          <a href="index.html" class="hover:text-[#C05621] transition-colors"
+            >Inicio</a
+          >
 
-            <!-- Menú de navegación principal -->
-            <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-stone-700">
-                <a href="index.html" class="hover:text-[#C05621] transition-colors">Inicio</a>
+          <a
+            href="categorias.html"
+            class="text-[#C05621] font-semibold border-b-2 border-[#C05621] pb-1"
+          >
+            Categorías
+          </a>
 
-                <a href="categorias.html"
-                    class="text-[#C05621] font-semibold border-b-2 border-[#C05621] pb-1">
-                    Categorías
-                </a>
+          <a
+            href="productos.html"
+            class="hover:text-[#C05621] transition-colors"
+            >Catálogo</a
+          >
 
-                <a href="productos.html" class="hover:text-[#C05621] transition-colors">Catálogo</a>
+          <a href="acerca.html" class="hover:text-[#C05621] transition-colors">
+            Sobre Nosotros
+          </a>
 
-                <a href="acerca.html" class="hover:text-[#C05621] transition-colors">
-                    Sobre Nosotros
-                </a>
+          <a href="contacto.html" class="hover:text-[#C05621] transition-colors"
+            >Contacto</a
+          >
+        </nav>
 
-                <a href="contacto.html" class="hover:text-[#C05621] transition-colors">Contacto</a>
-            </nav>
+        <!-- Buscador e inicio de sesión unificado con Inicio -->
+        <div class="flex items-center gap-4 flex-1 md:flex-initial justify-end">
+          <div class="relative w-full max-w-xs hidden sm:block">
+            <input
+              type="search"
+              placeholder="Buscar libro, autor..."
+              class="w-full pl-9 pr-4 py-2 bg-stone-100/80 border border-stone-300 rounded-full text-xs placeholder:text-stone-400 focus:outline-none focus:border-[#C05621] focus:bg-white transition-all"
+            />
 
-            <!-- Buscador e inicio de sesión unificado con Inicio -->
-            <div class="flex items-center gap-4 flex-1 md:flex-initial justify-end">
+            <i
+              data-lucide="search"
+              class="w-4 h-4 text-stone-400 absolute left-3 top-2.5"
+            ></i>
+          </div>
 
-                <div class="relative w-full max-w-xs hidden sm:block">
-                    <input
-                        type="search"
-                        placeholder="Buscar libro, autor..."
-                        class="w-full pl-9 pr-4 py-2 bg-stone-100/80 border border-stone-300 rounded-full text-xs placeholder:text-stone-400 focus:outline-none focus:border-[#C05621] focus:bg-white transition-all">
-
-                    <i data-lucide="search"
-                        class="w-4 h-4 text-stone-400 absolute left-3 top-2.5"></i>
-                </div>
-
-                <a href="login.html" class="flex items-center gap-2 text-sm font-medium text-stone-800 hover:text-[#C05621] px-3 py-1.5 rounded-full hover:bg-stone-100 transition-colors">
-                        <div class="w-8 h-8 rounded-full bg-stone-200 flex items-center justify-center text-stone-700">
-                            <i data-lucide="user" class="w-4 h-4">
-                            </i>
-                        </div>
-                        <span class="hidden lg:inline text-xs font-semibold">
-                            Iniciar Sesión
-                        </span>
-                    </a>
+          <a
+            href="login.html"
+            class="flex items-center gap-2 text-sm font-medium text-stone-800 hover:text-[#C05621] px-3 py-1.5 rounded-full hover:bg-stone-100 transition-colors"
+          >
+            <div
+              class="w-8 h-8 rounded-full bg-stone-200 flex items-center justify-center text-stone-700"
+            >
+              <i data-lucide="user" class="w-4 h-4"> </i>
             </div>
+            <span class="hidden lg:inline text-xs font-semibold">
+              Iniciar Sesión
+            </span>
+          </a>
         </div>
+      </div>
     </header>
 
     <main class="flex-grow">
+      <!-- Encabezado / Migas de pan y Título principal -->
+      <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-6">
+        <nav class="flex items-center gap-2 text-xs text-stone-500 mb-4">
+          <a href="inicio.html" class="hover:text-[#C05621] transition-colors">
+            Inicio
+          </a>
 
-        <!-- Encabezado / Migas de pan y Título principal -->
-        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-6">
+          <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-stone-400"></i>
 
-            <nav class="flex items-center gap-2 text-xs text-stone-500 mb-4">
-                <a href="inicio.html" class="hover:text-[#C05621] transition-colors">
-                    Inicio
-                </a>
+          <span class="text-stone-900 font-medium"> Categorías </span>
+        </nav>
 
-                <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-stone-400"></i>
+        <div class="text-center max-w-3xl mx-auto">
+          <div class="flex items-center justify-center gap-2 mb-3">
+            <span class="w-2 h-2 rounded-full bg-[#C05621]"></span>
 
-                <span class="text-stone-900 font-medium">
-                    Categorías
+            <span
+              class="text-[11px] font-bold uppercase tracking-widest text-[#C05621]"
+            >
+              Estantes &amp; Colecciones
+            </span>
+          </div>
+
+          <h1
+            class="font-editorial text-4xl sm:text-5xl font-bold text-stone-900 leading-[1.15] mb-4"
+          >
+            Explorá Nuestras
+            <span class="italic font-normal text-[#C05621]"> Categorías </span>
+          </h1>
+
+          <p
+            class="text-stone-600 text-base sm:text-lg font-light leading-relaxed"
+          >
+            Una cuidadosa cartografía editorial diseñada para devotos de las
+            letras. Recorré nuestras colecciones organizadas por género, período
+            histórico y pensamiento crítico contemporáneo.
+          </p>
+
+          <!-- Filtros rápidos por género -->
+          <div class="flex flex-wrap items-center justify-center gap-2 pt-6">
+            <button
+              class="px-4 py-1.5 rounded-full text-xs font-semibold bg-stone-900 text-white shadow-sm"
+            >
+              Todos los Estantes (9)
+            </button>
+
+            <button
+              class="px-4 py-1.5 rounded-full text-xs font-medium bg-stone-100 hover:bg-stone-200 text-stone-700 transition-colors"
+            >
+              Narrativa &amp; Ficción
+            </button>
+
+            <button
+              class="px-4 py-1.5 rounded-full text-xs font-medium bg-stone-100 hover:bg-stone-200 text-stone-700 transition-colors"
+            >
+              Pensamiento &amp; Filosofía
+            </button>
+
+            <button
+              class="px-4 py-1.5 rounded-full text-xs font-medium bg-stone-100 hover:bg-stone-200 text-stone-700 transition-colors"
+            >
+              Historia &amp; Ensayo
+            </button>
+
+            <button
+              class="px-4 py-1.5 rounded-full text-xs font-medium bg-stone-100 hover:bg-stone-200 text-stone-700 transition-colors"
+            >
+              Poesía
+            </button>
+
+            <button
+              class="px-4 py-1.5 rounded-full text-xs font-medium bg-stone-100 hover:bg-stone-200 text-stone-700 transition-colors"
+            >
+              Arte &amp; Monografías
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Grilla principal de Categorías -->
+      <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <!-- 1. Ficción Contemporánea -->
+          <div
+            class="bg-white border border-stone-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 flex flex-col group"
+          >
+            <div class="relative h-60 overflow-hidden bg-stone-100">
+              <img
+                src="https://images.unsplash.com/photo-1512820790803-83ca734da794?q=80&w=800&auto=format&fit=crop"
+                alt="Estante de Ficción Contemporánea & Novelas"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+              />
+
+              <div
+                class="absolute inset-0 bg-gradient-to-t from-stone-900/60 via-transparent to-transparent"
+              ></div>
+
+              <span
+                class="absolute top-4 right-4 bg-stone-900/80 backdrop-blur-sm text-[#FAF8F5] text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider"
+              >
+                420+ Obras
+              </span>
+            </div>
+
+            <div class="p-6 flex-1 flex flex-col justify-between">
+              <div>
+                <span
+                  class="text-[10px] font-bold uppercase tracking-widest text-[#C05621] block mb-1"
+                >
+                  Narrativa Selecta
                 </span>
-            </nav>
 
-            <div class="text-center max-w-3xl mx-auto">
+                <h2
+                  class="font-editorial text-xl font-bold text-stone-900 mb-2 group-hover:text-[#C05621] transition-colors"
+                >
+                  Ficción Contemporánea &amp; Novelas
+                </h2>
 
-                <div class="flex items-center justify-center gap-2 mb-3">
-                    <span class="w-2 h-2 rounded-full bg-[#C05621]"></span>
-
-                    <span class="text-[11px] font-bold uppercase tracking-widest text-[#C05621]">
-                        Estantes &amp; Colecciones
-                    </span>
-                </div>
-
-                <h1 class="font-editorial text-4xl sm:text-5xl font-bold text-stone-900 leading-[1.15] mb-4">
-                    Explorá Nuestras
-                    <span class="italic font-normal text-[#C05621]">
-                        Categorías
-                    </span>
-                </h1>
-
-                <p class="text-stone-600 text-base sm:text-lg font-light leading-relaxed">
-                    Una cuidadosa cartografía editorial diseñada para devotos de las letras.
-                    Recorré nuestras colecciones organizadas por género, período histórico y
-                    pensamiento crítico contemporáneo.
+                <p class="text-xs text-stone-600 leading-relaxed mb-4">
+                  Grandes voces de la literatura internacional, premios
+                  destacados y novelas que definen nuestro tiempo con prosa
+                  refinada.
                 </p>
+              </div>
 
-                <!-- Filtros rápidos por género -->
-                <div class="flex flex-wrap items-center justify-center gap-2 pt-6">
+              <div
+                class="pt-4 border-t border-stone-100 flex items-center justify-between"
+              >
+                <span class="text-[11px] text-stone-400">
+                  Borges, Mariana Enríquez, Murakami
+                </span>
 
-                    <button class="px-4 py-1.5 rounded-full text-xs font-semibold bg-stone-900 text-white shadow-sm">
-                        Todos los Estantes (9)
-                    </button>
-
-                    <button
-                        class="px-4 py-1.5 rounded-full text-xs font-medium bg-stone-100 hover:bg-stone-200 text-stone-700 transition-colors">
-                        Narrativa &amp; Ficción
-                    </button>
-
-                    <button
-                        class="px-4 py-1.5 rounded-full text-xs font-medium bg-stone-100 hover:bg-stone-200 text-stone-700 transition-colors">
-                        Pensamiento &amp; Filosofía
-                    </button>
-
-                    <button
-                        class="px-4 py-1.5 rounded-full text-xs font-medium bg-stone-100 hover:bg-stone-200 text-stone-700 transition-colors">
-                        Historia &amp; Ensayo
-                    </button>
-
-                    <button
-                        class="px-4 py-1.5 rounded-full text-xs font-medium bg-stone-100 hover:bg-stone-200 text-stone-700 transition-colors">
-                        Poesía
-                    </button>
-
-                    <button
-                        class="px-4 py-1.5 rounded-full text-xs font-medium bg-stone-100 hover:bg-stone-200 text-stone-700 transition-colors">
-                        Arte &amp; Monografías
-                    </button>
-
-                </div>
+                <a
+                  href="catalogo.html?cat=ficcion"
+                  class="inline-flex items-center gap-1 text-xs font-semibold text-[#C05621] group-hover:translate-x-0.5 transition-transform"
+                >
+                  <span>Explorar</span>
+                  <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                </a>
+              </div>
             </div>
-        </section>
-
-        <!-- Grilla principal de Categorías -->
-        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-
-                <!-- 1. Ficción Contemporánea -->
-                <div
-                    class="bg-white border border-stone-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 flex flex-col group">
-
-                    <div class="relative h-60 overflow-hidden bg-stone-100">
-
-                        <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?q=80&w=800&auto=format&fit=crop"
-                            alt="Estante de Ficción Contemporánea & Novelas"
-                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
-
-                        <div class="absolute inset-0 bg-gradient-to-t from-stone-900/60 via-transparent to-transparent">
-                        </div>
-
-                        <span
-                            class="absolute top-4 right-4 bg-stone-900/80 backdrop-blur-sm text-[#FAF8F5] text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">
-                            420+ Obras
-                        </span>
-                    </div>
-
-                    <div class="p-6 flex-1 flex flex-col justify-between">
-
-                        <div>
-                            <span
-                                class="text-[10px] font-bold uppercase tracking-widest text-[#C05621] block mb-1">
-                                Narrativa Selecta
-                            </span>
-
-                            <h2
-                                class="font-editorial text-xl font-bold text-stone-900 mb-2 group-hover:text-[#C05621] transition-colors">
-                                Ficción Contemporánea &amp; Novelas
-                            </h2>
-
-                            <p class="text-xs text-stone-600 leading-relaxed mb-4">
-                                Grandes voces de la literatura internacional, premios destacados y
-                                novelas que definen nuestro tiempo con prosa refinada.
-                            </p>
-                        </div>
-
-                        <div class="pt-4 border-t border-stone-100 flex items-center justify-between">
-                            <span class="text-[11px] text-stone-400">
-                                Borges, Mariana Enríquez, Murakami
-                            </span>
-
-                            <a href="catalogo.html?cat=ficcion"
-                                class="inline-flex items-center gap-1 text-xs font-semibold text-[#C05621] group-hover:translate-x-0.5 transition-transform">
-                                <span>Explorar</span>
-                                <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
-                            </a>
-                        </div>
-
-                    </div>
-                </div>
-
-                <!-- 2. Filosofía Clásica & Moderna -->
-                <div
-                    class="bg-white border border-stone-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 flex flex-col group">
-
-                    <div class="relative h-60 overflow-hidden bg-stone-100">
-
-                        <img src="https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?q=80&w=800&auto=format&fit=crop"
-                            alt="Libros de Filosofía Clásica & Moderna"
-                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
-
-                        <div class="absolute inset-0 bg-gradient-to-t from-stone-900/60 via-transparent to-transparent">
-                        </div>
-
-                        <span
-                            class="absolute top-4 right-4 bg-stone-900/80 backdrop-blur-sm text-[#FAF8F5] text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">
-                            185+ Obras
-                        </span>
-                    </div>
-
-                    <div class="p-6 flex-1 flex flex-col justify-between">
-
-                        <div>
-                            <span
-                                class="text-[10px] font-bold uppercase tracking-widest text-[#C05621] block mb-1">
-                                Pensamiento Crítico
-                            </span>
-
-                            <h2
-                                class="font-editorial text-xl font-bold text-stone-900 mb-2 group-hover:text-[#C05621] transition-colors">
-                                Filosofía Clásica &amp; Moderna
-                            </h2>
-
-                            <p class="text-xs text-stone-600 leading-relaxed mb-4">
-                                Tratados esenciales desde la antigüedad griega y el estoicismo hasta
-                                el existencialismo y la teoría crítica europea.
-                            </p>
-                        </div>
-
-                        <div class="pt-4 border-t border-stone-100 flex items-center justify-between">
-                            <span class="text-[11px] text-stone-400">
-                                Spinoza, Nietzsche, Byung-Chul Han
-                            </span>
-
-                            <a href="catalogo.html?cat=filosofia"
-                                class="inline-flex items-center gap-1 text-xs font-semibold text-[#C05621] group-hover:translate-x-0.5 transition-transform">
-                                <span>Explorar</span>
-                                <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
-                            </a>
-                        </div>
-
-                    </div>
-                </div>
-
-                <!-- 3. Historia & Ensayo Político -->
-                <div
-                    class="bg-white border border-stone-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 flex flex-col group">
-
-                    <div class="relative h-60 overflow-hidden bg-stone-100">
-
-                        <img src="https://images.unsplash.com/photo-1497633762265-9d179a990aa6?q=80&w=800&auto=format&fit=crop"
-                            alt="Historia y Ensayo Político"
-                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
-
-                        <div class="absolute inset-0 bg-gradient-to-t from-stone-900/60 via-transparent to-transparent">
-                        </div>
-
-                        <span
-                            class="absolute top-4 right-4 bg-stone-900/80 backdrop-blur-sm text-[#FAF8F5] text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">
-                            280+ Títulos
-                        </span>
-                    </div>
-
-                    <div class="p-6 flex-1 flex flex-col justify-between">
-
-                        <div>
-                            <span
-                                class="text-[10px] font-bold uppercase tracking-widest text-[#C05621] block mb-1">
-                                Memoria &amp; Análisis
-                            </span>
-
-                            <h2
-                                class="font-editorial text-xl font-bold text-stone-900 mb-2 group-hover:text-[#C05621] transition-colors">
-                                Historia &amp; Ensayo Político
-                            </h2>
-
-                            <p class="text-xs text-stone-600 leading-relaxed mb-4">
-                                Investigaciones rigurosas sobre los grandes hitos geopolíticos,
-                                biografías y crónicas del siglo XX y XXI.
-                            </p>
-                        </div>
-
-                        <div class="pt-4 border-t border-stone-100 flex items-center justify-between">
-                            <span class="text-[11px] text-stone-400">
-                                Hobsbawm, Arendt, Harari
-                            </span>
-
-                            <a href="catalogo.html?cat=historia"
-                                class="inline-flex items-center gap-1 text-xs font-semibold text-[#C05621] group-hover:translate-x-0.5 transition-transform">
-                                <span>Explorar</span>
-                                <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
-                            </a>
-                        </div>
-
-                    </div>
-                </div>
-
-                <!-- 4. Poesía Universal & Bilingüe -->
-                <div
-                    class="bg-white border border-stone-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 flex flex-col group">
-
-                    <div class="relative h-60 overflow-hidden bg-stone-100">
-
-                        <img src="https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?q=80&w=800&auto=format&fit=crop"
-                            alt="Poesía Universal y Bilingüe"
-                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
-
-                        <div class="absolute inset-0 bg-gradient-to-t from-stone-900/60 via-transparent to-transparent">
-                        </div>
-
-                        <span
-                            class="absolute top-4 right-4 bg-stone-900/80 backdrop-blur-sm text-[#FAF8F5] text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">
-                            150+ Antologías
-                        </span>
-                    </div>
-
-                    <div class="p-6 flex-1 flex flex-col justify-between">
-
-                        <div>
-                            <span
-                                class="text-[10px] font-bold uppercase tracking-widest text-[#C05621] block mb-1">
-                                Lírica &amp; Verso
-                            </span>
-
-                            <h2
-                                class="font-editorial text-xl font-bold text-stone-900 mb-2 group-hover:text-[#C05621] transition-colors">
-                                Poesía Universal &amp; Bilingüe
-                            </h2>
-
-                            <p class="text-xs text-stone-600 leading-relaxed mb-4">
-                                Antologías cuidadas, ediciones facsimilares y poemarios bilingües de
-                                las corrientes líricas más profundas.
-                            </p>
-                        </div>
-
-                        <div class="pt-4 border-t border-stone-100 flex items-center justify-between">
-                            <span class="text-[11px] text-stone-400">
-                                Pizarnik, Lorca, Szymborska
-                            </span>
-
-                            <a href="catalogo.html?cat=poesia"
-                                class="inline-flex items-center gap-1 text-xs font-semibold text-[#C05621] group-hover:translate-x-0.5 transition-transform">
-                                <span>Explorar</span>
-                                <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
-                            </a>
-                        </div>
-
-                    </div>
-                </div>
-
-                <!-- 5. Arte, Arquitectura & Fotografía -->
-                <div
-                    class="bg-white border border-stone-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 flex flex-col group">
-
-                    <div class="relative h-60 overflow-hidden bg-stone-100">
-
-                        <img src="https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?q=80&w=800&auto=format&fit=crop"
-                            alt="Arte, Arquitectura & Fotografía"
-                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
-
-                        <div class="absolute inset-0 bg-gradient-to-t from-stone-900/60 via-transparent to-transparent">
-                        </div>
-
-                        <span
-                            class="absolute top-4 right-4 bg-stone-900/80 backdrop-blur-sm text-[#FAF8F5] text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">
-                            195+ Ediciones
-                        </span>
-                    </div>
-
-                    <div class="p-6 flex-1 flex flex-col justify-between">
-
-                        <div>
-                            <span
-                                class="text-[10px] font-bold uppercase tracking-widest text-[#C05621] block mb-1">
-                                Cultura Visual
-                            </span>
-
-                            <h2
-                                class="font-editorial text-xl font-bold text-stone-900 mb-2 group-hover:text-[#C05621] transition-colors">
-                                Arte, Arquitectura &amp; Fotografía
-                            </h2>
-
-                            <p class="text-xs text-stone-600 leading-relaxed mb-4">
-                                Catálogos razonados, monografías sobre movimientos vanguardistas y
-                                libros de mesa con reproducciones de alta fidelidad.
-                            </p>
-                        </div>
-
-                        <div class="pt-4 border-t border-stone-100 flex items-center justify-between">
-                            <span class="text-[11px] text-stone-400">
-                                Bauhaus, Taschen, Sebastião Salgado
-                            </span>
-
-                            <a href="catalogo.html?cat=arte"
-                                class="inline-flex items-center gap-1 text-xs font-semibold text-[#C05621] group-hover:translate-x-0.5 transition-transform">
-                                <span>Explorar</span>
-                                <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
-                            </a>
-                        </div>
-
-                    </div>
-                </div>
-
-                <!-- 6. Literatura Asiática & Traducida -->
-                <div
-                    class="bg-white border border-stone-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 flex flex-col group">
-
-                    <div class="relative h-60 overflow-hidden bg-stone-100">
-
-                        <img src="https://images.unsplash.com/photo-1507842229451-7f01be7fe8d2?q=80&w=800&auto=format&fit=crop"
-                            alt="Literatura Asiática y Traducida"
-                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
-
-                        <div class="absolute inset-0 bg-gradient-to-t from-stone-900/60 via-transparent to-transparent">
-                        </div>
-
-                        <span
-                            class="absolute top-4 right-4 bg-stone-900/80 backdrop-blur-sm text-[#FAF8F5] text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">
-                            130+ Títulos
-                        </span>
-                    </div>
-
-                    <div class="p-6 flex-1 flex flex-col justify-between">
-
-                        <div>
-                            <span
-                                class="text-[10px] font-bold uppercase tracking-widest text-[#C05621] block mb-1">
-                                Voces del Mundo
-                            </span>
-
-                            <h2
-                                class="font-editorial text-xl font-bold text-stone-900 mb-2 group-hover:text-[#C05621] transition-colors">
-                                Literatura Asiática &amp; Traducida
-                            </h2>
-
-                            <p class="text-xs text-stone-600 leading-relaxed mb-4">
-                                Traducciones directas y rigurosas desde el japonés, coreano, chino y
-                                árabe. Narrativas orientales clásicas y actuales.
-                            </p>
-                        </div>
-
-                        <div class="pt-4 border-t border-stone-100 flex items-center justify-between">
-                            <span class="text-[11px] text-stone-400">
-                                Han Kang, Kawabata, Tanizaki
-                            </span>
-
-                            <a href="catalogo.html?cat=asiatica"
-                                class="inline-flex items-center gap-1 text-xs font-semibold text-[#C05621] group-hover:translate-x-0.5 transition-transform">
-                                <span>Explorar</span>
-                                <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
-                            </a>
-                        </div>
-
-                    </div>
-                </div>
-
-                <!-- 7. Ciencia Ficción & Distopías -->
-                <div
-                    class="bg-white border border-stone-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 flex flex-col group">
-
-                    <div class="relative h-60 overflow-hidden bg-stone-100">
-
-                        <img src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=800&auto=format&fit=crop"
-                            alt="Ciencia Ficción & Distopías"
-                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
-
-                        <div class="absolute inset-0 bg-gradient-to-t from-stone-900/60 via-transparent to-transparent">
-                        </div>
-
-                        <span
-                            class="absolute top-4 right-4 bg-stone-900/80 backdrop-blur-sm text-[#FAF8F5] text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">
-                            210+ Obras
-                        </span>
-                    </div>
-
-                    <div class="p-6 flex-1 flex flex-col justify-between">
-
-                        <div>
-                            <span
-                                class="text-[10px] font-bold uppercase tracking-widest text-[#C05621] block mb-1">
-                                Imaginación Especulativa
-                            </span>
-
-                            <h2
-                                class="font-editorial text-xl font-bold text-stone-900 mb-2 group-hover:text-[#C05621] transition-colors">
-                                Ciencia Ficción &amp; Distopías
-                            </h2>
-
-                            <p class="text-xs text-stone-600 leading-relaxed mb-4">
-                                Mundos futuros, ucronías sociológicas, ciberpunk y la mejor narrativa
-                                fantástica contemporánea y de culto.
-                            </p>
-                        </div>
-
-                        <div class="pt-4 border-t border-stone-100 flex items-center justify-between">
-                            <span class="text-[11px] text-stone-400">
-                                Philip K. Dick, Le Guin, Atwood
-                            </span>
-
-                            <a href="catalogo.html?cat=scifi"
-                                class="inline-flex items-center gap-1 text-xs font-semibold text-[#C05621] group-hover:translate-x-0.5 transition-transform">
-                                <span>Explorar</span>
-                                <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
-                            </a>
-                        </div>
-
-                    </div>
-                </div>
-
-                <!-- 8. Libros Ilustrados & Cómics -->
-                <div
-                    class="bg-white border border-stone-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 flex flex-col group">
-
-                    <div class="relative h-60 overflow-hidden bg-stone-100">
-
-                        <img src="https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=800&auto=format&fit=crop"
-                            alt="Libros Ilustrados & Cómics"
-                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
-
-                        <div class="absolute inset-0 bg-gradient-to-t from-stone-900/60 via-transparent to-transparent">
-                        </div>
-
-                        <span
-                            class="absolute top-4 right-4 bg-stone-900/80 backdrop-blur-sm text-[#FAF8F5] text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">
-                            140+ Publicaciones
-                        </span>
-                    </div>
-
-                    <div class="p-6 flex-1 flex flex-col justify-between">
-
-                        <div>
-                            <span
-                                class="text-[10px] font-bold uppercase tracking-widest text-[#C05621] block mb-1">
-                                Narrativa Gráfica
-                            </span>
-
-                            <h2
-                                class="font-editorial text-xl font-bold text-stone-900 mb-2 group-hover:text-[#C05621] transition-colors">
-                                Libros Ilustrados &amp; Cómics
-                            </h2>
-
-                            <p class="text-xs text-stone-600 leading-relaxed mb-4">
-                                El noveno arte en su máxima expresión: novelas gráficas de autor,
-                                álbumes ilustrados para adultos y tiras icónicas.
-                            </p>
-                        </div>
-
-                        <div class="pt-4 border-t border-stone-100 flex items-center justify-between">
-                            <span class="text-[11px] text-stone-400">
-                                Spiegelman, Satrapi, Chris Ware
-                            </span>
-
-                            <a href="catalogo.html?cat=comics"
-                                class="inline-flex items-center gap-1 text-xs font-semibold text-[#C05621] group-hover:translate-x-0.5 transition-transform">
-                                <span>Explorar</span>
-                                <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
-                            </a>
-                        </div>
-
-                    </div>
-                </div>
-
-                <!-- 9. Humanidades & Sociedad -->
-                <div
-                    class="bg-white border border-stone-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 flex flex-col group">
-
-                    <div class="relative h-60 overflow-hidden bg-stone-100">
-
-                        <img src="https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?q=80&w=800&auto=format&fit=crop"
-                            alt="Humanidades & Sociedad"
-                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
-
-                        <div class="absolute inset-0 bg-gradient-to-t from-stone-900/60 via-transparent to-transparent">
-                        </div>
-
-                        <span
-                            class="absolute top-4 right-4 bg-stone-900/80 backdrop-blur-sm text-[#FAF8F5] text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">
-                            165+ Obras
-                        </span>
-                    </div>
-
-                    <div class="p-6 flex-1 flex flex-col justify-between">
-
-                        <div>
-                            <span
-                                class="text-[10px] font-bold uppercase tracking-widest text-[#C05621] block mb-1">
-                                Academia &amp; Debate
-                            </span>
-
-                            <h2
-                                class="font-editorial text-xl font-bold text-stone-900 mb-2 group-hover:text-[#C05621] transition-colors">
-                                Humanidades &amp; Sociedad
-                            </h2>
-
-                            <p class="text-xs text-stone-600 leading-relaxed mb-4">
-                                Antropología, psicoanálisis, estudios de género y sociología para
-                                profundizar en los dilemas culturales modernos.
-                            </p>
-                        </div>
-
-                        <div class="pt-4 border-t border-stone-100 flex items-center justify-between">
-                            <span class="text-[11px] text-stone-400">
-                                Foucault, Butler, Zygmunt Bauman
-                            </span>
-
-                            <a href="catalogo.html?cat=humanidades"
-                                class="inline-flex items-center gap-1 text-xs font-semibold text-[#C05621] group-hover:translate-x-0.5 transition-transform">
-                                <span>Explorar</span>
-                                <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
-                            </a>
-                        </div>
-
-                    </div>
-                </div>
-
+          </div>
+
+          <!-- 2. Filosofía Clásica & Moderna -->
+          <div
+            class="bg-white border border-stone-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 flex flex-col group"
+          >
+            <div class="relative h-60 overflow-hidden bg-stone-100">
+              <img
+                src="https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?q=80&w=800&auto=format&fit=crop"
+                alt="Libros de Filosofía Clásica & Moderna"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+              />
+
+              <div
+                class="absolute inset-0 bg-gradient-to-t from-stone-900/60 via-transparent to-transparent"
+              ></div>
+
+              <span
+                class="absolute top-4 right-4 bg-stone-900/80 backdrop-blur-sm text-[#FAF8F5] text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider"
+              >
+                185+ Obras
+              </span>
             </div>
-        </section>
 
-        <!-- Itinerarios de Lectura / Exploraciones Temáticas Especiales -->
-        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="p-6 flex-1 flex flex-col justify-between">
+              <div>
+                <span
+                  class="text-[10px] font-bold uppercase tracking-widest text-[#C05621] block mb-1"
+                >
+                  Pensamiento Crítico
+                </span>
 
-            <div class="bg-stone-100/70 border border-stone-200 rounded-2xl p-8">
+                <h2
+                  class="font-editorial text-xl font-bold text-stone-900 mb-2 group-hover:text-[#C05621] transition-colors"
+                >
+                  Filosofía Clásica &amp; Moderna
+                </h2>
 
-                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+                <p class="text-xs text-stone-600 leading-relaxed mb-4">
+                  Tratados esenciales desde la antigüedad griega y el estoicismo
+                  hasta el existencialismo y la teoría crítica europea.
+                </p>
+              </div>
 
-                    <div>
-                        <span class="text-[11px] font-bold uppercase tracking-widest text-[#C05621] block mb-1">
-                            Itinerarios de Lectura
-                        </span>
+              <div
+                class="pt-4 border-t border-stone-100 flex items-center justify-between"
+              >
+                <span class="text-[11px] text-stone-400">
+                  Spinoza, Nietzsche, Byung-Chul Han
+                </span>
 
-                        <h2 class="font-editorial text-2xl sm:text-3xl font-bold text-stone-900">
-                            Exploraciones Temáticas Especiales
-                        </h2>
-                    </div>
-
-                    <p class="text-xs text-stone-500 max-w-md leading-relaxed">
-                        Si buscás un recorrido no convencional, podés sumergirte en selecciones por
-                        corriente estética, país o reconocimientos.
-                    </p>
-                </div>
-
-                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
-
-                    <a href="catalogo.html?tag=nobel"
-                        class="bg-white hover:bg-stone-50 border border-stone-200 p-4 rounded-xl text-center transition-all group shadow-sm">
-                        <span class="block text-xs font-bold text-stone-800 group-hover:text-[#C05621]">
-                            Premio Nobel
-                        </span>
-                        <span class="text-[10px] text-stone-400 mt-1 block">
-                            48 ediciones
-                        </span>
-                    </a>
-
-                    <a href="catalogo.html?tag=bilingue"
-                        class="bg-white hover:bg-stone-50 border border-stone-200 p-4 rounded-xl text-center transition-all group shadow-sm">
-                        <span class="block text-xs font-bold text-stone-800 group-hover:text-[#C05621]">
-                            Ediciones Bilingües
-                        </span>
-                        <span class="text-[10px] text-stone-400 mt-1 block">
-                            32 volúmenes
-                        </span>
-                    </a>
-
-                    <a href="catalogo.html?tag=argentina"
-                        class="bg-white hover:bg-stone-50 border border-stone-200 p-4 rounded-xl text-center transition-all group shadow-sm">
-                        <span class="block text-xs font-bold text-stone-800 group-hover:text-[#C05621]">
-                            Letras Argentinas
-                        </span>
-                        <span class="text-[10px] text-stone-400 mt-1 block">
-                            115 títulos
-                        </span>
-                    </a>
-
-                    <a href="catalogo.html?tag=indie"
-                        class="bg-white hover:bg-stone-50 border border-stone-200 p-4 rounded-xl text-center transition-all group shadow-sm">
-                        <span class="block text-xs font-bold text-stone-800 group-hover:text-[#C05621]">
-                            Editoriales Indie
-                        </span>
-                        <span class="text-[10px] text-stone-400 mt-1 block">
-                            74 sellos
-                        </span>
-                    </a>
-
-                    <a href="catalogo.html?tag=primeras-ediciones"
-                        class="bg-white hover:bg-stone-50 border border-stone-200 p-4 rounded-xl text-center transition-all group shadow-sm">
-                        <span class="block text-xs font-bold text-stone-800 group-hover:text-[#C05621]">
-                            Primeras Ediciones
-                        </span>
-                        <span class="text-[10px] text-stone-400 mt-1 block">
-                            Coleccionismo
-                        </span>
-                    </a>
-
-                    <a href="catalogo.html?tag=criticas"
-                        class="bg-white hover:bg-stone-50 border border-stone-200 p-4 rounded-xl text-center transition-all group shadow-sm">
-                        <span class="block text-xs font-bold text-stone-800 group-hover:text-[#C05621]">
-                            Traducciones Críticas
-                        </span>
-                        <span class="text-[10px] text-stone-400 mt-1 block">
-                            Anotadas
-                        </span>
-                    </a>
-
-                </div>
+                <a
+                  href="catalogo.html?cat=filosofia"
+                  class="inline-flex items-center gap-1 text-xs font-semibold text-[#C05621] group-hover:translate-x-0.5 transition-transform"
+                >
+                  <span>Explorar</span>
+                  <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                </a>
+              </div>
             </div>
-        </section>
+          </div>
 
-        <!-- Newsletter: El Correo del Lector -->
-        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 mb-6">
+          <!-- 3. Historia & Ensayo Político -->
+          <div
+            class="bg-white border border-stone-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 flex flex-col group"
+          >
+            <div class="relative h-60 overflow-hidden bg-stone-100">
+              <img
+                src="https://images.unsplash.com/photo-1497633762265-9d179a990aa6?q=80&w=800&auto=format&fit=crop"
+                alt="Historia y Ensayo Político"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+              />
 
-            <div
-                class="bg-stone-100 border border-stone-200/90 rounded-2xl p-8 text-center sm:text-left flex flex-col sm:flex-row items-center justify-between gap-6">
+              <div
+                class="absolute inset-0 bg-gradient-to-t from-stone-900/60 via-transparent to-transparent"
+              ></div>
 
-                <div>
-                    <span class="text-[10px] uppercase font-bold tracking-widest text-[#C05621] block mb-1">
-                        El Correo del Lector
-                    </span>
-
-                    <h2 class="font-editorial text-2xl sm:text-3xl font-bold text-stone-900">
-                        Suscribite para no perderte las novedades
-                    </h2>
-
-                    <p class="text-xs text-stone-500 mt-1">
-                        Ensayos breves, reseñas sin algoritmos, ingresos de importación y convocatorias
-                        a nuestras tertulias mensuales.
-                    </p>
-                </div>
-
-                <form
-                    class="flex w-full sm:w-auto max-w-md gap-2"
-                    onsubmit="event.preventDefault(); alert('¡Gracias por suscribirte al Correo del Lector!');">
-
-                    <input
-                        type="email"
-                        placeholder="Ingresá tu correo electrónico..."
-                        required
-                        class="px-4 py-2.5 rounded-lg border border-stone-300 bg-white text-xs focus:outline-none focus:border-[#C05621] flex-1 min-w-[220px]">
-
-                    <button
-                        type="submit"
-                        class="px-5 py-2.5 bg-[#C05621] hover:bg-[#a34415] text-white text-xs font-bold rounded-lg transition-colors shrink-0">
-                        Suscribirme
-                    </button>
-                </form>
+              <span
+                class="absolute top-4 right-4 bg-stone-900/80 backdrop-blur-sm text-[#FAF8F5] text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider"
+              >
+                280+ Títulos
+              </span>
             </div>
-        </section>
 
+            <div class="p-6 flex-1 flex flex-col justify-between">
+              <div>
+                <span
+                  class="text-[10px] font-bold uppercase tracking-widest text-[#C05621] block mb-1"
+                >
+                  Memoria &amp; Análisis
+                </span>
+
+                <h2
+                  class="font-editorial text-xl font-bold text-stone-900 mb-2 group-hover:text-[#C05621] transition-colors"
+                >
+                  Historia &amp; Ensayo Político
+                </h2>
+
+                <p class="text-xs text-stone-600 leading-relaxed mb-4">
+                  Investigaciones rigurosas sobre los grandes hitos
+                  geopolíticos, biografías y crónicas del siglo XX y XXI.
+                </p>
+              </div>
+
+              <div
+                class="pt-4 border-t border-stone-100 flex items-center justify-between"
+              >
+                <span class="text-[11px] text-stone-400">
+                  Hobsbawm, Arendt, Harari
+                </span>
+
+                <a
+                  href="catalogo.html?cat=historia"
+                  class="inline-flex items-center gap-1 text-xs font-semibold text-[#C05621] group-hover:translate-x-0.5 transition-transform"
+                >
+                  <span>Explorar</span>
+                  <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4. Poesía Universal & Bilingüe -->
+          <div
+            class="bg-white border border-stone-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 flex flex-col group"
+          >
+            <div class="relative h-60 overflow-hidden bg-stone-100">
+              <img
+                src="https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?q=80&w=800&auto=format&fit=crop"
+                alt="Poesía Universal y Bilingüe"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+              />
+
+              <div
+                class="absolute inset-0 bg-gradient-to-t from-stone-900/60 via-transparent to-transparent"
+              ></div>
+
+              <span
+                class="absolute top-4 right-4 bg-stone-900/80 backdrop-blur-sm text-[#FAF8F5] text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider"
+              >
+                150+ Antologías
+              </span>
+            </div>
+
+            <div class="p-6 flex-1 flex flex-col justify-between">
+              <div>
+                <span
+                  class="text-[10px] font-bold uppercase tracking-widest text-[#C05621] block mb-1"
+                >
+                  Lírica &amp; Verso
+                </span>
+
+                <h2
+                  class="font-editorial text-xl font-bold text-stone-900 mb-2 group-hover:text-[#C05621] transition-colors"
+                >
+                  Poesía Universal &amp; Bilingüe
+                </h2>
+
+                <p class="text-xs text-stone-600 leading-relaxed mb-4">
+                  Antologías cuidadas, ediciones facsimilares y poemarios
+                  bilingües de las corrientes líricas más profundas.
+                </p>
+              </div>
+
+              <div
+                class="pt-4 border-t border-stone-100 flex items-center justify-between"
+              >
+                <span class="text-[11px] text-stone-400">
+                  Pizarnik, Lorca, Szymborska
+                </span>
+
+                <a
+                  href="catalogo.html?cat=poesia"
+                  class="inline-flex items-center gap-1 text-xs font-semibold text-[#C05621] group-hover:translate-x-0.5 transition-transform"
+                >
+                  <span>Explorar</span>
+                  <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- 5. Arte, Arquitectura & Fotografía -->
+          <div
+            class="bg-white border border-stone-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 flex flex-col group"
+          >
+            <div class="relative h-60 overflow-hidden bg-stone-100">
+              <img
+                src="https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?q=80&w=800&auto=format&fit=crop"
+                alt="Arte, Arquitectura & Fotografía"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+              />
+
+              <div
+                class="absolute inset-0 bg-gradient-to-t from-stone-900/60 via-transparent to-transparent"
+              ></div>
+
+              <span
+                class="absolute top-4 right-4 bg-stone-900/80 backdrop-blur-sm text-[#FAF8F5] text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider"
+              >
+                195+ Ediciones
+              </span>
+            </div>
+
+            <div class="p-6 flex-1 flex flex-col justify-between">
+              <div>
+                <span
+                  class="text-[10px] font-bold uppercase tracking-widest text-[#C05621] block mb-1"
+                >
+                  Cultura Visual
+                </span>
+
+                <h2
+                  class="font-editorial text-xl font-bold text-stone-900 mb-2 group-hover:text-[#C05621] transition-colors"
+                >
+                  Arte, Arquitectura &amp; Fotografía
+                </h2>
+
+                <p class="text-xs text-stone-600 leading-relaxed mb-4">
+                  Catálogos razonados, monografías sobre movimientos
+                  vanguardistas y libros de mesa con reproducciones de alta
+                  fidelidad.
+                </p>
+              </div>
+
+              <div
+                class="pt-4 border-t border-stone-100 flex items-center justify-between"
+              >
+                <span class="text-[11px] text-stone-400">
+                  Bauhaus, Taschen, Sebastião Salgado
+                </span>
+
+                <a
+                  href="catalogo.html?cat=arte"
+                  class="inline-flex items-center gap-1 text-xs font-semibold text-[#C05621] group-hover:translate-x-0.5 transition-transform"
+                >
+                  <span>Explorar</span>
+                  <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- 6. Literatura Asiática & Traducida -->
+          <div
+            class="bg-white border border-stone-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 flex flex-col group"
+          >
+            <div class="relative h-60 overflow-hidden bg-stone-100">
+              <img
+                src="https://images.unsplash.com/photo-1507842229451-7f01be7fe8d2?q=80&w=800&auto=format&fit=crop"
+                alt="Literatura Asiática y Traducida"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+              />
+
+              <div
+                class="absolute inset-0 bg-gradient-to-t from-stone-900/60 via-transparent to-transparent"
+              ></div>
+
+              <span
+                class="absolute top-4 right-4 bg-stone-900/80 backdrop-blur-sm text-[#FAF8F5] text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider"
+              >
+                130+ Títulos
+              </span>
+            </div>
+
+            <div class="p-6 flex-1 flex flex-col justify-between">
+              <div>
+                <span
+                  class="text-[10px] font-bold uppercase tracking-widest text-[#C05621] block mb-1"
+                >
+                  Voces del Mundo
+                </span>
+
+                <h2
+                  class="font-editorial text-xl font-bold text-stone-900 mb-2 group-hover:text-[#C05621] transition-colors"
+                >
+                  Literatura Asiática &amp; Traducida
+                </h2>
+
+                <p class="text-xs text-stone-600 leading-relaxed mb-4">
+                  Traducciones directas y rigurosas desde el japonés, coreano,
+                  chino y árabe. Narrativas orientales clásicas y actuales.
+                </p>
+              </div>
+
+              <div
+                class="pt-4 border-t border-stone-100 flex items-center justify-between"
+              >
+                <span class="text-[11px] text-stone-400">
+                  Han Kang, Kawabata, Tanizaki
+                </span>
+
+                <a
+                  href="catalogo.html?cat=asiatica"
+                  class="inline-flex items-center gap-1 text-xs font-semibold text-[#C05621] group-hover:translate-x-0.5 transition-transform"
+                >
+                  <span>Explorar</span>
+                  <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- 7. Ciencia Ficción & Distopías -->
+          <div
+            class="bg-white border border-stone-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 flex flex-col group"
+          >
+            <div class="relative h-60 overflow-hidden bg-stone-100">
+              <img
+                src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=800&auto=format&fit=crop"
+                alt="Ciencia Ficción & Distopías"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+              />
+
+              <div
+                class="absolute inset-0 bg-gradient-to-t from-stone-900/60 via-transparent to-transparent"
+              ></div>
+
+              <span
+                class="absolute top-4 right-4 bg-stone-900/80 backdrop-blur-sm text-[#FAF8F5] text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider"
+              >
+                210+ Obras
+              </span>
+            </div>
+
+            <div class="p-6 flex-1 flex flex-col justify-between">
+              <div>
+                <span
+                  class="text-[10px] font-bold uppercase tracking-widest text-[#C05621] block mb-1"
+                >
+                  Imaginación Especulativa
+                </span>
+
+                <h2
+                  class="font-editorial text-xl font-bold text-stone-900 mb-2 group-hover:text-[#C05621] transition-colors"
+                >
+                  Ciencia Ficción &amp; Distopías
+                </h2>
+
+                <p class="text-xs text-stone-600 leading-relaxed mb-4">
+                  Mundos futuros, ucronías sociológicas, ciberpunk y la mejor
+                  narrativa fantástica contemporánea y de culto.
+                </p>
+              </div>
+
+              <div
+                class="pt-4 border-t border-stone-100 flex items-center justify-between"
+              >
+                <span class="text-[11px] text-stone-400">
+                  Philip K. Dick, Le Guin, Atwood
+                </span>
+
+                <a
+                  href="catalogo.html?cat=scifi"
+                  class="inline-flex items-center gap-1 text-xs font-semibold text-[#C05621] group-hover:translate-x-0.5 transition-transform"
+                >
+                  <span>Explorar</span>
+                  <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- 8. Libros Ilustrados & Cómics -->
+          <div
+            class="bg-white border border-stone-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 flex flex-col group"
+          >
+            <div class="relative h-60 overflow-hidden bg-stone-100">
+              <img
+                src="https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=800&auto=format&fit=crop"
+                alt="Libros Ilustrados & Cómics"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+              />
+
+              <div
+                class="absolute inset-0 bg-gradient-to-t from-stone-900/60 via-transparent to-transparent"
+              ></div>
+
+              <span
+                class="absolute top-4 right-4 bg-stone-900/80 backdrop-blur-sm text-[#FAF8F5] text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider"
+              >
+                140+ Publicaciones
+              </span>
+            </div>
+
+            <div class="p-6 flex-1 flex flex-col justify-between">
+              <div>
+                <span
+                  class="text-[10px] font-bold uppercase tracking-widest text-[#C05621] block mb-1"
+                >
+                  Narrativa Gráfica
+                </span>
+
+                <h2
+                  class="font-editorial text-xl font-bold text-stone-900 mb-2 group-hover:text-[#C05621] transition-colors"
+                >
+                  Libros Ilustrados &amp; Cómics
+                </h2>
+
+                <p class="text-xs text-stone-600 leading-relaxed mb-4">
+                  El noveno arte en su máxima expresión: novelas gráficas de
+                  autor, álbumes ilustrados para adultos y tiras icónicas.
+                </p>
+              </div>
+
+              <div
+                class="pt-4 border-t border-stone-100 flex items-center justify-between"
+              >
+                <span class="text-[11px] text-stone-400">
+                  Spiegelman, Satrapi, Chris Ware
+                </span>
+
+                <a
+                  href="catalogo.html?cat=comics"
+                  class="inline-flex items-center gap-1 text-xs font-semibold text-[#C05621] group-hover:translate-x-0.5 transition-transform"
+                >
+                  <span>Explorar</span>
+                  <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- 9. Humanidades & Sociedad -->
+          <div
+            class="bg-white border border-stone-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 flex flex-col group"
+          >
+            <div class="relative h-60 overflow-hidden bg-stone-100">
+              <img
+                src="https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?q=80&w=800&auto=format&fit=crop"
+                alt="Humanidades & Sociedad"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+              />
+
+              <div
+                class="absolute inset-0 bg-gradient-to-t from-stone-900/60 via-transparent to-transparent"
+              ></div>
+
+              <span
+                class="absolute top-4 right-4 bg-stone-900/80 backdrop-blur-sm text-[#FAF8F5] text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider"
+              >
+                165+ Obras
+              </span>
+            </div>
+
+            <div class="p-6 flex-1 flex flex-col justify-between">
+              <div>
+                <span
+                  class="text-[10px] font-bold uppercase tracking-widest text-[#C05621] block mb-1"
+                >
+                  Academia &amp; Debate
+                </span>
+
+                <h2
+                  class="font-editorial text-xl font-bold text-stone-900 mb-2 group-hover:text-[#C05621] transition-colors"
+                >
+                  Humanidades &amp; Sociedad
+                </h2>
+
+                <p class="text-xs text-stone-600 leading-relaxed mb-4">
+                  Antropología, psicoanálisis, estudios de género y sociología
+                  para profundizar en los dilemas culturales modernos.
+                </p>
+              </div>
+
+              <div
+                class="pt-4 border-t border-stone-100 flex items-center justify-between"
+              >
+                <span class="text-[11px] text-stone-400">
+                  Foucault, Butler, Zygmunt Bauman
+                </span>
+
+                <a
+                  href="catalogo.html?cat=humanidades"
+                  class="inline-flex items-center gap-1 text-xs font-semibold text-[#C05621] group-hover:translate-x-0.5 transition-transform"
+                >
+                  <span>Explorar</span>
+                  <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Itinerarios de Lectura / Exploraciones Temáticas Especiales -->
+      <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="bg-stone-100/70 border border-stone-200 rounded-2xl p-8">
+          <div
+            class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8"
+          >
+            <div>
+              <span
+                class="text-[11px] font-bold uppercase tracking-widest text-[#C05621] block mb-1"
+              >
+                Itinerarios de Lectura
+              </span>
+
+              <h2
+                class="font-editorial text-2xl sm:text-3xl font-bold text-stone-900"
+              >
+                Exploraciones Temáticas Especiales
+              </h2>
+            </div>
+
+            <p class="text-xs text-stone-500 max-w-md leading-relaxed">
+              Si buscás un recorrido no convencional, podés sumergirte en
+              selecciones por corriente estética, país o reconocimientos.
+            </p>
+          </div>
+
+          <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+            <a
+              href="catalogo.html?tag=nobel"
+              class="bg-white hover:bg-stone-50 border border-stone-200 p-4 rounded-xl text-center transition-all group shadow-sm"
+            >
+              <span
+                class="block text-xs font-bold text-stone-800 group-hover:text-[#C05621]"
+              >
+                Premio Nobel
+              </span>
+              <span class="text-[10px] text-stone-400 mt-1 block">
+                48 ediciones
+              </span>
+            </a>
+
+            <a
+              href="catalogo.html?tag=bilingue"
+              class="bg-white hover:bg-stone-50 border border-stone-200 p-4 rounded-xl text-center transition-all group shadow-sm"
+            >
+              <span
+                class="block text-xs font-bold text-stone-800 group-hover:text-[#C05621]"
+              >
+                Ediciones Bilingües
+              </span>
+              <span class="text-[10px] text-stone-400 mt-1 block">
+                32 volúmenes
+              </span>
+            </a>
+
+            <a
+              href="catalogo.html?tag=argentina"
+              class="bg-white hover:bg-stone-50 border border-stone-200 p-4 rounded-xl text-center transition-all group shadow-sm"
+            >
+              <span
+                class="block text-xs font-bold text-stone-800 group-hover:text-[#C05621]"
+              >
+                Letras Argentinas
+              </span>
+              <span class="text-[10px] text-stone-400 mt-1 block">
+                115 títulos
+              </span>
+            </a>
+
+            <a
+              href="catalogo.html?tag=indie"
+              class="bg-white hover:bg-stone-50 border border-stone-200 p-4 rounded-xl text-center transition-all group shadow-sm"
+            >
+              <span
+                class="block text-xs font-bold text-stone-800 group-hover:text-[#C05621]"
+              >
+                Editoriales Indie
+              </span>
+              <span class="text-[10px] text-stone-400 mt-1 block">
+                74 sellos
+              </span>
+            </a>
+
+            <a
+              href="catalogo.html?tag=primeras-ediciones"
+              class="bg-white hover:bg-stone-50 border border-stone-200 p-4 rounded-xl text-center transition-all group shadow-sm"
+            >
+              <span
+                class="block text-xs font-bold text-stone-800 group-hover:text-[#C05621]"
+              >
+                Primeras Ediciones
+              </span>
+              <span class="text-[10px] text-stone-400 mt-1 block">
+                Coleccionismo
+              </span>
+            </a>
+
+            <a
+              href="catalogo.html?tag=criticas"
+              class="bg-white hover:bg-stone-50 border border-stone-200 p-4 rounded-xl text-center transition-all group shadow-sm"
+            >
+              <span
+                class="block text-xs font-bold text-stone-800 group-hover:text-[#C05621]"
+              >
+                Traducciones Críticas
+              </span>
+              <span class="text-[10px] text-stone-400 mt-1 block">
+                Anotadas
+              </span>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <!-- Newsletter: El Correo del Lector -->
+      <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 mb-6">
+        <div
+          class="bg-stone-100 border border-stone-200/90 rounded-2xl p-8 text-center sm:text-left flex flex-col sm:flex-row items-center justify-between gap-6"
+        >
+          <div>
+            <span
+              class="text-[10px] uppercase font-bold tracking-widest text-[#C05621] block mb-1"
+            >
+              El Correo del Lector
+            </span>
+
+            <h2
+              class="font-editorial text-2xl sm:text-3xl font-bold text-stone-900"
+            >
+              Suscribite para no perderte las novedades
+            </h2>
+
+            <p class="text-xs text-stone-500 mt-1">
+              Ensayos breves, reseñas sin algoritmos, ingresos de importación y
+              convocatorias a nuestras tertulias mensuales.
+            </p>
+          </div>
+
+          <form
+            class="flex w-full sm:w-auto max-w-md gap-2"
+            onsubmit="
+              event.preventDefault();
+              alert('¡Gracias por suscribirte al Correo del Lector!');
+            "
+          >
+            <input
+              type="email"
+              placeholder="Ingresá tu correo electrónico..."
+              required
+              class="px-4 py-2.5 rounded-lg border border-stone-300 bg-white text-xs focus:outline-none focus:border-[#C05621] flex-1 min-w-[220px]"
+            />
+
+            <button
+              type="submit"
+              class="px-5 py-2.5 bg-[#C05621] hover:bg-[#a34415] text-white text-xs font-bold rounded-lg transition-colors shrink-0"
+            >
+              Suscribirme
+            </button>
+          </form>
+        </div>
+      </section>
     </main>
 
     <!-- Footer Editorial -->
-    <footer class="bg-stone-100 border-t border-stone-200 text-stone-600 text-xs mt-auto">
-
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 grid grid-cols-1 md:grid-cols-4 gap-8">
-
-            <!-- Identidad y bio -->
-            <div class="space-y-3">
-
-                <div class="flex items-center gap-2">
-
-                    <div class="w-7 h-7 rounded bg-[#C05621] text-white flex items-center justify-center">
-                        <i data-lucide="book-open" class="w-4 h-4 text-[#FAF8F5]"></i>
-                    </div>
-
-                    <span class="font-editorial font-bold text-base text-stone-900">
-                        Libros<span class="text-[#C05621]">Libros</span>
-                    </span>
-                </div>
-
-                <p class="text-stone-500 leading-relaxed text-[11px]">
-                    Librería editorial independiente. Curaduría paciente de clásicos perdidos,
-                    teoría contemporánea y autores emergentes.
-                </p>
-
-                <span class="inline-flex items-center gap-1.5 text-stone-500 text-[10px]">
-                    <i data-lucide="library" class="w-3.5 h-3.5 text-[#C05621]"></i>
-                    Curaduría Editorial
-                </span>
+    <footer
+      class="bg-stone-100 border-t border-stone-200 text-stone-600 text-xs mt-auto"
+    >
+      <div
+        class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 grid grid-cols-1 md:grid-cols-4 gap-8"
+      >
+        <!-- Identidad y bio -->
+        <div class="space-y-3">
+          <div class="flex items-center gap-2">
+            <div
+              class="w-7 h-7 rounded bg-[#C05621] text-white flex items-center justify-center"
+            >
+              <i data-lucide="book-open" class="w-4 h-4 text-[#FAF8F5]"></i>
             </div>
 
-            <!-- Navegación -->
-            <div>
+            <span class="font-editorial font-bold text-base text-stone-900">
+              Libros<span class="text-[#C05621]">Libros</span>
+            </span>
+          </div>
 
-                <h5 class="font-bold text-stone-900 text-xs uppercase tracking-wider mb-3">
-                    Navegación
-                </h5>
+          <p class="text-stone-500 leading-relaxed text-[11px]">
+            Librería editorial independiente. Curaduría paciente de clásicos
+            perdidos, teoría contemporánea y autores emergentes.
+          </p>
 
-                <ul class="space-y-2 text-[11px]">
-                    <li>
-                        <a href="inicio.html" class="hover:text-[#C05621] transition-colors">
-                            Inicio
-                        </a>
-                    </li>
-
-                    <li>
-                        <a href="categorias.html" class="text-[#C05621] font-semibold">
-                            Categorías &amp; Colecciones
-                        </a>
-                    </li>
-
-                    <li>
-                        <a href="catalogo.html" class="hover:text-[#C05621] transition-colors">
-                            Catálogo Completo
-                        </a>
-                    </li>
-
-                    <li>
-                        <a href="sobre-nosotros.html" class="hover:text-[#C05621] transition-colors">
-                            Sobre Nuestra Librería
-                        </a>
-                    </li>
-
-                    <li>
-                        <a href="#recomendaciones" class="hover:text-[#C05621] transition-colors">
-                            Recomendaciones del Mes
-                        </a>
-                    </li>
-                </ul>
-            </div>
-
-            <!-- Atención al Lector -->
-            <div>
-
-                <h5 class="font-bold text-stone-900 text-xs uppercase tracking-wider mb-3">
-                    Atención al Lector
-                </h5>
-
-                <ul class="space-y-2 text-[11px]">
-                    <li>
-                        <a href="#envios" class="hover:text-[#C05621] transition-colors">
-                            Envíos y Seguimiento
-                        </a>
-                    </li>
-
-                    <li>
-                        <a href="#pedidos-especiales" class="hover:text-[#C05621] transition-colors">
-                            Pedidos Especiales e Importaciones
-                        </a>
-                    </li>
-
-                    <li>
-                        <a href="#devoluciones" class="hover:text-[#C05621] transition-colors">
-                            Políticas de Devolución
-                        </a>
-                    </li>
-
-                    <li>
-                        <a href="#faq" class="hover:text-[#C05621] transition-colors">
-                            Preguntas Frecuentes
-                        </a>
-                    </li>
-
-                    <li>
-                        <a href="contacto.html" class="hover:text-[#C05621] transition-colors">
-                            Contacto Directo
-                        </a>
-                    </li>
-                </ul>
-            </div>
-
-            <!-- Ubicación física -->
-            <div>
-
-                <h5 class="font-bold text-stone-900 text-xs uppercase tracking-wider mb-3">
-                    Nuestra Librería
-                </h5>
-
-                <ul class="space-y-2 text-[11px] text-stone-500">
-
-                    <li class="flex items-start gap-2">
-                        <i data-lucide="map-pin"
-                            class="w-3.5 h-3.5 text-[#C05621] shrink-0 mt-0.5"></i>
-
-                        <span>
-                            Av. de las Letras 1420, Barrio Bellas Artes
-                        </span>
-                    </li>
-
-                    <li class="flex items-center gap-2">
-                        <i data-lucide="phone"
-                            class="w-3.5 h-3.5 text-[#C05621] shrink-0"></i>
-
-                        <span>
-                            +54 (11) 4892-0044
-                        </span>
-                    </li>
-
-                    <li class="flex items-center gap-2">
-                        <i data-lucide="clock"
-                            class="w-3.5 h-3.5 text-[#C05621] shrink-0"></i>
-
-                        <span>
-                            Lunes a Sábado: 10:00 - 20:30 hs.<br>
-                            Domingos: 14:00 - 19:00 hs.
-                        </span>
-                    </li>
-
-                </ul>
-            </div>
+          <span
+            class="inline-flex items-center gap-1.5 text-stone-500 text-[10px]"
+          >
+            <i data-lucide="library" class="w-3.5 h-3.5 text-[#C05621]"></i>
+            Curaduría Editorial
+          </span>
         </div>
 
-        <div
-            class="border-t border-stone-200/80 py-4 px-4 text-center text-[10px] text-stone-400 max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-2">
+        <!-- Navegación -->
+        <div>
+          <h5
+            class="font-bold text-stone-900 text-xs uppercase tracking-wider mb-3"
+          >
+            Navegación
+          </h5>
 
-            <p>
-                © 2025 Libros Libros Librería Editorial. Todos los derechos reservados.
-            </p>
+          <ul class="space-y-2 text-[11px]">
+            <li>
+              <a
+                href="inicio.html"
+                class="hover:text-[#C05621] transition-colors"
+              >
+                Inicio
+              </a>
+            </li>
 
-            <div class="flex items-center gap-4">
+            <li>
+              <a href="categorias.html" class="text-[#C05621] font-semibold">
+                Categorías &amp; Colecciones
+              </a>
+            </li>
 
-                <a href="#" class="hover:text-stone-600 transition-colors">
-                    Términos de Servicio
-                </a>
+            <li>
+              <a
+                href="catalogo.html"
+                class="hover:text-[#C05621] transition-colors"
+              >
+                Catálogo Completo
+              </a>
+            </li>
 
-                <a href="#" class="hover:text-stone-600 transition-colors">
-                    Privacidad de Datos
-                </a>
+            <li>
+              <a
+                href="sobre-nosotros.html"
+                class="hover:text-[#C05621] transition-colors"
+              >
+                Sobre Nuestra Librería
+              </a>
+            </li>
 
-                <a href="#" class="hover:text-stone-600 transition-colors">
-                    Defensa del Consumidor
-                </a>
-
-            </div>
+            <li>
+              <a
+                href="#recomendaciones"
+                class="hover:text-[#C05621] transition-colors"
+              >
+                Recomendaciones del Mes
+              </a>
+            </li>
+          </ul>
         </div>
+
+        <!-- Atención al Lector -->
+        <div>
+          <h5
+            class="font-bold text-stone-900 text-xs uppercase tracking-wider mb-3"
+          >
+            Atención al Lector
+          </h5>
+
+          <ul class="space-y-2 text-[11px]">
+            <li>
+              <a href="#envios" class="hover:text-[#C05621] transition-colors">
+                Envíos y Seguimiento
+              </a>
+            </li>
+
+            <li>
+              <a
+                href="#pedidos-especiales"
+                class="hover:text-[#C05621] transition-colors"
+              >
+                Pedidos Especiales e Importaciones
+              </a>
+            </li>
+
+            <li>
+              <a
+                href="#devoluciones"
+                class="hover:text-[#C05621] transition-colors"
+              >
+                Políticas de Devolución
+              </a>
+            </li>
+
+            <li>
+              <a href="#faq" class="hover:text-[#C05621] transition-colors">
+                Preguntas Frecuentes
+              </a>
+            </li>
+
+            <li>
+              <a
+                href="contacto.html"
+                class="hover:text-[#C05621] transition-colors"
+              >
+                Contacto Directo
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Ubicación física -->
+        <div>
+          <h5
+            class="font-bold text-stone-900 text-xs uppercase tracking-wider mb-3"
+          >
+            Nuestra Librería
+          </h5>
+
+          <ul class="space-y-2 text-[11px] text-stone-500">
+            <li class="flex items-start gap-2">
+              <i
+                data-lucide="map-pin"
+                class="w-3.5 h-3.5 text-[#C05621] shrink-0 mt-0.5"
+              ></i>
+
+              <span> Av. de las Letras 1420, Barrio Bellas Artes </span>
+            </li>
+
+            <li class="flex items-center gap-2">
+              <i
+                data-lucide="phone"
+                class="w-3.5 h-3.5 text-[#C05621] shrink-0"
+              ></i>
+
+              <span> +54 (11) 4892-0044 </span>
+            </li>
+
+            <li class="flex items-center gap-2">
+              <i
+                data-lucide="clock"
+                class="w-3.5 h-3.5 text-[#C05621] shrink-0"
+              ></i>
+
+              <span>
+                Lunes a Sábado: 10:00 - 20:30 hs.<br />
+                Domingos: 14:00 - 19:00 hs.
+              </span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div
+        class="border-t border-stone-200/80 py-4 px-4 text-center text-[10px] text-stone-400 max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-2"
+      >
+        <p>
+          © 2025 Libros Libros Librería Editorial. Todos los derechos
+          reservados.
+        </p>
+
+        <div class="flex items-center gap-4">
+          <a href="#" class="hover:text-stone-600 transition-colors">
+            Términos de Servicio
+          </a>
+
+          <a href="#" class="hover:text-stone-600 transition-colors">
+            Privacidad de Datos
+          </a>
+
+          <a href="#" class="hover:text-stone-600 transition-colors">
+            Defensa del Consumidor
+          </a>
+        </div>
+      </div>
     </footer>
 
     <!-- Inicialización de iconos de Lucide -->
     <script>
-        lucide.createIcons();
+      lucide.createIcons();
     </script>
-
-</body>
-
+  </body>
 </html>

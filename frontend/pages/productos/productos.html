@@ -1,961 +1,1096 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Catálogo General — Libros Libros Librería Editorial</title>
-
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-
-    <!-- Google Fonts: Playfair Display & Plus Jakarta Sans -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;0,800;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
 
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        serif: ['"Playfair Display"', 'Georgia', 'serif'],
-                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
-                    },
-                    colors: {
-                        brand: {
-                            terracotta: '#C05621',
-                            dark: '#1C1917',
-                            paper: '#FAF8F5',
-                            cream: '#F4EFE6',
-                            muted: '#78716C',
-                        }
-                    }
-                }
-            }
-        }
-    </script>
-
     <style>
-        body {
-            background-color: #FAF8F5;
-            color: #1C1917;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-        }
+      body {
+        background-color: #faf8f5;
+        color: #1c1917;
+        font-family: "Plus Jakarta Sans", sans-serif;
+      }
 
-        .font-editorial {
-            font-family: 'Playfair Display', Georgia, serif;
-        }
+      .font-editorial {
+        font-family: "Playfair Display", Georgia, serif;
+      }
     </style>
-</head>
+  </head>
 
-<body class="min-h-screen flex flex-col antialiased selection:bg-[#C05621] selection:text-white">
-
+  <body
+    class="min-h-screen flex flex-col antialiased selection:bg-[#C05621] selection:text-white"
+  >
     <!-- Cinta superior de envíos -->
-    <div class="bg-[#1C1917] text-[#FAF8F5] text-xs py-2 px-4 text-center tracking-wide border-b border-stone-800 flex items-center justify-center gap-2">
-        <i data-lucide="truck" class="w-3.5 h-3.5 text-[#C05621]"></i>
-        <span>Envíos sin cargo en compras superiores a $35.000 • Entregas a todo el país</span>
+    <div
+      class="bg-[#1C1917] text-[#FAF8F5] text-xs py-2 px-4 text-center tracking-wide border-b border-stone-800 flex items-center justify-center gap-2"
+    >
+      <i data-lucide="truck" class="w-3.5 h-3.5 text-[#C05621]"></i>
+      <span
+        >Envíos sin cargo en compras superiores a $35.000 • Entregas a todo el
+        país</span
+      >
     </div>
 
     <!-- Header / Barra de navegación principal (Sin carrito de compras) -->
-    <header class="sticky top-0 z-40 bg-[#FAF8F5]/95 backdrop-blur-md border-b border-stone-200">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-6">
+    <header
+      class="sticky top-0 z-40 bg-[#FAF8F5]/95 backdrop-blur-md border-b border-stone-200"
+    >
+      <div
+        class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-6"
+      >
+        <!-- Logotipo de la marca -->
+        <a href="inicio.html" class="flex items-center gap-3 group">
+          <div
+            class="w-10 h-10 rounded-lg bg-[#1C1917] text-amber-50 flex items-center justify-center shadow-sm group-hover:bg-[#C05621] transition-colors"
+          >
+            <i data-lucide="book-open" class="w-5 h-5 text-[#FAF8F5]"></i>
+          </div>
 
-            <!-- Logotipo de la marca -->
-            <a href="inicio.html" class="flex items-center gap-3 group">
-                <div class="w-10 h-10 rounded-lg bg-[#1C1917] text-amber-50 flex items-center justify-center shadow-sm group-hover:bg-[#C05621] transition-colors">
-                    <i data-lucide="book-open" class="w-5 h-5 text-[#FAF8F5]"></i>
-                </div>
+          <div class="flex flex-col">
+            <span
+              class="font-editorial text-2xl font-bold tracking-tight text-stone-900 leading-none"
+            >
+              Libros<span class="text-[#C05621]">Libros</span>
+            </span>
+            <span
+              class="text-[10px] tracking-[0.2em] uppercase font-semibold text-stone-500 mt-1"
+            >
+              Librería Editorial
+            </span>
+          </div>
+        </a>
 
-                <div class="flex flex-col">
-                    <span class="font-editorial text-2xl font-bold tracking-tight text-stone-900 leading-none">
-                        Libros<span class="text-[#C05621]">Libros</span>
-                    </span>
-                    <span class="text-[10px] tracking-[0.2em] uppercase font-semibold text-stone-500 mt-1">
-                        Librería Editorial
-                    </span>
-                </div>
-            </a>
+        <!-- Menú de navegación principal -->
+        <nav
+          class="hidden md:flex items-center gap-8 text-sm font-medium text-stone-700"
+        >
+          <a href="index.html" class="hover:text-[#C05621] transition-colors"
+            >Inicio</a
+          >
+          <a
+            href="categorias.html"
+            class="hover:text-[#C05621] transition-colors"
+            >Categorías</a
+          >
+          <a
+            href="productos.html"
+            class="text-[#C05621] font-semibold border-b-2 border-[#C05621] pb-1"
+            >Catálogo</a
+          >
+          <a href="acerca.html" class="hover:text-[#C05621] transition-colors"
+            >Sobre Nosotros</a
+          >
+          <a href="contacto.html" class="hover:text-[#C05621] transition-colors"
+            >Contacto</a
+          >
+        </nav>
 
-            <!-- Menú de navegación principal -->
-            <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-stone-700">
-                <a href="index.html" class="hover:text-[#C05621] transition-colors">Inicio</a>
-                <a href="categorias.html" class="hover:text-[#C05621] transition-colors">Categorías</a>
-                <a href="productos.html" class="text-[#C05621] font-semibold border-b-2 border-[#C05621] pb-1">Catálogo</a>
-                <a href="acerca.html" class="hover:text-[#C05621] transition-colors">Sobre Nosotros</a>
-                <a href="contacto.html" class="hover:text-[#C05621] transition-colors">Contacto</a>
-            </nav>
+        <!-- Buscador rápido y cuenta -->
+        <div class="flex items-center gap-4 flex-1 md:flex-initial justify-end">
+          <div class="relative w-full max-w-xs hidden sm:block">
+            <input
+              type="search"
+              placeholder="Buscar libro, autor..."
+              class="w-full pl-9 pr-4 py-2 bg-stone-100/80 border border-stone-300 rounded-full text-xs placeholder:text-stone-400 focus:outline-none focus:border-[#C05621] focus:bg-white transition-all"
+            />
+            <i
+              data-lucide="search"
+              class="w-4 h-4 text-stone-400 absolute left-3 top-2.5"
+            ></i>
+          </div>
 
-            <!-- Buscador rápido y cuenta -->
-            <div class="flex items-center gap-4 flex-1 md:flex-initial justify-end">
-
-                <div class="relative w-full max-w-xs hidden sm:block">
-                    <input
-                        type="search"
-                        placeholder="Buscar libro, autor..."
-                        class="w-full pl-9 pr-4 py-2 bg-stone-100/80 border border-stone-300 rounded-full text-xs placeholder:text-stone-400 focus:outline-none focus:border-[#C05621] focus:bg-white transition-all"
-                    >
-                    <i data-lucide="search" class="w-4 h-4 text-stone-400 absolute left-3 top-2.5"></i>
-                </div>
-
-            
-
-                <a
-                    href="login.html"
-                    class="flex items-center gap-2 text-sm font-medium text-stone-800 hover:text-[#C05621] px-3 py-1.5 rounded-full hover:bg-stone-100 transition-colors"
-                >
-                    <div class="w-8 h-8 rounded-full bg-stone-200 flex items-center justify-center text-stone-700">
-                        <i data-lucide="user" class="w-4 h-4"></i>
-                    </div>
-                    <span class="hidden lg:inline text-xs font-semibold">Iniciar Sesión</span>
-                </a>
-
+          <a
+            href="login.html"
+            class="flex items-center gap-2 text-sm font-medium text-stone-800 hover:text-[#C05621] px-3 py-1.5 rounded-full hover:bg-stone-100 transition-colors"
+          >
+            <div
+              class="w-8 h-8 rounded-full bg-stone-200 flex items-center justify-center text-stone-700"
+            >
+              <i data-lucide="user" class="w-4 h-4"></i>
             </div>
+            <span class="hidden lg:inline text-xs font-semibold"
+              >Iniciar Sesión</span
+            >
+          </a>
         </div>
+      </div>
     </header>
 
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow">
+      <!-- Migas de pan (Breadcrumbs) -->
+      <nav class="flex items-center gap-2 text-xs text-stone-500 mb-4">
+        <a href="inicio.html" class="hover:text-[#C05621] transition-colors"
+          >Inicio</a
+        >
+        <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-stone-400"></i>
+        <span class="text-stone-900 font-medium">Catálogo</span>
+      </nav>
 
-        <!-- Migas de pan (Breadcrumbs) -->
-        <nav class="flex items-center gap-2 text-xs text-stone-500 mb-4">
-            <a href="inicio.html" class="hover:text-[#C05621] transition-colors">Inicio</a>
-            <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-stone-400"></i>
-            <span class="text-stone-900 font-medium">Catálogo</span>
-        </nav>
+      <!-- Encabezado del catálogo -->
+      <div
+        class="flex flex-col md:flex-row md:items-end justify-between pb-6 border-b border-stone-200 mb-6 gap-4"
+      >
+        <div>
+          <div class="flex items-center gap-3">
+            <h1
+              class="font-editorial text-3xl sm:text-4xl font-bold text-stone-900"
+            >
+              Catálogo General
+            </h1>
 
-        <!-- Encabezado del catálogo -->
-        <div class="flex flex-col md:flex-row md:items-end justify-between pb-6 border-b border-stone-200 mb-6 gap-4">
+            <span
+              class="bg-stone-200/80 text-stone-700 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider"
+            >
+              148 Títulos Seleccionados
+            </span>
+          </div>
 
-            <div>
-                <div class="flex items-center gap-3">
-                    <h1 class="font-editorial text-3xl sm:text-4xl font-bold text-stone-900">
-                        Catálogo General
-                    </h1>
-
-                    <span class="bg-stone-200/80 text-stone-700 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider">
-                        148 Títulos Seleccionados
-                    </span>
-                </div>
-
-                <p class="text-xs text-stone-500 mt-1">
-                    Obras seleccionadas de autores clásicos, premios literarios y novedades editoriales.
-                </p>
-            </div>
-
-            <div class="text-xs text-stone-500 font-medium">
-                Mostrando <span class="font-bold text-stone-900">12</span> de 148 obras curadas disponibles
-            </div>
-
+          <p class="text-xs text-stone-500 mt-1">
+            Obras seleccionadas de autores clásicos, premios literarios y
+            novedades editoriales.
+          </p>
         </div>
 
-        <!-- Barra de Filtros y Búsqueda -->
-        <div class="bg-white border border-stone-200/90 rounded-2xl p-4 mb-8 shadow-sm space-y-4">
-
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-3 items-center">
-
-                <!-- Búsqueda específica -->
-                <div class="lg:col-span-4 relative">
-                    <input
-                        type="text"
-                        placeholder="Buscar por obra, autor o editorial..."
-                        class="w-full pl-9 pr-4 py-2 bg-stone-50 border border-stone-300 rounded-lg text-xs placeholder:text-stone-400 focus:outline-none focus:border-[#C05621] focus:bg-white transition-all"
-                    >
-                    <i data-lucide="search" class="w-4 h-4 text-stone-400 absolute left-3 top-2.5"></i>
-                </div>
-
-                <!-- Selector Géneros -->
-                <div class="lg:col-span-3">
-                    <select class="w-full px-3 py-2 bg-stone-50 border border-stone-300 rounded-lg text-xs text-stone-700 focus:outline-none focus:border-[#C05621] transition-all">
-                        <option value="">Todos los géneros</option>
-                        <option value="ficcion">Ficción &amp; Novela</option>
-                        <option value="narrativa">Narrativa Latinoamericana</option>
-                        <option value="filosofia">Filosofía &amp; Ensayo</option>
-                        <option value="poesia">Poesía Universal</option>
-                        <option value="arte">Arte &amp; Fotografía</option>
-                    </select>
-                </div>
-
-                <!-- Rango de precio -->
-                <div class="lg:col-span-2">
-                    <button class="w-full px-3 py-2 bg-stone-50 border border-stone-300 rounded-lg text-xs text-stone-700 hover:bg-stone-100 flex items-center justify-between transition-colors">
-                        <span>Rango de precio</span>
-                        <i data-lucide="sliders-horizontal" class="w-3.5 h-3.5 text-stone-400"></i>
-                    </button>
-                </div>
-
-                <!-- Interruptor de Stock Inmediato -->
-                <div class="lg:col-span-3 flex items-center justify-end gap-3">
-
-                    <label class="flex items-center gap-2 cursor-pointer text-xs font-semibold text-emerald-800 bg-emerald-50 border border-emerald-200 px-3 py-1.5 rounded-lg">
-                        <input type="checkbox" checked class="w-3.5 h-3.5 text-emerald-600 rounded focus:ring-0">
-
-                        <span class="flex items-center gap-1.5">
-                            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                            En stock inmediato
-                        </span>
-                    </label>
-
-                    <select class="px-3 py-2 bg-stone-50 border border-stone-300 rounded-lg text-xs text-stone-700 focus:outline-none focus:border-[#C05621]">
-                        <option>Recomendados</option>
-                        <option>Menor precio</option>
-                        <option>Mayor precio</option>
-                        <option>Novedades</option>
-                    </select>
-
-                </div>
-            </div>
-
-            <!-- Filtros rápidos por etiqueta -->
-            <div class="pt-3 border-t border-stone-100 flex flex-wrap items-center gap-2 text-xs">
-
-                <span class="text-stone-400 font-semibold text-[11px] uppercase tracking-wider mr-1">
-                    Filtro rápido:
-                </span>
-
-                <button class="px-3 py-1 bg-stone-900 text-white rounded-full font-medium">
-                    Todos
-                </button>
-
-                <button class="px-3 py-1 bg-stone-100 hover:bg-stone-200 text-stone-700 rounded-full transition-colors">
-                    Tapa Dura
-                </button>
-
-                <button class="px-3 py-1 bg-stone-100 hover:bg-stone-200 text-stone-700 rounded-full transition-colors">
-                    Ediciones Anotadas
-                </button>
-
-                <button class="px-3 py-1 bg-stone-100 hover:bg-stone-200 text-stone-700 rounded-full transition-colors">
-                    Premio Alfaguara
-                </button>
-
-                <button class="px-3 py-1 bg-stone-100 hover:bg-stone-200 text-stone-700 rounded-full transition-colors">
-                    Traducción Ilustrada
-                </button>
-
-                <button class="px-3 py-1 bg-stone-100 hover:bg-stone-200 text-stone-700 rounded-full transition-colors">
-                    Novedad 2025
-                </button>
-
-            </div>
+        <div class="text-xs text-stone-500 font-medium">
+          Mostrando <span class="font-bold text-stone-900">12</span> de 148
+          obras curadas disponibles
         </div>
-
-        <!-- Grilla del Catálogo (Tarjetas de Libro con Disponibilidad y Botón 'Ver detalle') -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-
-            <!-- Libro 1: En stock -->
-            <article class="bg-white border border-stone-200 rounded-xl overflow-hidden hover:shadow-lg transition-all group flex flex-col">
-
-                <div class="relative bg-stone-100 p-6 flex items-center justify-center min-h-[290px]">
-
-                    <!-- Indicador explícito de Stock -->
-                    <span class="absolute top-3 left-3 bg-emerald-100 text-emerald-800 border border-emerald-200 text-[10px] font-bold px-2 py-0.5 rounded tracking-wide flex items-center gap-1">
-                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
-                        DISPONIBLE EN STOCK
-                    </span>
-
-                    <button
-                        class="absolute top-3 right-3 text-stone-400 hover:text-red-500 transition-colors"
-                        title="Guardar"
-                    >
-                        <i data-lucide="heart" class="w-4 h-4"></i>
-                    </button>
-
-                    <img
-                        src="https://images.unsplash.com/photo-1544947950-fa07a98d237f?q=80&w=600&auto=format&fit=crop"
-                        alt="En agosto nos vemos"
-                        class="w-36 h-52 object-cover shadow-md rounded group-hover:scale-105 transition-transform duration-300"
-                    >
-                </div>
-
-                <div class="p-5 flex-1 flex flex-col justify-between">
-
-                    <div>
-                        <span class="text-[10px] font-bold uppercase tracking-wider text-[#C05621]">
-                            Ficción Literaria
-                        </span>
-
-                        <h3 class="font-editorial font-bold text-lg text-stone-900 mt-1 leading-snug">
-                            En agosto nos vemos
-                        </h3>
-
-                        <p class="text-xs text-stone-500 mt-0.5">
-                            Gabriel García Márquez
-                        </p>
-                    </div>
-
-                    <div class="mt-5 pt-3 border-t border-stone-100 flex items-center justify-between">
-                        <span class="text-base font-bold text-stone-900">$23.500</span>
-
-                        <a
-                            href="ficha-libro.html"
-                            class="px-3.5 py-1.5 bg-stone-100 hover:bg-[#C05621] hover:text-white text-stone-800 text-xs font-semibold rounded-lg transition-colors"
-                        >
-                            Ver detalle
-                        </a>
-                    </div>
-
-                </div>
-            </article>
-
-            <!-- Libro 2: En stock -->
-            <article class="bg-white border border-stone-200 rounded-xl overflow-hidden hover:shadow-lg transition-all group flex flex-col">
-
-                <div class="relative bg-stone-100 p-6 flex items-center justify-center min-h-[290px]">
-
-                    <span class="absolute top-3 left-3 bg-emerald-100 text-emerald-800 border border-emerald-200 text-[10px] font-bold px-2 py-0.5 rounded tracking-wide flex items-center gap-1">
-                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
-                        DISPONIBLE EN STOCK
-                    </span>
-
-                    <button
-                        class="absolute top-3 right-3 text-stone-400 hover:text-red-500 transition-colors"
-                        title="Guardar"
-                    >
-                        <i data-lucide="heart" class="w-4 h-4"></i>
-                    </button>
-
-                    <img
-                        src="https://images.unsplash.com/photo-1512820790803-83ca734da794?q=80&w=600&auto=format&fit=crop"
-                        alt="La vegetariana"
-                        class="w-36 h-52 object-cover shadow-md rounded group-hover:scale-105 transition-transform duration-300"
-                    >
-                </div>
-
-                <div class="p-5 flex-1 flex flex-col justify-between">
-
-                    <div>
-                        <span class="text-[10px] font-bold uppercase tracking-wider text-[#C05621]">
-                            Literatura Contemporánea
-                        </span>
-
-                        <h3 class="font-editorial font-bold text-lg text-stone-900 mt-1 leading-snug">
-                            La vegetariana
-                        </h3>
-
-                        <p class="text-xs text-stone-500 mt-0.5">
-                            Han Kang
-                        </p>
-                    </div>
-
-                    <div class="mt-5 pt-3 border-t border-stone-100 flex items-center justify-between">
-                        <span class="text-base font-bold text-stone-900">$24.900</span>
-
-                        <a
-                            href="ficha-libro.html"
-                            class="px-3.5 py-1.5 bg-stone-100 hover:bg-[#C05621] hover:text-white text-stone-800 text-xs font-semibold rounded-lg transition-colors"
-                        >
-                            Ver detalle
-                        </a>
-                    </div>
-
-                </div>
-            </article>
-
-            <!-- Libro 3: En stock -->
-            <article class="bg-white border border-stone-200 rounded-xl overflow-hidden hover:shadow-lg transition-all group flex flex-col">
-
-                <div class="relative bg-stone-100 p-6 flex items-center justify-center min-h-[290px]">
-
-                    <span class="absolute top-3 left-3 bg-emerald-100 text-emerald-800 border border-emerald-200 text-[10px] font-bold px-2 py-0.5 rounded tracking-wide flex items-center gap-1">
-                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
-                        DISPONIBLE EN STOCK
-                    </span>
-
-                    <button
-                        class="absolute top-3 right-3 text-stone-400 hover:text-red-500 transition-colors"
-                        title="Guardar"
-                    >
-                        <i data-lucide="heart" class="w-4 h-4"></i>
-                    </button>
-
-                    <img
-                        src="https://images.unsplash.com/photo-1543002588-bfa74002ed7e?q=80&w=600&auto=format&fit=crop"
-                        alt="Mi nombre es Emilia del Valle"
-                        class="w-36 h-52 object-cover shadow-md rounded group-hover:scale-105 transition-transform duration-300"
-                    >
-                </div>
-
-                <div class="p-5 flex-1 flex flex-col justify-between">
-
-                    <div>
-                        <span class="text-[10px] font-bold uppercase tracking-wider text-[#C05621]">
-                            Narrativa Latinoamericana
-                        </span>
-
-                        <h3 class="font-editorial font-bold text-lg text-stone-900 mt-1 leading-snug">
-                            Mi nombre es Emilia del Valle
-                        </h3>
-
-                        <p class="text-xs text-stone-500 mt-0.5">
-                            Isabel Allende
-                        </p>
-                    </div>
-
-                    <div class="mt-5 pt-3 border-t border-stone-100 flex items-center justify-between">
-                        <span class="text-base font-bold text-stone-900">$28.200</span>
-
-                        <a
-                            href="ficha-libro.html"
-                            class="px-3.5 py-1.5 bg-stone-100 hover:bg-[#C05621] hover:text-white text-stone-800 text-xs font-semibold rounded-lg transition-colors"
-                        >
-                            Ver detalle
-                        </a>
-                    </div>
-
-                </div>
-            </article>
-
-            <!-- Libro 4: Sin stock / Agotado -->
-            <article class="bg-white border border-stone-200 rounded-xl overflow-hidden hover:shadow-lg transition-all group flex flex-col opacity-90">
-
-                <div class="relative bg-stone-100 p-6 flex items-center justify-center min-h-[290px]">
-
-                    <!-- Indicador explícito Sin Stock -->
-                    <span class="absolute top-3 left-3 bg-stone-200 text-stone-700 border border-stone-300 text-[10px] font-bold px-2 py-0.5 rounded tracking-wide uppercase">
-                        SIN STOCK / AGOTADO
-                    </span>
-
-                    <button
-                        class="absolute top-3 right-3 text-stone-400 hover:text-red-500 transition-colors"
-                        title="Guardar"
-                    >
-                        <i data-lucide="heart" class="w-4 h-4"></i>
-                    </button>
-
-                    <img
-                        src="https://images.unsplash.com/photo-1541963463532-d68292c34b19?q=80&w=600&auto=format&fit=crop"
-                        alt="Ficciones"
-                        class="w-36 h-52 object-cover shadow-md rounded group-hover:scale-105 transition-transform duration-300 grayscale-[40%]"
-                    >
-                </div>
-
-                <div class="p-5 flex-1 flex flex-col justify-between">
-
-                    <div>
-                        <span class="text-[10px] font-bold uppercase tracking-wider text-stone-500">
-                            Clásicos Argentinos
-                        </span>
-
-                        <h3 class="font-editorial font-bold text-lg text-stone-900 mt-1 leading-snug">
-                            Ficciones
-                        </h3>
-
-                        <p class="text-xs text-stone-500 mt-0.5">
-                            Jorge Luis Borges
-                        </p>
-                    </div>
-
-                    <div class="mt-5 pt-3 border-t border-stone-100 flex items-center justify-between">
-                        <span class="text-base font-bold text-stone-500">$21.000</span>
-
-                        <a
-                            href="ficha-libro.html"
-                            class="px-3.5 py-1.5 bg-stone-100 hover:bg-stone-200 text-stone-700 text-xs font-semibold rounded-lg transition-colors"
-                        >
-                            Ver detalle
-                        </a>
-                    </div>
-
-                </div>
-            </article>
-
-            <!-- Libro 5: En stock -->
-            <article class="bg-white border border-stone-200 rounded-xl overflow-hidden hover:shadow-lg transition-all group flex flex-col">
-
-                <div class="relative bg-stone-100 p-6 flex items-center justify-center min-h-[290px]">
-
-                    <span class="absolute top-3 left-3 bg-emerald-100 text-emerald-800 border border-emerald-200 text-[10px] font-bold px-2 py-0.5 rounded tracking-wide flex items-center gap-1">
-                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
-                        DISPONIBLE EN STOCK
-                    </span>
-
-                    <button
-                        class="absolute top-3 right-3 text-stone-400 hover:text-red-500 transition-colors"
-                        title="Guardar"
-                    >
-                        <i data-lucide="heart" class="w-4 h-4"></i>
-                    </button>
-
-                    <img
-                        src="https://images.unsplash.com/photo-1497633762265-9d179a990aa6?q=80&w=600&auto=format&fit=crop"
-                        alt="El infinito en un junco"
-                        class="w-36 h-52 object-cover shadow-md rounded group-hover:scale-105 transition-transform duration-300"
-                    >
-                </div>
-
-                <div class="p-5 flex-1 flex flex-col justify-between">
-
-                    <div>
-                        <span class="text-[10px] font-bold uppercase tracking-wider text-[#C05621]">
-                            Ensayo &amp; Memoria
-                        </span>
-
-                        <h3 class="font-editorial font-bold text-lg text-stone-900 mt-1 leading-snug">
-                            El infinito en un junco
-                        </h3>
-
-                        <p class="text-xs text-stone-500 mt-0.5">
-                            Irene Vallejo
-                        </p>
-                    </div>
-
-                    <div class="mt-5 pt-3 border-t border-stone-100 flex items-center justify-between">
-                        <span class="text-base font-bold text-stone-900">$22.400</span>
-
-                        <a
-                            href="ficha-libro.html"
-                            class="px-3.5 py-1.5 bg-stone-100 hover:bg-[#C05621] hover:text-white text-stone-800 text-xs font-semibold rounded-lg transition-colors"
-                        >
-                            Ver detalle
-                        </a>
-                    </div>
-
-                </div>
-            </article>
-
-            <!-- Libro 6: En stock -->
-            <article class="bg-white border border-stone-200 rounded-xl overflow-hidden hover:shadow-lg transition-all group flex flex-col">
-
-                <div class="relative bg-stone-100 p-6 flex items-center justify-center min-h-[290px]">
-
-                    <span class="absolute top-3 left-3 bg-emerald-100 text-emerald-800 border border-emerald-200 text-[10px] font-bold px-2 py-0.5 rounded tracking-wide flex items-center gap-1">
-                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
-                        DISPONIBLE EN STOCK
-                    </span>
-
-                    <button
-                        class="absolute top-3 right-3 text-stone-400 hover:text-red-500 transition-colors"
-                        title="Guardar"
-                    >
-                        <i data-lucide="heart" class="w-4 h-4"></i>
-                    </button>
-
-                    <img
-                        src="https://images.unsplash.com/photo-1532012164546-f432f2e3edd4?q=80&w=600&auto=format&fit=crop"
-                        alt="Rayuela"
-                        class="w-36 h-52 object-cover shadow-md rounded group-hover:scale-105 transition-transform duration-300"
-                    >
-                </div>
-
-                <div class="p-5 flex-1 flex flex-col justify-between">
-
-                    <div>
-                        <span class="text-[10px] font-bold uppercase tracking-wider text-[#C05621]">
-                            Literatura de Vanguardia
-                        </span>
-
-                        <h3 class="font-editorial font-bold text-lg text-stone-900 mt-1 leading-snug">
-                            Rayuela
-                        </h3>
-
-                        <p class="text-xs text-stone-500 mt-0.5">
-                            Julio Cortázar
-                        </p>
-                    </div>
-
-                    <div class="mt-5 pt-3 border-t border-stone-100 flex items-center justify-between">
-                        <span class="text-base font-bold text-stone-900">$25.800</span>
-
-                        <a
-                            href="ficha-libro.html"
-                            class="px-3.5 py-1.5 bg-stone-100 hover:bg-[#C05621] hover:text-white text-stone-800 text-xs font-semibold rounded-lg transition-colors"
-                        >
-                            Ver detalle
-                        </a>
-                    </div>
-
-                </div>
-            </article>
-
-            <!-- Libro 7: En stock -->
-            <article class="bg-white border border-stone-200 rounded-xl overflow-hidden hover:shadow-lg transition-all group flex flex-col">
-
-                <div class="relative bg-stone-100 p-6 flex items-center justify-center min-h-[290px]">
-
-                    <span class="absolute top-3 left-3 bg-emerald-100 text-emerald-800 border border-emerald-200 text-[10px] font-bold px-2 py-0.5 rounded tracking-wide flex items-center gap-1">
-                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
-                        DISPONIBLE EN STOCK
-                    </span>
-
-                    <button
-                        class="absolute top-3 right-3 text-stone-400 hover:text-red-500 transition-colors"
-                        title="Guardar"
-                    >
-                        <i data-lucide="heart" class="w-4 h-4"></i>
-                    </button>
-
-                    <img
-                        src="https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?q=80&w=600&auto=format&fit=crop"
-                        alt="Nuestra parte de noche"
-                        class="w-36 h-52 object-cover shadow-md rounded group-hover:scale-105 transition-transform duration-300"
-                    >
-                </div>
-
-                <div class="p-5 flex-1 flex flex-col justify-between">
-
-                    <div>
-                        <span class="text-[10px] font-bold uppercase tracking-wider text-[#C05621]">
-                            Terror Gótico Latino
-                        </span>
-
-                        <h3 class="font-editorial font-bold text-lg text-stone-900 mt-1 leading-snug">
-                            Nuestra parte de noche
-                        </h3>
-
-                        <p class="text-xs text-stone-500 mt-0.5">
-                            Mariana Enríquez
-                        </p>
-                    </div>
-
-                    <div class="mt-5 pt-3 border-t border-stone-100 flex items-center justify-between">
-                        <span class="text-base font-bold text-stone-900">$27.500</span>
-
-                        <a
-                            href="ficha-libro.html"
-                            class="px-3.5 py-1.5 bg-stone-100 hover:bg-[#C05621] hover:text-white text-stone-800 text-xs font-semibold rounded-lg transition-colors"
-                        >
-                            Ver detalle
-                        </a>
-                    </div>
-
-                </div>
-            </article>
-
-            <!-- Libro 8: Sin stock / Agotado -->
-            <article class="bg-white border border-stone-200 rounded-xl overflow-hidden hover:shadow-lg transition-all group flex flex-col opacity-90">
-
-                <div class="relative bg-stone-100 p-6 flex items-center justify-center min-h-[290px]">
-
-                    <span class="absolute top-3 left-3 bg-stone-200 text-stone-700 border border-stone-300 text-[10px] font-bold px-2 py-0.5 rounded tracking-wide uppercase">
-                        SIN STOCK / AGOTADO
-                    </span>
-
-                    <button
-                        class="absolute top-3 right-3 text-stone-400 hover:text-red-500 transition-colors"
-                        title="Guardar"
-                    >
-                        <i data-lucide="heart" class="w-4 h-4"></i>
-                    </button>
-
-                    <img
-                        src="https://images.unsplash.com/photo-1589829085413-56de8ae18c73?q=80&w=600&auto=format&fit=crop"
-                        alt="Distancia de rescate"
-                        class="w-36 h-52 object-cover shadow-md rounded group-hover:scale-105 transition-transform duration-300 grayscale-[40%]"
-                    >
-                </div>
-
-                <div class="p-5 flex-1 flex flex-col justify-between">
-
-                    <div>
-                        <span class="text-[10px] font-bold uppercase tracking-wider text-stone-500">
-                            Ficción Contemporánea
-                        </span>
-
-                        <h3 class="font-editorial font-bold text-lg text-stone-900 mt-1 leading-snug">
-                            Distancia de rescate
-                        </h3>
-
-                        <p class="text-xs text-stone-500 mt-0.5">
-                            Samanta Schweblin
-                        </p>
-                    </div>
-
-                    <div class="mt-5 pt-3 border-t border-stone-100 flex items-center justify-between">
-                        <span class="text-base font-bold text-stone-500">$20.500</span>
-
-                        <a
-                            href="ficha-libro.html"
-                            class="px-3.5 py-1.5 bg-stone-100 hover:bg-stone-200 text-stone-700 text-xs font-semibold rounded-lg transition-colors"
-                        >
-                            Ver detalle
-                        </a>
-                    </div>
-
-                </div>
-            </article>
-
-        </div>
-
-        <!-- Botón "Ver más obras" (según wireframe original) -->
-        <div class="text-center my-10">
-            <button class="px-8 py-3 bg-stone-200/80 hover:bg-stone-300 text-stone-800 text-xs font-bold rounded-xl transition-colors inline-flex items-center gap-2">
-                Ver más obras
-                <i data-lucide="chevron-down" class="w-4 h-4"></i>
+      </div>
+
+      <!-- Barra de Filtros y Búsqueda -->
+      <div
+        class="bg-white border border-stone-200/90 rounded-2xl p-4 mb-8 shadow-sm space-y-4"
+      >
+        <div
+          class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-3 items-center"
+        >
+          <!-- Búsqueda específica -->
+          <div class="lg:col-span-4 relative">
+            <input
+              type="text"
+              placeholder="Buscar por obra, autor o editorial..."
+              class="w-full pl-9 pr-4 py-2 bg-stone-50 border border-stone-300 rounded-lg text-xs placeholder:text-stone-400 focus:outline-none focus:border-[#C05621] focus:bg-white transition-all"
+            />
+            <i
+              data-lucide="search"
+              class="w-4 h-4 text-stone-400 absolute left-3 top-2.5"
+            ></i>
+          </div>
+
+          <!-- Selector Géneros -->
+          <div class="lg:col-span-3">
+            <select
+              class="w-full px-3 py-2 bg-stone-50 border border-stone-300 rounded-lg text-xs text-stone-700 focus:outline-none focus:border-[#C05621] transition-all"
+            >
+              <option value="">Todos los géneros</option>
+              <option value="ficcion">Ficción &amp; Novela</option>
+              <option value="narrativa">Narrativa Latinoamericana</option>
+              <option value="filosofia">Filosofía &amp; Ensayo</option>
+              <option value="poesia">Poesía Universal</option>
+              <option value="arte">Arte &amp; Fotografía</option>
+            </select>
+          </div>
+
+          <!-- Rango de precio -->
+          <div class="lg:col-span-2">
+            <button
+              class="w-full px-3 py-2 bg-stone-50 border border-stone-300 rounded-lg text-xs text-stone-700 hover:bg-stone-100 flex items-center justify-between transition-colors"
+            >
+              <span>Rango de precio</span>
+              <i
+                data-lucide="sliders-horizontal"
+                class="w-3.5 h-3.5 text-stone-400"
+              ></i>
             </button>
+          </div>
+
+          <!-- Interruptor de Stock Inmediato -->
+          <div class="lg:col-span-3 flex items-center justify-end gap-3">
+            <label
+              class="flex items-center gap-2 cursor-pointer text-xs font-semibold text-emerald-800 bg-emerald-50 border border-emerald-200 px-3 py-1.5 rounded-lg"
+            >
+              <input
+                type="checkbox"
+                checked
+                class="w-3.5 h-3.5 text-emerald-600 rounded focus:ring-0"
+              />
+
+              <span class="flex items-center gap-1.5">
+                <span
+                  class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"
+                ></span>
+                En stock inmediato
+              </span>
+            </label>
+
+            <select
+              class="px-3 py-2 bg-stone-50 border border-stone-300 rounded-lg text-xs text-stone-700 focus:outline-none focus:border-[#C05621]"
+            >
+              <option>Recomendados</option>
+              <option>Menor precio</option>
+              <option>Mayor precio</option>
+              <option>Novedades</option>
+            </select>
+          </div>
         </div>
 
-        <!-- Paginación -->
-        <div class="flex items-center justify-center gap-1.5 text-xs font-medium pb-8">
+        <!-- Filtros rápidos por etiqueta -->
+        <div
+          class="pt-3 border-t border-stone-100 flex flex-wrap items-center gap-2 text-xs"
+        >
+          <span
+            class="text-stone-400 font-semibold text-[11px] uppercase tracking-wider mr-1"
+          >
+            Filtro rápido:
+          </span>
+
+          <button
+            class="px-3 py-1 bg-stone-900 text-white rounded-full font-medium"
+          >
+            Todos
+          </button>
+
+          <button
+            class="px-3 py-1 bg-stone-100 hover:bg-stone-200 text-stone-700 rounded-full transition-colors"
+          >
+            Tapa Dura
+          </button>
+
+          <button
+            class="px-3 py-1 bg-stone-100 hover:bg-stone-200 text-stone-700 rounded-full transition-colors"
+          >
+            Ediciones Anotadas
+          </button>
+
+          <button
+            class="px-3 py-1 bg-stone-100 hover:bg-stone-200 text-stone-700 rounded-full transition-colors"
+          >
+            Premio Alfaguara
+          </button>
+
+          <button
+            class="px-3 py-1 bg-stone-100 hover:bg-stone-200 text-stone-700 rounded-full transition-colors"
+          >
+            Traducción Ilustrada
+          </button>
+
+          <button
+            class="px-3 py-1 bg-stone-100 hover:bg-stone-200 text-stone-700 rounded-full transition-colors"
+          >
+            Novedad 2025
+          </button>
+        </div>
+      </div>
+
+      <!-- Grilla del Catálogo (Tarjetas de Libro con Disponibilidad y Botón 'Ver detalle') -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <!-- Libro 1: En stock -->
+        <article
+          class="bg-white border border-stone-200 rounded-xl overflow-hidden hover:shadow-lg transition-all group flex flex-col"
+        >
+          <div
+            class="relative bg-stone-100 p-6 flex items-center justify-center min-h-[290px]"
+          >
+            <!-- Indicador explícito de Stock -->
+            <span
+              class="absolute top-3 left-3 bg-emerald-100 text-emerald-800 border border-emerald-200 text-[10px] font-bold px-2 py-0.5 rounded tracking-wide flex items-center gap-1"
+            >
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+              DISPONIBLE EN STOCK
+            </span>
 
             <button
-                class="w-8 h-8 rounded-lg border border-stone-300 flex items-center justify-center text-stone-500 hover:bg-stone-100 transition-colors"
-                disabled
+              class="absolute top-3 right-3 text-stone-400 hover:text-red-500 transition-colors"
+              title="Guardar"
             >
-                <i data-lucide="chevron-left" class="w-4 h-4"></i>
+              <i data-lucide="heart" class="w-4 h-4"></i>
             </button>
 
-            <button class="w-8 h-8 rounded-lg bg-[#C05621] text-white font-bold flex items-center justify-center">
-                1
+            <img
+              src="https://images.unsplash.com/photo-1544947950-fa07a98d237f?q=80&w=600&auto=format&fit=crop"
+              alt="En agosto nos vemos"
+              class="w-36 h-52 object-cover shadow-md rounded group-hover:scale-105 transition-transform duration-300"
+            />
+          </div>
+
+          <div class="p-5 flex-1 flex flex-col justify-between">
+            <div>
+              <span
+                class="text-[10px] font-bold uppercase tracking-wider text-[#C05621]"
+              >
+                Ficción Literaria
+              </span>
+
+              <h3
+                class="font-editorial font-bold text-lg text-stone-900 mt-1 leading-snug"
+              >
+                En agosto nos vemos
+              </h3>
+
+              <p class="text-xs text-stone-500 mt-0.5">
+                Gabriel García Márquez
+              </p>
+            </div>
+
+            <div
+              class="mt-5 pt-3 border-t border-stone-100 flex items-center justify-between"
+            >
+              <span class="text-base font-bold text-stone-900">$23.500</span>
+
+              <a
+                href="ficha-libro.html"
+                class="px-3.5 py-1.5 bg-stone-100 hover:bg-[#C05621] hover:text-white text-stone-800 text-xs font-semibold rounded-lg transition-colors"
+              >
+                Ver detalle
+              </a>
+            </div>
+          </div>
+        </article>
+
+        <!-- Libro 2: En stock -->
+        <article
+          class="bg-white border border-stone-200 rounded-xl overflow-hidden hover:shadow-lg transition-all group flex flex-col"
+        >
+          <div
+            class="relative bg-stone-100 p-6 flex items-center justify-center min-h-[290px]"
+          >
+            <span
+              class="absolute top-3 left-3 bg-emerald-100 text-emerald-800 border border-emerald-200 text-[10px] font-bold px-2 py-0.5 rounded tracking-wide flex items-center gap-1"
+            >
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+              DISPONIBLE EN STOCK
+            </span>
+
+            <button
+              class="absolute top-3 right-3 text-stone-400 hover:text-red-500 transition-colors"
+              title="Guardar"
+            >
+              <i data-lucide="heart" class="w-4 h-4"></i>
             </button>
 
-            <button class="w-8 h-8 rounded-lg border border-stone-300 text-stone-700 hover:bg-stone-100 flex items-center justify-center transition-colors">
-                2
+            <img
+              src="https://images.unsplash.com/photo-1512820790803-83ca734da794?q=80&w=600&auto=format&fit=crop"
+              alt="La vegetariana"
+              class="w-36 h-52 object-cover shadow-md rounded group-hover:scale-105 transition-transform duration-300"
+            />
+          </div>
+
+          <div class="p-5 flex-1 flex flex-col justify-between">
+            <div>
+              <span
+                class="text-[10px] font-bold uppercase tracking-wider text-[#C05621]"
+              >
+                Literatura Contemporánea
+              </span>
+
+              <h3
+                class="font-editorial font-bold text-lg text-stone-900 mt-1 leading-snug"
+              >
+                La vegetariana
+              </h3>
+
+              <p class="text-xs text-stone-500 mt-0.5">Han Kang</p>
+            </div>
+
+            <div
+              class="mt-5 pt-3 border-t border-stone-100 flex items-center justify-between"
+            >
+              <span class="text-base font-bold text-stone-900">$24.900</span>
+
+              <a
+                href="ficha-libro.html"
+                class="px-3.5 py-1.5 bg-stone-100 hover:bg-[#C05621] hover:text-white text-stone-800 text-xs font-semibold rounded-lg transition-colors"
+              >
+                Ver detalle
+              </a>
+            </div>
+          </div>
+        </article>
+
+        <!-- Libro 3: En stock -->
+        <article
+          class="bg-white border border-stone-200 rounded-xl overflow-hidden hover:shadow-lg transition-all group flex flex-col"
+        >
+          <div
+            class="relative bg-stone-100 p-6 flex items-center justify-center min-h-[290px]"
+          >
+            <span
+              class="absolute top-3 left-3 bg-emerald-100 text-emerald-800 border border-emerald-200 text-[10px] font-bold px-2 py-0.5 rounded tracking-wide flex items-center gap-1"
+            >
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+              DISPONIBLE EN STOCK
+            </span>
+
+            <button
+              class="absolute top-3 right-3 text-stone-400 hover:text-red-500 transition-colors"
+              title="Guardar"
+            >
+              <i data-lucide="heart" class="w-4 h-4"></i>
             </button>
 
-            <button class="w-8 h-8 rounded-lg border border-stone-300 text-stone-700 hover:bg-stone-100 flex items-center justify-center transition-colors">
-                3
+            <img
+              src="https://images.unsplash.com/photo-1543002588-bfa74002ed7e?q=80&w=600&auto=format&fit=crop"
+              alt="Mi nombre es Emilia del Valle"
+              class="w-36 h-52 object-cover shadow-md rounded group-hover:scale-105 transition-transform duration-300"
+            />
+          </div>
+
+          <div class="p-5 flex-1 flex flex-col justify-between">
+            <div>
+              <span
+                class="text-[10px] font-bold uppercase tracking-wider text-[#C05621]"
+              >
+                Narrativa Latinoamericana
+              </span>
+
+              <h3
+                class="font-editorial font-bold text-lg text-stone-900 mt-1 leading-snug"
+              >
+                Mi nombre es Emilia del Valle
+              </h3>
+
+              <p class="text-xs text-stone-500 mt-0.5">Isabel Allende</p>
+            </div>
+
+            <div
+              class="mt-5 pt-3 border-t border-stone-100 flex items-center justify-between"
+            >
+              <span class="text-base font-bold text-stone-900">$28.200</span>
+
+              <a
+                href="ficha-libro.html"
+                class="px-3.5 py-1.5 bg-stone-100 hover:bg-[#C05621] hover:text-white text-stone-800 text-xs font-semibold rounded-lg transition-colors"
+              >
+                Ver detalle
+              </a>
+            </div>
+          </div>
+        </article>
+
+        <!-- Libro 4: Sin stock / Agotado -->
+        <article
+          class="bg-white border border-stone-200 rounded-xl overflow-hidden hover:shadow-lg transition-all group flex flex-col opacity-90"
+        >
+          <div
+            class="relative bg-stone-100 p-6 flex items-center justify-center min-h-[290px]"
+          >
+            <!-- Indicador explícito Sin Stock -->
+            <span
+              class="absolute top-3 left-3 bg-stone-200 text-stone-700 border border-stone-300 text-[10px] font-bold px-2 py-0.5 rounded tracking-wide uppercase"
+            >
+              SIN STOCK / AGOTADO
+            </span>
+
+            <button
+              class="absolute top-3 right-3 text-stone-400 hover:text-red-500 transition-colors"
+              title="Guardar"
+            >
+              <i data-lucide="heart" class="w-4 h-4"></i>
             </button>
 
-            <span class="px-2 text-stone-400">...</span>
+            <img
+              src="https://images.unsplash.com/photo-1541963463532-d68292c34b19?q=80&w=600&auto=format&fit=crop"
+              alt="Ficciones"
+              class="w-36 h-52 object-cover shadow-md rounded group-hover:scale-105 transition-transform duration-300 grayscale-[40%]"
+            />
+          </div>
 
-            <button class="w-8 h-8 rounded-lg border border-stone-300 text-stone-700 hover:bg-stone-100 flex items-center justify-center transition-colors">
-                12
+          <div class="p-5 flex-1 flex flex-col justify-between">
+            <div>
+              <span
+                class="text-[10px] font-bold uppercase tracking-wider text-stone-500"
+              >
+                Clásicos Argentinos
+              </span>
+
+              <h3
+                class="font-editorial font-bold text-lg text-stone-900 mt-1 leading-snug"
+              >
+                Ficciones
+              </h3>
+
+              <p class="text-xs text-stone-500 mt-0.5">Jorge Luis Borges</p>
+            </div>
+
+            <div
+              class="mt-5 pt-3 border-t border-stone-100 flex items-center justify-between"
+            >
+              <span class="text-base font-bold text-stone-500">$21.000</span>
+
+              <a
+                href="ficha-libro.html"
+                class="px-3.5 py-1.5 bg-stone-100 hover:bg-stone-200 text-stone-700 text-xs font-semibold rounded-lg transition-colors"
+              >
+                Ver detalle
+              </a>
+            </div>
+          </div>
+        </article>
+
+        <!-- Libro 5: En stock -->
+        <article
+          class="bg-white border border-stone-200 rounded-xl overflow-hidden hover:shadow-lg transition-all group flex flex-col"
+        >
+          <div
+            class="relative bg-stone-100 p-6 flex items-center justify-center min-h-[290px]"
+          >
+            <span
+              class="absolute top-3 left-3 bg-emerald-100 text-emerald-800 border border-emerald-200 text-[10px] font-bold px-2 py-0.5 rounded tracking-wide flex items-center gap-1"
+            >
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+              DISPONIBLE EN STOCK
+            </span>
+
+            <button
+              class="absolute top-3 right-3 text-stone-400 hover:text-red-500 transition-colors"
+              title="Guardar"
+            >
+              <i data-lucide="heart" class="w-4 h-4"></i>
             </button>
 
-            <button class="w-8 h-8 rounded-lg border border-stone-300 flex items-center justify-center text-stone-700 hover:bg-stone-100 transition-colors">
-                <i data-lucide="chevron-right" class="w-4 h-4"></i>
+            <img
+              src="https://images.unsplash.com/photo-1497633762265-9d179a990aa6?q=80&w=600&auto=format&fit=crop"
+              alt="El infinito en un junco"
+              class="w-36 h-52 object-cover shadow-md rounded group-hover:scale-105 transition-transform duration-300"
+            />
+          </div>
+
+          <div class="p-5 flex-1 flex flex-col justify-between">
+            <div>
+              <span
+                class="text-[10px] font-bold uppercase tracking-wider text-[#C05621]"
+              >
+                Ensayo &amp; Memoria
+              </span>
+
+              <h3
+                class="font-editorial font-bold text-lg text-stone-900 mt-1 leading-snug"
+              >
+                El infinito en un junco
+              </h3>
+
+              <p class="text-xs text-stone-500 mt-0.5">Irene Vallejo</p>
+            </div>
+
+            <div
+              class="mt-5 pt-3 border-t border-stone-100 flex items-center justify-between"
+            >
+              <span class="text-base font-bold text-stone-900">$22.400</span>
+
+              <a
+                href="ficha-libro.html"
+                class="px-3.5 py-1.5 bg-stone-100 hover:bg-[#C05621] hover:text-white text-stone-800 text-xs font-semibold rounded-lg transition-colors"
+              >
+                Ver detalle
+              </a>
+            </div>
+          </div>
+        </article>
+
+        <!-- Libro 6: En stock -->
+        <article
+          class="bg-white border border-stone-200 rounded-xl overflow-hidden hover:shadow-lg transition-all group flex flex-col"
+        >
+          <div
+            class="relative bg-stone-100 p-6 flex items-center justify-center min-h-[290px]"
+          >
+            <span
+              class="absolute top-3 left-3 bg-emerald-100 text-emerald-800 border border-emerald-200 text-[10px] font-bold px-2 py-0.5 rounded tracking-wide flex items-center gap-1"
+            >
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+              DISPONIBLE EN STOCK
+            </span>
+
+            <button
+              class="absolute top-3 right-3 text-stone-400 hover:text-red-500 transition-colors"
+              title="Guardar"
+            >
+              <i data-lucide="heart" class="w-4 h-4"></i>
             </button>
 
+            <img
+              src="https://images.unsplash.com/photo-1532012164546-f432f2e3edd4?q=80&w=600&auto=format&fit=crop"
+              alt="Rayuela"
+              class="w-36 h-52 object-cover shadow-md rounded group-hover:scale-105 transition-transform duration-300"
+            />
+          </div>
+
+          <div class="p-5 flex-1 flex flex-col justify-between">
+            <div>
+              <span
+                class="text-[10px] font-bold uppercase tracking-wider text-[#C05621]"
+              >
+                Literatura de Vanguardia
+              </span>
+
+              <h3
+                class="font-editorial font-bold text-lg text-stone-900 mt-1 leading-snug"
+              >
+                Rayuela
+              </h3>
+
+              <p class="text-xs text-stone-500 mt-0.5">Julio Cortázar</p>
+            </div>
+
+            <div
+              class="mt-5 pt-3 border-t border-stone-100 flex items-center justify-between"
+            >
+              <span class="text-base font-bold text-stone-900">$25.800</span>
+
+              <a
+                href="ficha-libro.html"
+                class="px-3.5 py-1.5 bg-stone-100 hover:bg-[#C05621] hover:text-white text-stone-800 text-xs font-semibold rounded-lg transition-colors"
+              >
+                Ver detalle
+              </a>
+            </div>
+          </div>
+        </article>
+
+        <!-- Libro 7: En stock -->
+        <article
+          class="bg-white border border-stone-200 rounded-xl overflow-hidden hover:shadow-lg transition-all group flex flex-col"
+        >
+          <div
+            class="relative bg-stone-100 p-6 flex items-center justify-center min-h-[290px]"
+          >
+            <span
+              class="absolute top-3 left-3 bg-emerald-100 text-emerald-800 border border-emerald-200 text-[10px] font-bold px-2 py-0.5 rounded tracking-wide flex items-center gap-1"
+            >
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+              DISPONIBLE EN STOCK
+            </span>
+
+            <button
+              class="absolute top-3 right-3 text-stone-400 hover:text-red-500 transition-colors"
+              title="Guardar"
+            >
+              <i data-lucide="heart" class="w-4 h-4"></i>
+            </button>
+
+            <img
+              src="https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?q=80&w=600&auto=format&fit=crop"
+              alt="Nuestra parte de noche"
+              class="w-36 h-52 object-cover shadow-md rounded group-hover:scale-105 transition-transform duration-300"
+            />
+          </div>
+
+          <div class="p-5 flex-1 flex flex-col justify-between">
+            <div>
+              <span
+                class="text-[10px] font-bold uppercase tracking-wider text-[#C05621]"
+              >
+                Terror Gótico Latino
+              </span>
+
+              <h3
+                class="font-editorial font-bold text-lg text-stone-900 mt-1 leading-snug"
+              >
+                Nuestra parte de noche
+              </h3>
+
+              <p class="text-xs text-stone-500 mt-0.5">Mariana Enríquez</p>
+            </div>
+
+            <div
+              class="mt-5 pt-3 border-t border-stone-100 flex items-center justify-between"
+            >
+              <span class="text-base font-bold text-stone-900">$27.500</span>
+
+              <a
+                href="ficha-libro.html"
+                class="px-3.5 py-1.5 bg-stone-100 hover:bg-[#C05621] hover:text-white text-stone-800 text-xs font-semibold rounded-lg transition-colors"
+              >
+                Ver detalle
+              </a>
+            </div>
+          </div>
+        </article>
+
+        <!-- Libro 8: Sin stock / Agotado -->
+        <article
+          class="bg-white border border-stone-200 rounded-xl overflow-hidden hover:shadow-lg transition-all group flex flex-col opacity-90"
+        >
+          <div
+            class="relative bg-stone-100 p-6 flex items-center justify-center min-h-[290px]"
+          >
+            <span
+              class="absolute top-3 left-3 bg-stone-200 text-stone-700 border border-stone-300 text-[10px] font-bold px-2 py-0.5 rounded tracking-wide uppercase"
+            >
+              SIN STOCK / AGOTADO
+            </span>
+
+            <button
+              class="absolute top-3 right-3 text-stone-400 hover:text-red-500 transition-colors"
+              title="Guardar"
+            >
+              <i data-lucide="heart" class="w-4 h-4"></i>
+            </button>
+
+            <img
+              src="https://images.unsplash.com/photo-1589829085413-56de8ae18c73?q=80&w=600&auto=format&fit=crop"
+              alt="Distancia de rescate"
+              class="w-36 h-52 object-cover shadow-md rounded group-hover:scale-105 transition-transform duration-300 grayscale-[40%]"
+            />
+          </div>
+
+          <div class="p-5 flex-1 flex flex-col justify-between">
+            <div>
+              <span
+                class="text-[10px] font-bold uppercase tracking-wider text-stone-500"
+              >
+                Ficción Contemporánea
+              </span>
+
+              <h3
+                class="font-editorial font-bold text-lg text-stone-900 mt-1 leading-snug"
+              >
+                Distancia de rescate
+              </h3>
+
+              <p class="text-xs text-stone-500 mt-0.5">Samanta Schweblin</p>
+            </div>
+
+            <div
+              class="mt-5 pt-3 border-t border-stone-100 flex items-center justify-between"
+            >
+              <span class="text-base font-bold text-stone-500">$20.500</span>
+
+              <a
+                href="ficha-libro.html"
+                class="px-3.5 py-1.5 bg-stone-100 hover:bg-stone-200 text-stone-700 text-xs font-semibold rounded-lg transition-colors"
+              >
+                Ver detalle
+              </a>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <!-- Botón "Ver más obras" (según wireframe original) -->
+      <div class="text-center my-10">
+        <button
+          class="px-8 py-3 bg-stone-200/80 hover:bg-stone-300 text-stone-800 text-xs font-bold rounded-xl transition-colors inline-flex items-center gap-2"
+        >
+          Ver más obras
+          <i data-lucide="chevron-down" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <!-- Paginación -->
+      <div
+        class="flex items-center justify-center gap-1.5 text-xs font-medium pb-8"
+      >
+        <button
+          class="w-8 h-8 rounded-lg border border-stone-300 flex items-center justify-center text-stone-500 hover:bg-stone-100 transition-colors"
+          disabled
+        >
+          <i data-lucide="chevron-left" class="w-4 h-4"></i>
+        </button>
+
+        <button
+          class="w-8 h-8 rounded-lg bg-[#C05621] text-white font-bold flex items-center justify-center"
+        >
+          1
+        </button>
+
+        <button
+          class="w-8 h-8 rounded-lg border border-stone-300 text-stone-700 hover:bg-stone-100 flex items-center justify-center transition-colors"
+        >
+          2
+        </button>
+
+        <button
+          class="w-8 h-8 rounded-lg border border-stone-300 text-stone-700 hover:bg-stone-100 flex items-center justify-center transition-colors"
+        >
+          3
+        </button>
+
+        <span class="px-2 text-stone-400">...</span>
+
+        <button
+          class="w-8 h-8 rounded-lg border border-stone-300 text-stone-700 hover:bg-stone-100 flex items-center justify-center transition-colors"
+        >
+          12
+        </button>
+
+        <button
+          class="w-8 h-8 rounded-lg border border-stone-300 flex items-center justify-center text-stone-700 hover:bg-stone-100 transition-colors"
+        >
+          <i data-lucide="chevron-right" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <!-- Compromiso de la librería en el catálogo -->
+      <div
+        class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-8 border-t border-stone-200"
+      >
+        <div
+          class="bg-white border border-stone-200/80 rounded-xl p-4 flex items-center gap-3"
+        >
+          <div class="p-2.5 rounded-lg bg-amber-100 text-[#C05621]">
+            <i data-lucide="book-marked" class="w-5 h-5"></i>
+          </div>
+
+          <div>
+            <h4 class="text-xs font-bold text-stone-900">
+              Curaduría Exclusiva
+            </h4>
+            <p class="text-[11px] text-stone-500">
+              Cada libro seleccionado meticulosamente por libreros de oficio.
+            </p>
+          </div>
         </div>
 
-        <!-- Compromiso de la librería en el catálogo -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-8 border-t border-stone-200">
+        <div
+          class="bg-white border border-stone-200/80 rounded-xl p-4 flex items-center gap-3"
+        >
+          <div class="p-2.5 rounded-lg bg-emerald-100 text-emerald-800">
+            <i data-lucide="package" class="w-5 h-5"></i>
+          </div>
 
-            <div class="bg-white border border-stone-200/80 rounded-xl p-4 flex items-center gap-3">
-                <div class="p-2.5 rounded-lg bg-amber-100 text-[#C05621]">
-                    <i data-lucide="book-marked" class="w-5 h-5"></i>
-                </div>
-
-                <div>
-                    <h4 class="text-xs font-bold text-stone-900">Curaduría Exclusiva</h4>
-                    <p class="text-[11px] text-stone-500">
-                        Cada libro seleccionado meticulosamente por libreros de oficio.
-                    </p>
-                </div>
-            </div>
-
-            <div class="bg-white border border-stone-200/80 rounded-xl p-4 flex items-center gap-3">
-                <div class="p-2.5 rounded-lg bg-emerald-100 text-emerald-800">
-                    <i data-lucide="package" class="w-5 h-5"></i>
-                </div>
-
-                <div>
-                    <h4 class="text-xs font-bold text-stone-900">Embalaje Protector</h4>
-                    <p class="text-[11px] text-stone-500">
-                        Envoltorio ecológico libre de plásticos que resguarda cantos y lomos.
-                    </p>
-                </div>
-            </div>
-
-            <div class="bg-white border border-stone-200/80 rounded-xl p-4 flex items-center gap-3">
-                <div class="p-2.5 rounded-lg bg-blue-100 text-blue-800">
-                    <i data-lucide="bookmark" class="w-5 h-5"></i>
-                </div>
-
-                <div>
-                    <h4 class="text-xs font-bold text-stone-900">Marcapáginas de Regalo</h4>
-                    <p class="text-[11px] text-stone-500">
-                        Incluimos un separador editorial de colección en cada envío.
-                    </p>
-                </div>
-            </div>
-
+          <div>
+            <h4 class="text-xs font-bold text-stone-900">Embalaje Protector</h4>
+            <p class="text-[11px] text-stone-500">
+              Envoltorio ecológico libre de plásticos que resguarda cantos y
+              lomos.
+            </p>
+          </div>
         </div>
+
+        <div
+          class="bg-white border border-stone-200/80 rounded-xl p-4 flex items-center gap-3"
+        >
+          <div class="p-2.5 rounded-lg bg-blue-100 text-blue-800">
+            <i data-lucide="bookmark" class="w-5 h-5"></i>
+          </div>
+
+          <div>
+            <h4 class="text-xs font-bold text-stone-900">
+              Marcapáginas de Regalo
+            </h4>
+            <p class="text-[11px] text-stone-500">
+              Incluimos un separador editorial de colección en cada envío.
+            </p>
+          </div>
+        </div>
+      </div>
     </main>
 
     <!-- Newsletter: El Correo del Lector -->
     <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+      <div
+        class="bg-stone-100 border border-stone-200/90 rounded-2xl p-8 text-center sm:text-left flex flex-col sm:flex-row items-center justify-between gap-6"
+      >
+        <div>
+          <h4 class="font-editorial text-2xl font-bold text-stone-900">
+            El Correo del Lector
+          </h4>
 
-        <div class="bg-stone-100 border border-stone-200/90 rounded-2xl p-8 text-center sm:text-left flex flex-col sm:flex-row items-center justify-between gap-6">
-
-            <div>
-                <h4 class="font-editorial text-2xl font-bold text-stone-900">
-                    El Correo del Lector
-                </h4>
-
-                <p class="text-xs text-stone-500 mt-1">
-                    Suscribite para recibir recomendaciones exclusivas, notas críticas y novedades literarias cada semana.
-                </p>
-            </div>
-
-            <form
-                class="flex w-full sm:w-auto max-w-md gap-2"
-                onsubmit="event.preventDefault(); alert('¡Gracias por suscribirte al Correo del Lector!');"
-            >
-                <input
-                    type="email"
-                    placeholder="Ingresá tu correo electrónico"
-                    required
-                    class="px-4 py-2.5 rounded-lg border border-stone-300 bg-white text-xs focus:outline-none focus:border-[#C05621] flex-1 min-w-[220px]"
-                >
-
-                <button
-                    type="submit"
-                    class="px-5 py-2.5 bg-[#C05621] hover:bg-[#a34415] text-white text-xs font-bold rounded-lg transition-colors shrink-0"
-                >
-                    Suscribirme
-                </button>
-            </form>
-
+          <p class="text-xs text-stone-500 mt-1">
+            Suscribite para recibir recomendaciones exclusivas, notas críticas y
+            novedades literarias cada semana.
+          </p>
         </div>
+
+        <form
+          class="flex w-full sm:w-auto max-w-md gap-2"
+          onsubmit="
+            event.preventDefault();
+            alert('¡Gracias por suscribirte al Correo del Lector!');
+          "
+        >
+          <input
+            type="email"
+            placeholder="Ingresá tu correo electrónico"
+            required
+            class="px-4 py-2.5 rounded-lg border border-stone-300 bg-white text-xs focus:outline-none focus:border-[#C05621] flex-1 min-w-[220px]"
+          />
+
+          <button
+            type="submit"
+            class="px-5 py-2.5 bg-[#C05621] hover:bg-[#a34415] text-white text-xs font-bold rounded-lg transition-colors shrink-0"
+          >
+            Suscribirme
+          </button>
+        </form>
+      </div>
     </section>
 
     <!-- Footer Editorial -->
-    <footer class="bg-stone-100 border-t border-stone-200 text-stone-600 text-xs mt-auto">
-
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 grid grid-cols-1 md:grid-cols-4 gap-8">
-
-            <!-- Identidad y bio -->
-            <div class="space-y-3">
-
-                <div class="flex items-center gap-2">
-                    <div class="w-7 h-7 rounded bg-[#1C1917] text-white flex items-center justify-center">
-                        <i data-lucide="book-open" class="w-4 h-4 text-[#FAF8F5]"></i>
-                    </div>
-
-                    <span class="font-editorial font-bold text-base text-stone-900">
-                        Libros Libros
-                    </span>
-                </div>
-
-                <p class="text-stone-500 leading-relaxed text-[11px]">
-                    Una librería independiente y espacio de encuentro pensado para amantes de la palabra escrita, las primeras ediciones y la lectura pausada.
-                </p>
-
-                <span class="inline-flex items-center gap-1.5 text-stone-500 text-[10px]">
-                    <i data-lucide="library" class="w-3.5 h-3.5 text-[#C05621]"></i>
-                    Curaduría Editorial
-                </span>
-
+    <footer
+      class="bg-stone-100 border-t border-stone-200 text-stone-600 text-xs mt-auto"
+    >
+      <div
+        class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 grid grid-cols-1 md:grid-cols-4 gap-8"
+      >
+        <!-- Identidad y bio -->
+        <div class="space-y-3">
+          <div class="flex items-center gap-2">
+            <div
+              class="w-7 h-7 rounded bg-[#1C1917] text-white flex items-center justify-center"
+            >
+              <i data-lucide="book-open" class="w-4 h-4 text-[#FAF8F5]"></i>
             </div>
 
-            <!-- Navegación -->
-            <div>
+            <span class="font-editorial font-bold text-base text-stone-900">
+              Libros Libros
+            </span>
+          </div>
 
-                <h5 class="font-bold text-stone-900 text-xs uppercase tracking-wider mb-3">
-                    Navegación
-                </h5>
+          <p class="text-stone-500 leading-relaxed text-[11px]">
+            Una librería independiente y espacio de encuentro pensado para
+            amantes de la palabra escrita, las primeras ediciones y la lectura
+            pausada.
+          </p>
 
-                <ul class="space-y-2 text-[11px]">
-                    <li>
-                        <a href="inicio.html" class="hover:text-[#C05621] transition-colors">
-                            Inicio
-                        </a>
-                    </li>
-
-                    <li>
-                        <a href="catalogo.html" class="text-[#C05621] font-semibold">
-                            Catálogo Completo
-                        </a>
-                    </li>
-
-                    <li>
-                        <a href="categorias.html" class="hover:text-[#C05621] transition-colors">
-                            Colecciones &amp; Géneros
-                        </a>
-                    </li>
-
-                    <li>
-                        <a href="sobre-nosotros.html" class="hover:text-[#C05621] transition-colors">
-                            Sobre Nosotros
-                        </a>
-                    </li>
-                </ul>
-
-            </div>
-
-            <!-- Atención al Lector -->
-            <div>
-
-                <h5 class="font-bold text-stone-900 text-xs uppercase tracking-wider mb-3">
-                    Atención al Lector
-                </h5>
-
-                <ul class="space-y-2 text-[11px]">
-
-                    <li>
-                        <a href="contacto.html" class="hover:text-[#C05621] transition-colors">
-                            Contacto &amp; Consultas
-                        </a>
-                    </li>
-
-                    <li>
-                        <a href="#" class="hover:text-[#C05621] transition-colors">
-                            Términos y Condiciones
-                        </a>
-                    </li>
-
-                    <li>
-                        <a href="#" class="hover:text-[#C05621] transition-colors">
-                            Políticas de Envíos
-                        </a>
-                    </li>
-
-                    <li>
-                        <a href="#" class="hover:text-[#C05621] transition-colors">
-                            Preguntas Frecuentes
-                        </a>
-                    </li>
-
-                </ul>
-
-            </div>
-
-            <!-- Ubicación física -->
-            <div>
-
-                <h5 class="font-bold text-stone-900 text-xs uppercase tracking-wider mb-3">
-                    Nuestra Librería
-                </h5>
-
-                <ul class="space-y-2 text-[11px] text-stone-500">
-
-                    <li class="flex items-start gap-2">
-                        <i data-lucide="map-pin" class="w-3.5 h-3.5 text-[#C05621] shrink-0 mt-0.5"></i>
-                        <span>
-                            Av. de las Letras 1420, Barrio Antiguo, Ciudad
-                        </span>
-                    </li>
-
-                    <li class="flex items-center gap-2">
-                        <i data-lucide="phone" class="w-3.5 h-3.5 text-[#C05621] shrink-0"></i>
-                        <span>
-                            +54 11 4821-9000
-                        </span>
-                    </li>
-
-                    <li class="flex items-center gap-2">
-                        <i data-lucide="clock" class="w-3.5 h-3.5 text-[#C05621] shrink-0"></i>
-                        <span>
-                            Lunes a Sábado: 10:00 — 20:30<br>
-                            Domingos: 14:00 — 19:30
-                        </span>
-                    </li>
-
-                </ul>
-            </div>
-
+          <span
+            class="inline-flex items-center gap-1.5 text-stone-500 text-[10px]"
+          >
+            <i data-lucide="library" class="w-3.5 h-3.5 text-[#C05621]"></i>
+            Curaduría Editorial
+          </span>
         </div>
 
-        <div class="border-t border-stone-200/80 py-4 px-4 text-center text-[10px] text-stone-400 max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-2">
+        <!-- Navegación -->
+        <div>
+          <h5
+            class="font-bold text-stone-900 text-xs uppercase tracking-wider mb-3"
+          >
+            Navegación
+          </h5>
 
-            <p>
-                © 2025 Libros Libros. Hecho con pasión por los libros.
-            </p>
+          <ul class="space-y-2 text-[11px]">
+            <li>
+              <a
+                href="inicio.html"
+                class="hover:text-[#C05621] transition-colors"
+              >
+                Inicio
+              </a>
+            </li>
 
-            <p class="tracking-widest uppercase text-stone-400 font-medium">
-                Ediciones Clásicas &amp; Contemporáneas
-            </p>
+            <li>
+              <a href="catalogo.html" class="text-[#C05621] font-semibold">
+                Catálogo Completo
+              </a>
+            </li>
 
+            <li>
+              <a
+                href="categorias.html"
+                class="hover:text-[#C05621] transition-colors"
+              >
+                Colecciones &amp; Géneros
+              </a>
+            </li>
+
+            <li>
+              <a
+                href="sobre-nosotros.html"
+                class="hover:text-[#C05621] transition-colors"
+              >
+                Sobre Nosotros
+              </a>
+            </li>
+          </ul>
         </div>
+
+        <!-- Atención al Lector -->
+        <div>
+          <h5
+            class="font-bold text-stone-900 text-xs uppercase tracking-wider mb-3"
+          >
+            Atención al Lector
+          </h5>
+
+          <ul class="space-y-2 text-[11px]">
+            <li>
+              <a
+                href="contacto.html"
+                class="hover:text-[#C05621] transition-colors"
+              >
+                Contacto &amp; Consultas
+              </a>
+            </li>
+
+            <li>
+              <a href="#" class="hover:text-[#C05621] transition-colors">
+                Términos y Condiciones
+              </a>
+            </li>
+
+            <li>
+              <a href="#" class="hover:text-[#C05621] transition-colors">
+                Políticas de Envíos
+              </a>
+            </li>
+
+            <li>
+              <a href="#" class="hover:text-[#C05621] transition-colors">
+                Preguntas Frecuentes
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Ubicación física -->
+        <div>
+          <h5
+            class="font-bold text-stone-900 text-xs uppercase tracking-wider mb-3"
+          >
+            Nuestra Librería
+          </h5>
+
+          <ul class="space-y-2 text-[11px] text-stone-500">
+            <li class="flex items-start gap-2">
+              <i
+                data-lucide="map-pin"
+                class="w-3.5 h-3.5 text-[#C05621] shrink-0 mt-0.5"
+              ></i>
+              <span> Av. de las Letras 1420, Barrio Antiguo, Ciudad </span>
+            </li>
+
+            <li class="flex items-center gap-2">
+              <i
+                data-lucide="phone"
+                class="w-3.5 h-3.5 text-[#C05621] shrink-0"
+              ></i>
+              <span> +54 11 4821-9000 </span>
+            </li>
+
+            <li class="flex items-center gap-2">
+              <i
+                data-lucide="clock"
+                class="w-3.5 h-3.5 text-[#C05621] shrink-0"
+              ></i>
+              <span>
+                Lunes a Sábado: 10:00 — 20:30<br />
+                Domingos: 14:00 — 19:30
+              </span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div
+        class="border-t border-stone-200/80 py-4 px-4 text-center text-[10px] text-stone-400 max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-2"
+      >
+        <p>© 2025 Libros Libros. Hecho con pasión por los libros.</p>
+
+        <p class="tracking-widest uppercase text-stone-400 font-medium">
+          Ediciones Clásicas &amp; Contemporáneas
+        </p>
+      </div>
     </footer>
 
     <!-- Inicialización de iconos de Lucide -->
     <script>
-        lucide.createIcons();
+      lucide.createIcons();
     </script>
-
-</body>
+  </body>
 </html>
