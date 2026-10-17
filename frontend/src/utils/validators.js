@@ -134,3 +134,82 @@ export function validarRecuperacion({ email }) {
   const e = validarEmail(email);
   return e ? { email: e } : {};
 }
+
+// ---------------------------------------------------------------------------
+// Productos (mismas reglas y mensajes que routes/product.routes.js del back)
+// ---------------------------------------------------------------------------
+
+export const LIMITES_PRODUCTO = {
+  nombre: 200,
+  descripcion: 5000,
+  precioMax: 99999999.99,
+  stockMax: 100000,
+  isbn: 20,
+  autor: 200,
+  editorial: 200,
+  anioMin: 1000,
+};
+
+const TIPOS_VALIDOS = ["libro", "papeleria", "accesorio", "otros"];
+const ESTADOS_VALIDOS = ["activo", "inactivo", "agotado"];
+
+const esNumero = (texto) => String(texto ?? "").trim() !== "" && Number.isFinite(Number(texto));
+
+export function validarProducto(v) {
+  const errores = {};
+  const nombre = String(v.nombre ?? "").trim();
+  const anioMax = new Date().getFullYear() + 1;
+
+  if (!TIPOS_VALIDOS.includes(v.tipoProducto)) errores.tipoProducto = "tipoProducto inválido";
+
+  if (!nombre) errores.nombre = "El nombre es obligatorio";
+  else if (nombre.length > LIMITES_PRODUCTO.nombre) {
+    errores.nombre = `El nombre no puede superar los ${LIMITES_PRODUCTO.nombre} caracteres`;
+  }
+
+  if (String(v.descripcion ?? "").length > LIMITES_PRODUCTO.descripcion) {
+    errores.descripcion = `La descripción no puede superar los ${LIMITES_PRODUCTO.descripcion} caracteres`;
+  }
+
+  if (!esNumero(v.precio) || Number(v.precio) < 0) errores.precio = "El precio debe ser un número mayor o igual a 0";
+  else if (Number(v.precio) > LIMITES_PRODUCTO.precioMax) errores.precio = "El precio es demasiado alto";
+
+  if (String(v.descuento ?? "").trim() !== "" && (!esNumero(v.descuento) || Number(v.descuento) < 0 || Number(v.descuento) > 100)) {
+    errores.descuento = "El descuento debe estar entre 0 y 100";
+  }
+
+  if (String(v.stock ?? "").trim() !== "") {
+    const n = Number(v.stock);
+    if (!esNumero(v.stock) || !Number.isInteger(n) || n < 0 || n > LIMITES_PRODUCTO.stockMax) {
+      errores.stock = `El stock debe ser un entero entre 0 y ${LIMITES_PRODUCTO.stockMax}`;
+    }
+  }
+
+  if (!ESTADOS_VALIDOS.includes(v.estado)) errores.estado = "Estado inválido";
+
+  if (!Array.isArray(v.categoryIds) || v.categoryIds.length === 0) {
+    errores.categoryIds = "Debe incluir al menos una categoría";
+  }
+
+  if (v.tipoProducto === "libro") {
+    const isbn = String(v.isbn ?? "").trim();
+    if (!isbn) errores.isbn = "El ISBN es obligatorio para libros";
+    else if (isbn.length > LIMITES_PRODUCTO.isbn) errores.isbn = `El ISBN no puede superar los ${LIMITES_PRODUCTO.isbn} caracteres`;
+
+    if (String(v.autor ?? "").trim().length > LIMITES_PRODUCTO.autor) {
+      errores.autor = `El autor no puede superar los ${LIMITES_PRODUCTO.autor} caracteres`;
+    }
+    if (String(v.editorial ?? "").trim().length > LIMITES_PRODUCTO.editorial) {
+      errores.editorial = `La editorial no puede superar los ${LIMITES_PRODUCTO.editorial} caracteres`;
+    }
+
+    if (String(v.anioPublicacion ?? "").trim() !== "") {
+      const anio = Number(v.anioPublicacion);
+      if (!Number.isInteger(anio) || anio < LIMITES_PRODUCTO.anioMin || anio > anioMax) {
+        errores.anioPublicacion = `El año debe estar entre ${LIMITES_PRODUCTO.anioMin} y ${anioMax}`;
+      }
+    }
+  }
+
+  return errores;
+}

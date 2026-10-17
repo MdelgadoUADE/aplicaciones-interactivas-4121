@@ -19,8 +19,9 @@ export function useForm(inicial, validar, prefijo) {
     [inicial, prefijo],
   );
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
+  // Fija el valor de un campo (también sirve para valores que no vienen de un
+  // <input>, como una lista de categorías elegidas).
+  const setValor = (name, value) => {
     setValores((prev) => ({ ...prev, [name]: value }));
     // Si el campo tenía error, se revalida mientras el usuario lo corrige.
     if (errores[name]) {
@@ -28,6 +29,8 @@ export function useForm(inicial, validar, prefijo) {
       setErrores((prev) => ({ ...prev, [name]: siguiente[name] ?? "" }));
     }
   };
+
+  const handleChange = (e) => setValor(e.target.name, e.target.value);
 
   // Al salir de un campo con contenido se valida; los vacíos se marcan al enviar.
   const handleBlur = (e) => {
@@ -55,5 +58,5 @@ export function useForm(inicial, validar, prefijo) {
     setErrores({});
   };
 
-  return { valores, errores, setErrores, handleChange, handleBlur, validarTodo, aplicarErroresBack, reset };
+  return { valores, errores, setErrores, setValor, handleChange, handleBlur, validarTodo, aplicarErroresBack, reset };
 }

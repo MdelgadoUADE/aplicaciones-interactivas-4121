@@ -16,3 +16,18 @@ export const ORDENES = [
   { value: "price_desc", label: "Precio: mayor a menor" },
   { value: "title_asc", label: "Título A–Z" },
 ];
+
+export const TIPOS_PRODUCTO = [
+  { value: "libro", label: "Libro" },
+  { value: "papeleria", label: "Papelería" },
+  { value: "accesorio", label: "Accesorio" },
+  { value: "otros", label: "Otros" },
+];
+
+export const ESTADOS_PRODUCTO = [
+  { value: "activo", label: "Activo" },
+  { value: "inactivo", label: "Inactivo" },
+  { value: "agotado", label: "Agotado" },
+];
+
+export const etiquetaTipo = (valor) => TIPOS_PRODUCTO.find((t) => t.value === valor)?.label ?? valor;

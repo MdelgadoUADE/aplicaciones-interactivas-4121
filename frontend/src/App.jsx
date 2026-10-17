@@ -1,6 +1,7 @@
 import { Route, Routes } from "react-router-dom";
 import ComercioProvider from "./context/ComercioProvider.jsx";
 import AuthProvider from "./context/AuthProvider.jsx";
+import ToastProvider from "./context/ToastProvider.jsx";
 import AdminRoute from "./components/auth/AdminRoute.jsx";
 import GuestRoute from "./components/auth/GuestRoute.jsx";
 import PublicLayout from "./components/layout/PublicLayout.jsx";
@@ -31,6 +32,7 @@ export default function App() {
   return (
     <ComercioProvider>
       <AuthProvider>
+      <ToastProvider>
       <Routes>
         {/* Sitio público */}
         <Route element={<PublicLayout />}>
@@ -65,6 +67,7 @@ export default function App() {
           </Route>
         </Route>
       </Routes>
+      </ToastProvider>
       </AuthProvider>
     </ComercioProvider>
   );

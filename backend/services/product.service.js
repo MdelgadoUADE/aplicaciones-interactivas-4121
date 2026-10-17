@@ -121,7 +121,13 @@ async function listar({
   const where = {};
   const offset = (page - 1) * limit;
 
-  where.estado = isAdmin && estado ? estado : 'activo';
+  // Público (y admin navegando el sitio): solo activos. El admin puede pedir
+  // un estado puntual, o ?estado=todos para ver activos, inactivos y agotados
+  // juntos (listado del panel). Es opt-in a propósito: así las pantallas
+  // públicas no muestran productos ocultos aunque el admin tenga sesión.
+  if (!(isAdmin && estado === 'todos')) {
+    where.estado = isAdmin && estado ? estado : 'activo';
+  }
 
   if (tipoProducto) where.tipoProducto = tipoProducto;
   if (destacado === true) where.destacado = true;
@@ -341,7 +347,7 @@ async function actualizar(id, { tipoProducto, nombre, descripcion, precio, descu
     }
 
     await producto.update(
-      { tipoProducto, nombre, descripcion, precio, descuento, stock, estado },
+      { tipoProducto, nombre, descripcion: descripcion || null, precio, descuento, stock, estado },
       { transaction: t }
     );
 
@@ -349,19 +355,47 @@ async function actualizar(id, { tipoProducto, nombre, descripcion, precio, descu
       await producto.setCategorias(categoryIds, { transaction: t });
     }
 
-    if (tipoProducto === 'libro' && libro) {
-      const [libroRow] = await Libro.findOrCreate({
-        where: { idProducto: id },
-        defaults: { idProducto: id, ...libro },
-        transaction: t,
-      });
-      await libroRow.update(libro, { transaction: t });
+    if (tipoProducto === 'libro') {
+      const existente = await Libro.findOne({ where: { idProducto: id }, transaction: t });
+
+      if (libro) {
+        // Se arma el objeto campo por campo (no se pasa `libro` tal cual):
+        // antes un body con "idProducto" dentro de libro podía reasignar la
+        // fila de libro a otro producto.
+        const datos = {
+          isbn: libro.isbn ?? existente?.isbn,
+          autor: libro.autor || null,
+          editorial: libro.editorial || null,
+          anioPublicacion: libro.anioPublicacion || null,
+        };
+        if (!datos.isbn) {
+          const error = new Error('Los datos de libro (isbn) son obligatorios cuando tipoProducto es "libro".');
+          error.status = 400;
+          throw error;
+        }
+        if (existente) await existente.update(datos, { transaction: t });
+        else await Libro.create({ idProducto: id, ...datos }, { transaction: t });
+      } else if (!existente) {
+        const error = new Error('Los datos de libro (isbn) son obligatorios cuando tipoProducto es "libro".');
+        error.status = 400;
+        throw error;
+      }
+    } else {
+      // Si el producto dejó de ser un libro, se borra su ficha de libro:
+      // si no, el detalle seguiría mostrando autor/ISBN de algo que ya no es un libro.
+      await Libro.destroy({ where: { idProducto: id }, transaction: t });
     }
 
     await t.commit();
     return obtenerPorId(id, { isAdmin: true });
   } catch (err) {
     await t.rollback();
+    // Mismo mensaje que en crear(): ISBN repetido -> 409, no 500.
+    if (err.name === 'SequelizeUniqueConstraintError' && err.fields?.isbn) {
+      const error = new Error('Ya existe un producto con ese ISBN.');
+      error.status = 409;
+      throw error;
+    }
     throw err;
   }
 }
