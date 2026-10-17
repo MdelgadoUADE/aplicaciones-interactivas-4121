@@ -30,20 +30,20 @@ module.exports = {
     ];
 
     // Etapa 15 (novedades): el INSERT crudo de más abajo no pasa por
-    // Sequelize, así que created_at NO se completa solo con NOW() salvo
-    // que lo mandemos explícito — y si lo dejamos vacío, TODOS los
-    // productos quedan con el mismo timestamp (el momento del seed) y
-    // el filtro ?novedades=true no tiene nada que excluir. Por eso acá
-    // generamos una fecha distinta por producto, según su posición en
-    // el array: los primeros quedan "viejos" (fuera de la ventana de 7
-    // días) y el resto "recientes" (dentro), para poder demostrar el
-    // filtro con datos reales apenas se corre el seeder.
+    // Sequelize, así que created_at hay que mandarlo explícito. Si no, todos
+    // los productos quedan con la hora del seed y ?novedades=true no
+    // distingue nada. Acá cada producto recibe una fecha propia:
+    //   - los primeros CANTIDAD_VIEJOS libros: hace 20+ días (fuera de la
+    //     ventana de 7 días de "novedades"), cada uno un día más viejo;
+    //   - el resto: hace entre 1 y 6 días (dentro de la ventana).
+    // Al ser fechas distintas, el orden "newest" también es estable.
     const AHORA = new Date();
-    const DIAS_VIEJOS = 20; // fuera de la ventana de "novedades" (7 días)
-    const DIAS_RECIENTES = 2; // dentro de la ventana
+    const DIAS_VIEJOS = 20;
+    const CANTIDAD_VIEJOS = 15;
 
     function fechaSeed(indice, cantidadViejos) {
-      const diasAtras = indice < cantidadViejos ? DIAS_VIEJOS : DIAS_RECIENTES;
+      const esViejo = indice < cantidadViejos;
+      const diasAtras = esViejo ? DIAS_VIEJOS + indice : 1 + ((indice - cantidadViejos) % 6);
       const fecha = new Date(AHORA);
       fecha.setDate(fecha.getDate() - diasAtras);
       return fecha;
@@ -64,11 +64,11 @@ module.exports = {
       let idImagen = 1;
 
       // --- Libros ---
-      // Primeros 5 libros del array: created_at "viejo" (excluidos de
+      // Primeros CANTIDAD_VIEJOS libros: created_at "viejo" (excluidos de
       // novedades). Resto: created_at "reciente" (incluidos).
       for (let i = 0; i < libros.length; i++) {
         const libro = libros[i];
-        const createdAt = fechaSeed(i, 5);
+        const createdAt = fechaSeed(i, CANTIDAD_VIEJOS);
 
         await queryInterface.sequelize.query(`
           INSERT INTO producto (id_producto, tipo_producto, nombre, descripcion, precio, stock, estado, descuento, created_at, updated_at)

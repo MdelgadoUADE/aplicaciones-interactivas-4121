@@ -4,15 +4,17 @@ const { Producto, Libro, Categoria, ProductoImagen, sequelize } = db;
 const { Op } = require('sequelize');
 
 /**
- * Arma el include estándar para traer un producto "completo": sus
- * categorías (N:N), sus imágenes (1:N) y su fila de libro (1:1, si
- * corresponde). Se reutiliza en varias funciones para no repetir esto
- * cinco veces.
+ * Include estándar para traer un producto "completo": sus categorías
+ * (N:N), sus imágenes (1:N) y su fila de libro (1:1, si corresponde).
+ *
+ * El orden de las imágenes NO se define acá (un `order` dentro de un
+ * include no es una opción válida de Sequelize y se ignoraba): se
+ * ordenan en serializarProducto().
  */
 const includeCompleto = [
   { model: Categoria, as: 'categorias', through: { attributes: [] } },
-  { model: ProductoImagen, as: 'imagenes', order: [['orden', 'ASC']] },
-  { model: Libro, as: 'libro' },
+  { model: ProductoImagen, as: 'imagenes' },
+  { model: Libro, as: 'libro', required: false },
 ];
 
 function calcularPrecioFinal(producto) {
@@ -21,12 +23,50 @@ function calcularPrecioFinal(producto) {
   return +(precio - (precio * descuento) / 100).toFixed(2);
 }
 
-function serializarProducto(producto) {
+/**
+ * ÚNICA forma de producto que devuelve la API (listado y detalle).
+ * Antes el detalle devolvía idProducto/categorias/imagenes y el listado
+ * id/categories: el front tenía que manejar dos formas para lo mismo.
+ *
+ *   id, tipoProducto, nombre, descripcion,
+ *   precio, descuento, precioFinal, stock, estado, destacado,
+ *   imagenPrincipal, images[], categories[], libro | null,
+ *   createdAt, updatedAt, (visitas solo para admin)
+ */
+function serializarProducto(producto, { isAdmin = false } = {}) {
   const json = producto.toJSON();
-  return {
-    ...json,
+
+  const images = [...(json.imagenes || [])].sort(
+    (a, b) => a.orden - b.orden || Number(a.idImagen) - Number(b.idImagen)
+  );
+  const principal = images.find((img) => img.esPrincipal) || images[0];
+
+  const item = {
+    id: json.idProducto,
+    tipoProducto: json.tipoProducto,
+    nombre: json.nombre,
+    descripcion: json.descripcion,
+    precio: Number(json.precio),
+    descuento: Number(json.descuento),
     precioFinal: calcularPrecioFinal(producto),
+    stock: json.stock,
+    estado: json.estado,
+    destacado: json.destacado,
+    imagenPrincipal: principal?.imagenUrl || null,
+    images,
+    categories: json.categorias || [],
+    libro: json.libro || null, // { isbn, autor, editorial, anioPublicacion }
+    // El modelo declara createdAt: 'created_at', así que según la
+    // versión de Sequelize el atributo puede salir con cualquiera de
+    // los dos nombres. Se aceptan ambos para no devolver null.
+    createdAt: json.createdAt ?? json.created_at,
+    updatedAt: json.updatedAt ?? json.updated_at,
   };
+
+  // Las vistas son una métrica interna del dashboard: no se publican.
+  if (isAdmin) item.visitas = json.visitas;
+
+  return item;
 }
 
 /**
@@ -85,25 +125,35 @@ async function listar({
 
   if (tipoProducto) where.tipoProducto = tipoProducto;
   if (destacado === true) where.destacado = true;
+
+  // Todas las condiciones que van con AND se acumulan en un array y se
+  // asignan UNA sola vez al final. Antes, "novedades" y "search" asignaban
+  // cada una su propio where[Op.and] y la segunda pisaba a la primera:
+  // ?novedades=true&search=x ignoraba el filtro de novedades.
+  const condiciones = [];
+
   if (novedades === true) {
     const desde = new Date();
     desde.setDate(desde.getDate() - DIAS_NOVEDAD);
-    // OJO: acá usamos el nombre de columna FÍSICO ('created_at'), no el
-    // atributo del modelo ('createdAt'). Sequelize.count()/aggregate()
-    // no traduce bien underscored:true dentro de un where con
-    // comparación de rango en algunas versiones — usar sequelize.col()
-    // con el nombre real evita el error "column Producto.createdAt
-    // does not exist" que sí aparecía con { createdAt: { [Op.gte]: ... } }.
-    where[Op.and] = [
-      ...(where[Op.and] || []),
-      sequelize.where(sequelize.col('Producto.created_at'), { [Op.gte]: desde }),
-    ];
+    // Nombre de columna FÍSICO ('created_at'), no el atributo del modelo:
+    // ver nota en el orderMap más abajo.
+    condiciones.push(sequelize.where(sequelize.col('Producto.created_at'), { [Op.gte]: desde }));
   }
 
-  const condicionBusqueda = search ? armarCondicionBusqueda(search) : null;
-  if (condicionBusqueda) {
-    Object.assign(where, condicionBusqueda);
+  if (search) condiciones.push(...armarCondicionesBusqueda(search));
+
+  // Filtro por categoría con subconsulta, y no con un `where` dentro del
+  // include de categorías: ese `where` hacía que cada producto viniera
+  // con SOLO la categoría filtrada en `categories`, aunque tuviera más.
+  if (Number.isInteger(categoryId)) {
+    condiciones.push(
+      sequelize.literal(
+        `"Producto"."id_producto" IN (SELECT id_producto FROM producto_categoria WHERE id_categoria = ${categoryId})`
+      )
+    );
   }
+
+  if (condiciones.length > 0) where[Op.and] = condiciones;
 
   if (minPrice !== undefined) where.precio = { ...where.precio, [Op.gte]: minPrice };
   if (maxPrice !== undefined) where.precio = { ...where.precio, [Op.lte]: maxPrice };
@@ -117,10 +167,6 @@ async function listar({
     // (sin fila en Libro) no quedan excluidos cuando hay búsqueda activa.
     { model: Libro, as: 'libro', required: false },
   ];
-
-  if (categoryId) {
-    include[0].where = { idCategoria: categoryId };
-  }
 
   const orderMap = {
     price_asc: [['precio', 'ASC']],
@@ -141,27 +187,12 @@ async function listar({
     offset,
     distinct: true, // necesario por el include N:N, si no count() cuenta filas duplicadas del JOIN
     subQuery: false, // necesario para que el filtro '$libro.autor$' funcione junto con limit/offset
-    order: orderMap[sort] || orderMap.newest,
+    // Desempate por id: sin él, productos con el mismo created_at pueden
+    // repetirse o saltearse entre páginas.
+    order: [...(orderMap[sort] || orderMap.newest), [sequelize.col('Producto.id_producto'), 'DESC']],
   });
 
-  const data = rows.map((producto) => {
-    const json = producto.toJSON();
-    const imagenPrincipal = json.imagenes?.find((img) => img.esPrincipal) || json.imagenes?.[0];
-    return {
-      id: json.idProducto,
-      nombre: json.nombre,
-      tipoProducto: json.tipoProducto,
-      precio: json.precio,
-      descuento: json.descuento,
-      precioFinal: calcularPrecioFinal(producto),
-      imagenPrincipal: imagenPrincipal?.imagenUrl || null,
-      stock: json.stock,
-      categories: json.categorias,
-      destacado: json.destacado,
-      estado: json.estado,
-      createdAt: json.createdAt,
-    };
-  });
+  const data = rows.map((producto) => serializarProducto(producto, { isAdmin }));
 
   return {
     total: count,
@@ -172,19 +203,22 @@ async function listar({
   };
 }
 
-function armarCondicionBusqueda(search) {
+/**
+ * Devuelve un array con una condición por palabra (todas deben cumplirse,
+ * cada una en al menos uno de los campos buscables: nombre, descripción,
+ * autor o editorial). Devuelve [] si no hay palabras.
+ */
+function armarCondicionesBusqueda(search) {
   const palabras = search.trim().split(/\s+/).filter(Boolean);
-  if (palabras.length === 0) return null;
 
-  return {
-    [Op.and]: palabras.map((palabra) => ({
-      [Op.or]: [
-        condicionUnaccent('Producto.nombre', palabra),
-        condicionUnaccent('Producto.descripcion', palabra),
-        condicionUnaccent('libro.autor', palabra),
-      ],
-    })),
-  };
+  return palabras.map((palabra) => ({
+    [Op.or]: [
+      condicionUnaccent('Producto.nombre', palabra),
+      condicionUnaccent('Producto.descripcion', palabra),
+      condicionUnaccent('libro.autor', palabra),
+      condicionUnaccent('libro.editorial', palabra),
+    ],
+  }));
 }
 
 /**
@@ -200,7 +234,7 @@ async function obtenerPorId(id, { isAdmin = false } = {}) {
     throw error;
   }
 
-  return serializarProducto(producto);
+  return serializarProducto(producto, { isAdmin });
 }
 
 /**

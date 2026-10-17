@@ -1,6 +1,7 @@
 // services/category.service.js
 const db = require('../models');
-const { Categoria, Producto } = db;
+const { Categoria } = db;
+const productService = require('./product.service');
 
 async function listar() {
   const categorias = await Categoria.findAll({
@@ -30,8 +31,8 @@ async function obtenerPorId(id) {
   return { ...categoria.toJSON(), productCount };
 }
 
-async function crear({ name, description }) {
-  const existente = await Categoria.findOne({ where: { nombre: name } });
+async function crear({ nombre, descripcion }) {
+  const existente = await Categoria.findOne({ where: { nombre } });
   if (existente) {
     const error = new Error('Ya existe una categoría con ese nombre.');
     error.status = 409;
@@ -39,14 +40,14 @@ async function crear({ name, description }) {
   }
 
   const categoria = await Categoria.create({
-    nombre: name,
-    descripcion: description || null,
+    nombre,
+    descripcion: descripcion || null,
   });
 
   return { ...categoria.toJSON(), productCount: 0 };
 }
 
-async function actualizar(id, { name, description }) {
+async function actualizar(id, { nombre, descripcion }) {
   const categoria = await Categoria.findByPk(id);
   if (!categoria) {
     const error = new Error('Categoría no encontrada.');
@@ -54,8 +55,8 @@ async function actualizar(id, { name, description }) {
     throw error;
   }
 
-  if (name && name !== categoria.nombre) {
-    const existente = await Categoria.findOne({ where: { nombre: name } });
+  if (nombre && nombre !== categoria.nombre) {
+    const existente = await Categoria.findOne({ where: { nombre } });
     if (existente) {
       const error = new Error('Ya existe una categoría con ese nombre.');
       error.status = 409;
@@ -64,8 +65,8 @@ async function actualizar(id, { name, description }) {
   }
 
   await categoria.update({
-    nombre: name ?? categoria.nombre,
-    descripcion: description !== undefined ? description : categoria.descripcion,
+    nombre: nombre ?? categoria.nombre,
+    descripcion: descripcion !== undefined ? descripcion : categoria.descripcion,
   });
 
   const productCount = await categoria.countProductos();
@@ -111,28 +112,11 @@ async function listarProductosDeCategoria(id, { page = 1, limit = 20 } = {}) {
     throw error;
   }
 
-  const offset = (page - 1) * limit;
-  const { count, rows } = await Producto.findAndCountAll({
-    include: [
-      {
-        model: Categoria,
-        as: 'categorias',
-        where: { idCategoria: id },
-        attributes: [],
-      },
-    ],
-    limit,
-    offset,
-    order: [['nombre', 'ASC']],
-  });
-
-  return {
-    total: count,
-    page,
-    limit,
-    totalPages: Math.ceil(count / limit),
-    data: rows,
-  };
+  // Se delega en productService.listar para que este endpoint devuelva la
+  // misma forma que GET /products y, sobre todo, solo productos ACTIVOS:
+  // antes devolvía filas crudas del modelo e incluía productos inactivos
+  // a cualquier visitante.
+  return productService.listar({ page, limit, categoryId: Number(id), isAdmin: false });
 }
 
 module.exports = {
