@@ -12,6 +12,20 @@ const transporter = nodemailer.createTransport({
 });
 
 /**
+ * Escapa texto que viene de un visitante antes de meterlo en el HTML de un
+ * mail. El formulario de contacto es público: sin esto, cualquiera podía
+ * inyectar HTML (links, imágenes, "botones") en el mail que recibe el dueño.
+ */
+function escapeHtml(texto) {
+  return String(texto ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+/**
  * Envía un email de recuperación de contraseña.
  * @param {string} destinatario - email del usuario
  * @param {string} tokenPlano - token en texto plano (NO el hash guardado en la DB)
@@ -22,7 +36,7 @@ async function enviarEmailRecuperacion(destinatario, tokenPlano) {
   await transporter.sendMail({
     from: process.env.EMAIL_FROM,
     to: destinatario,
-    subject: 'Recuperación de contraseña — Maxilibros',
+    subject: 'Recuperación de contraseña — MaxiLibrerías',
     html: `
       <p>Recibimos una solicitud para restablecer tu contraseña.</p>
       <p>Hacé clic en el siguiente enlace (válido por 30 minutos):</p>
@@ -40,12 +54,14 @@ async function enviarNotificacionConsulta(consulta) {
   await transporter.sendMail({
     from: process.env.EMAIL_FROM,
     to: process.env.EMAIL_COMERCIO || process.env.EMAIL_USER,
+    // "Responder" en el cliente de mail le contesta directo al visitante.
+    replyTo: consulta.email,
     subject: `Nueva consulta: ${consulta.asunto}`,
     html: `
-      <p><strong>De:</strong> ${consulta.nombre} (${consulta.email})</p>
-      <p><strong>Teléfono:</strong> ${consulta.telefono || 'No especificado'}</p>
+      <p><strong>De:</strong> ${escapeHtml(consulta.nombre)} (${escapeHtml(consulta.email)})</p>
+      <p><strong>Teléfono:</strong> ${escapeHtml(consulta.telefono) || 'No especificado'}</p>
       <p><strong>Mensaje:</strong></p>
-      <p>${consulta.mensaje}</p>
+      <p>${escapeHtml(consulta.mensaje).replace(/\r?\n/g, '<br>')}</p>
     `,
   });
 }

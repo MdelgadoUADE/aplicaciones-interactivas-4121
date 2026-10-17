@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { Clock, MapPin, Phone } from "lucide-react";
 import { useComercio } from "../../context/comercio-context.js";
+import SocialIcon from "../common/SocialIcon.jsx";
 
 export default function Footer() {
   const { comercio } = useComercio();
@@ -44,16 +45,18 @@ export default function Footer() {
             <li><Link to="/contacto" className="hover:text-brand-terracotta">Contacto</Link></li>
           </ul>
           {redes.length > 0 && (
-            <ul className="flex flex-wrap gap-x-4 gap-y-1 pt-2">
+            <ul className="flex flex-wrap gap-3 pt-2">
               {redes.map((red) => (
                 <li key={red.tipo}>
                   <a
                     href={red.url}
                     target="_blank"
                     rel="noreferrer noopener"
-                    className="capitalize hover:text-brand-terracotta"
+                    aria-label={`${red.tipo} (se abre en una pestaña nueva)`}
+                    title={red.tipo}
+                    className="flex h-9 w-9 items-center justify-center rounded-full border border-stone-300 text-stone-700 transition-colors hover:border-brand-terracotta hover:text-brand-terracotta"
                   >
-                    {red.tipo}
+                    <SocialIcon tipo={red.tipo} />
                   </a>
                 </li>
               ))}
