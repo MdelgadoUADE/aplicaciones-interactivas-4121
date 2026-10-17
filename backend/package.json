@@ -1,8 +1,8 @@
 {
-  "name": "Maxilibrerias",
+  "name": "aplicaciones-interactivas-4121-backend",
   "version": "1.0.0",
   "description": "Trabajo practico integrador de materia Aplicaciones Interactivas curso 4121",
-  "main": "index.js",
+  "main": "server.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/MdelgadoUADE/aplicaciones-interactivas-4121.git"

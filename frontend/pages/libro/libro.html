@@ -1,0 +1,1180 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      Mi nombre es Emilia del Valle — Isabel Allende | Libros Libros
+    </title>
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+      body {
+        background-color: #faf8f5;
+        color: #1c1917;
+        font-family: "Plus Jakarta Sans", sans-serif;
+      }
+
+      .font-editorial {
+        font-family: "Playfair Display", Georgia, serif;
+      }
+    </style>
+  </head>
+
+  <body
+    class="min-h-screen flex flex-col antialiased selection:bg-[#C05621] selection:text-white"
+  >
+    <!-- Cinta superior de anuncios -->
+    <div
+      class="bg-[#1C1917] text-[#FAF8F5] text-xs py-2 px-4 text-center tracking-wide border-b border-stone-800 flex items-center justify-center gap-2"
+    >
+      <i data-lucide="truck" class="w-3.5 h-3.5 text-[#C05621]"></i>
+
+      <span>
+        Envíos sin cargo en compras superiores a $35.000 • Entregas a todo el
+        país
+      </span>
+    </div>
+
+    <!-- Header / Barra de navegación principal -->
+    <header
+      class="sticky top-0 z-40 bg-[#FAF8F5]/95 backdrop-blur-md border-b border-stone-200"
+    >
+      <div
+        class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-6"
+      >
+        <!-- Logotipo de la marca -->
+        <a href="inicio.html" class="flex items-center gap-3 group">
+          <div
+            class="w-10 h-10 rounded-lg bg-[#C05621] text-white flex items-center justify-center shadow-sm group-hover:bg-[#a34415] transition-colors"
+          >
+            <i data-lucide="book-open" class="w-5 h-5 text-[#FAF8F5]"></i>
+          </div>
+
+          <div class="flex flex-col">
+            <span
+              class="font-editorial text-2xl font-bold tracking-tight text-stone-900 leading-none"
+            >
+              Libros<span class="text-[#C05621]">Libros</span>
+            </span>
+
+            <span
+              class="text-[10px] tracking-[0.2em] uppercase font-semibold text-stone-500 mt-1"
+            >
+              Librería Editorial
+            </span>
+          </div>
+        </a>
+
+        <!-- Menú de navegación principal -->
+        <nav
+          class="hidden md:flex items-center gap-8 text-sm font-medium text-stone-700"
+        >
+          <a href="inicio.html" class="hover:text-[#C05621] transition-colors">
+            Inicio
+          </a>
+
+          <a
+            href="categorias.html"
+            class="hover:text-[#C05621] transition-colors"
+          >
+            Categorías
+          </a>
+
+          <a
+            href="catalogo.html"
+            class="text-[#C05621] font-semibold border-b-2 border-[#C05621] pb-1"
+          >
+            Catálogo
+          </a>
+
+          <a
+            href="sobre-nosotros.html"
+            class="hover:text-[#C05621] transition-colors"
+          >
+            Sobre Nosotros
+          </a>
+
+          <a
+            href="contacto.html"
+            class="hover:text-[#C05621] transition-colors"
+          >
+            Contacto
+          </a>
+        </nav>
+
+        <!-- Buscador y botón de Iniciar Sesión (Sin Carrito) -->
+        <div class="flex items-center gap-4 flex-1 md:flex-initial justify-end">
+          <div class="relative w-full max-w-xs hidden sm:block">
+            <input
+              type="search"
+              placeholder="Buscar libro, autor..."
+              class="w-full pl-9 pr-4 py-2 bg-stone-100/80 border border-stone-300 rounded-full text-xs placeholder:text-stone-400 focus:outline-none focus:border-[#C05621] focus:bg-white transition-all"
+            />
+
+            <i
+              data-lucide="search"
+              class="w-4 h-4 text-stone-400 absolute left-3 top-2.5"
+            ></i>
+          </div>
+
+          <a
+            href="login.html"
+            class="flex items-center gap-2 text-sm font-medium text-stone-800 hover:text-[#C05621] px-3 py-1.5 rounded-full hover:bg-stone-100 transition-colors"
+          >
+            <div
+              class="w-8 h-8 rounded-full bg-[#C05621] flex items-center justify-center text-white"
+            >
+              <i data-lucide="user" class="w-4 h-4"></i>
+            </div>
+
+            <span class="hidden lg:inline text-xs font-semibold">
+              Iniciar Sesión
+            </span>
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <main class="flex-grow">
+      <!-- Migas de Pan (Breadcrumbs) -->
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-2">
+        <nav class="flex items-center gap-2 text-xs text-stone-500 flex-wrap">
+          <a href="inicio.html" class="hover:text-[#C05621] transition-colors">
+            Inicio
+          </a>
+
+          <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-stone-400"></i>
+
+          <a
+            href="catalogo.html"
+            class="hover:text-[#C05621] transition-colors"
+          >
+            Catálogo
+          </a>
+
+          <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-stone-400"></i>
+
+          <a
+            href="catalogo.html?cat=ficcion"
+            class="hover:text-[#C05621] transition-colors"
+          >
+            Ficción Latinoamericana
+          </a>
+
+          <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-stone-400"></i>
+
+          <span class="text-stone-900 font-medium">
+            Mi nombre es Emilia del Valle
+          </span>
+        </nav>
+      </div>
+
+      <!-- Bloque Principal de la Ficha: Portada & Compra -->
+      <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+          <!-- Columna Izquierda: Portada del Libro y Ficha Rápida (5 cols) -->
+          <div class="lg:col-span-5 flex flex-col items-center">
+            <div
+              class="relative w-full max-w-sm bg-white p-4 pb-6 rounded-2xl border border-stone-200 shadow-md"
+            >
+              <div
+                class="relative rounded-xl overflow-hidden aspect-[2/3] bg-stone-100 shadow-inner group"
+              >
+                <img
+                  src="https://images.unsplash.com/photo-1544947950-fa07a98d237f?q=80&w=800&auto=format&fit=crop"
+                  alt="Portada del libro Mi nombre es Emilia del Valle de Isabel Allende"
+                  class="w-full h-full object-cover group-hover:scale-102 transition-transform duration-500"
+                />
+
+                <div
+                  class="absolute top-3 left-3 bg-[#1C1917]/90 backdrop-blur-sm text-white text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full shadow-sm"
+                >
+                  Novedad 2025
+                </div>
+              </div>
+
+              <!-- Metadatos rápidos bajo portada -->
+              <div
+                class="grid grid-cols-3 gap-2 mt-4 pt-4 border-t border-stone-100 text-center text-xs"
+              >
+                <div class="p-2 rounded-lg bg-stone-50">
+                  <span
+                    class="block text-[10px] uppercase font-bold text-stone-400"
+                  >
+                    Formato
+                  </span>
+
+                  <span class="font-semibold text-stone-800">
+                    Tapa Blanda
+                  </span>
+                </div>
+
+                <div class="p-2 rounded-lg bg-stone-50">
+                  <span
+                    class="block text-[10px] uppercase font-bold text-stone-400"
+                  >
+                    Páginas
+                  </span>
+
+                  <span class="font-semibold text-stone-800"> 368 págs. </span>
+                </div>
+
+                <div class="p-2 rounded-lg bg-stone-50">
+                  <span
+                    class="block text-[10px] uppercase font-bold text-stone-400"
+                  >
+                    Editorial
+                  </span>
+
+                  <span class="font-semibold text-stone-800">
+                    Sudamericana
+                  </span>
+                </div>
+              </div>
+
+              <!-- Accesos rápidos -->
+              <div
+                class="flex items-center justify-around mt-4 pt-2 text-xs font-semibold text-stone-600"
+              >
+                <button
+                  type="button"
+                  class="inline-flex items-center gap-1.5 hover:text-[#C05621] transition-colors"
+                >
+                  <i
+                    data-lucide="book-open-check"
+                    class="w-4 h-4 text-[#C05621]"
+                  ></i>
+
+                  <span> Leer primeras páginas </span>
+                </button>
+
+                <span class="text-stone-300">•</span>
+
+                <button
+                  type="button"
+                  class="inline-flex items-center gap-1.5 hover:text-[#C05621] transition-colors"
+                >
+                  <i data-lucide="zoom-in" class="w-4 h-4 text-[#C05621]"></i>
+
+                  <span> Ver detalles de cubierta </span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Columna Derecha: Título, Autor, Precio, Stock y Acciones (7 cols) -->
+          <div class="lg:col-span-7 flex flex-col space-y-6">
+            <div>
+              <div class="flex items-center gap-2 mb-2">
+                <span
+                  class="inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider text-emerald-800 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200"
+                >
+                  <i
+                    data-lucide="shield-check"
+                    class="w-3 h-3 text-emerald-600"
+                  ></i>
+
+                  Edición Original Garantizada
+                </span>
+
+                <span class="text-xs text-stone-400">
+                  • Colección Narrativas del Sur
+                </span>
+              </div>
+
+              <h1
+                class="font-editorial text-4xl sm:text-5xl font-bold text-stone-900 leading-tight"
+              >
+                Mi nombre es Emilia del Valle
+              </h1>
+
+              <p class="text-lg text-stone-600 mt-2">
+                Por
+
+                <a
+                  href="catalogo.html?autor=isabel-allende"
+                  class="text-[#C05621] font-semibold underline underline-offset-4 hover:text-[#a34415]"
+                >
+                  Isabel Allende
+                </a>
+              </p>
+
+              <!-- Valoraciones de lectores -->
+              <div class="flex items-center gap-3 mt-3">
+                <div class="flex items-center text-amber-500">
+                  <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                  <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                  <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                  <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                  <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                </div>
+
+                <span class="text-xs font-bold text-stone-800"> 4.9 </span>
+
+                <span class="text-stone-400 text-xs">
+                  (128 valoraciones de lectores)
+                </span>
+              </div>
+            </div>
+
+            <!-- Caja de Precio y Disponibilidad en Stock -->
+            <div
+              class="bg-white border border-stone-200 rounded-2xl p-6 shadow-sm space-y-5"
+            >
+              <div
+                class="flex flex-col sm:flex-row sm:items-baseline justify-between gap-4 border-b border-stone-100 pb-4"
+              >
+                <div>
+                  <span
+                    class="text-[11px] uppercase font-bold text-stone-400 tracking-wider"
+                  >
+                    Precio de venta
+                  </span>
+
+                  <div class="flex items-baseline gap-3 mt-1">
+                    <span
+                      class="text-3xl sm:text-4xl font-extrabold text-stone-900"
+                    >
+                      $24.900
+                    </span>
+
+                    <span class="text-sm text-stone-400 line-through">
+                      $28.500
+                    </span>
+
+                    <span
+                      class="text-xs font-bold text-red-600 bg-red-50 px-2 py-0.5 rounded"
+                    >
+                      -12%
+                    </span>
+                  </div>
+                </div>
+
+                <!-- Indicador de Stock Directo -->
+                <div
+                  class="inline-flex items-center gap-2 bg-emerald-50 text-emerald-800 px-3.5 py-1.5 rounded-full border border-emerald-200 text-xs font-semibold"
+                >
+                  <span class="w-2 h-2 rounded-full bg-emerald-600"></span>
+
+                  <span> Disponible • Despacho en 24h </span>
+                </div>
+              </div>
+
+              <!-- Beneficios de compra -->
+              <div class="space-y-2 text-xs text-stone-600">
+                <p class="flex items-center gap-2">
+                  <i
+                    data-lucide="credit-card"
+                    class="w-4 h-4 text-stone-400"
+                  ></i>
+
+                  <span>
+                    Hasta
+                    <strong>3 cuotas fijas sin interés de $8.300</strong> con
+                    todos los bancos.
+                  </span>
+                </p>
+
+                <p class="flex items-center gap-2">
+                  <i data-lucide="truck" class="w-4 h-4 text-emerald-600"></i>
+
+                  <span>
+                    <strong>Envío bonificado</strong> a sucursales de correo y a
+                    domicilio superando los $35.000.
+                  </span>
+                </p>
+              </div>
+
+              <!-- Acciones de Compra / Reserva (Sin Carrito de compras) -->
+              <div class="flex flex-col sm:flex-row items-center gap-3 pt-2">
+                <button
+                  type="button"
+                  class="w-full sm:flex-1 py-3.5 px-6 bg-[#C05621] hover:bg-[#a34415] text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all shadow-sm flex items-center justify-center gap-2"
+                  onclick="
+                    alert(
+                      'Has iniciado la reserva del ejemplar: Mi nombre es Emilia del Valle',
+                    )
+                  "
+                >
+                  <i data-lucide="bookmark" class="w-4 h-4"></i>
+
+                  <span> Reservar Ejemplar </span>
+                </button>
+
+                <button
+                  type="button"
+                  class="w-full sm:flex-1 py-3.5 px-6 bg-[#1C1917] hover:bg-stone-800 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all shadow-sm flex items-center justify-center gap-2"
+                  onclick="alert('Redirigiendo al checkout seguro directo')"
+                >
+                  <i data-lucide="zap" class="w-4 h-4 text-amber-400"></i>
+
+                  <span> Comprar Ahora </span>
+                </button>
+              </div>
+
+              <!-- Opciones de Retiro -->
+              <div
+                class="flex items-center justify-between text-xs text-stone-500 pt-2 border-t border-stone-100"
+              >
+                <span
+                  class="flex items-center gap-1.5 text-emerald-700 font-medium"
+                >
+                  <i data-lucide="check" class="w-4 h-4"></i>
+
+                  Disponible en stock para entrega inmediata
+                </span>
+
+                <a
+                  href="contacto.html"
+                  class="text-stone-600 hover:text-[#C05621] inline-flex items-center gap-1 font-semibold"
+                >
+                  <i data-lucide="store" class="w-3.5 h-3.5"></i>
+
+                  <span> Consultar retiro en librería </span>
+                </a>
+              </div>
+            </div>
+
+            <!-- Sellos de Confianza Editorial -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+              <div
+                class="flex items-center gap-3 p-3 bg-white border border-stone-200 rounded-xl"
+              >
+                <i
+                  data-lucide="book"
+                  class="w-5 h-5 text-[#C05621] shrink-0"
+                ></i>
+
+                <div>
+                  <h4 class="text-xs font-bold text-stone-900">
+                    Papel FSC Certificado
+                  </h4>
+
+                  <p class="text-[10px] text-stone-500">Impresión ecológica</p>
+                </div>
+              </div>
+
+              <div
+                class="flex items-center gap-3 p-3 bg-white border border-stone-200 rounded-xl"
+              >
+                <i
+                  data-lucide="rotate-ccw"
+                  class="w-5 h-5 text-[#C05621] shrink-0"
+                ></i>
+
+                <div>
+                  <h4 class="text-xs font-bold text-stone-900">
+                    30 Días de Cambio
+                  </h4>
+
+                  <p class="text-[10px] text-stone-500">
+                    Garantía sin preguntas
+                  </p>
+                </div>
+              </div>
+
+              <div
+                class="flex items-center gap-3 p-3 bg-white border border-stone-200 rounded-xl"
+              >
+                <i
+                  data-lucide="gift"
+                  class="w-5 h-5 text-[#C05621] shrink-0"
+                ></i>
+
+                <div>
+                  <h4 class="text-xs font-bold text-stone-900">
+                    Señalador de Regalo
+                  </h4>
+
+                  <p class="text-[10px] text-stone-500">
+                    Diseño de autor en tu envío
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Sinopsis de la Obra y Ficha Técnica Detallada -->
+      <section
+        class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 border-t border-stone-200"
+      >
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12">
+          <!-- Sinopsis Literaria (7 cols) -->
+          <div class="lg:col-span-7 space-y-6">
+            <div>
+              <span
+                class="text-xs uppercase font-bold tracking-widest text-[#C05621] block mb-1"
+              >
+                Reseña Crítica
+              </span>
+
+              <h2 class="font-editorial text-3xl font-bold text-stone-900">
+                Sinopsis de la Obra
+              </h2>
+            </div>
+
+            <div class="prose text-stone-700 text-sm leading-relaxed space-y-4">
+              <p>
+                <strong
+                  class="font-editorial text-xl font-normal text-stone-900 float-left pr-2 pt-0.5 leading-none"
+                >
+                  S
+                </strong>
+
+                an Francisco, 1866: una monja irlandesa, embarazada y abandonada
+                por un aristócrata chileno tras una apasionada relación secreta,
+                da a luz a una niña a la que llama Emilia del Valle. Criada por
+                su cariñoso padrastro, Emilia se convertirá en una joven
+                brillante de gran personalidad, autónoma e independiente,
+                resuelta a desafiar las normas sociales asfixiantes de su tiempo
+                para profesar su verdadera pasión y vocación ineludible: la
+                escritura.
+              </p>
+
+              <p>
+                Con tan solo diecisiete años, publicará audaces novelas de
+                aventuras bajo un seudónimo masculino que descoloca a los
+                salones literarios de la costa oeste. Pero muy enseguida su
+                mundo ficticio se le quedará pequeño y decidirá optar por el
+                puesto de periodista que se le ofrece en el periódico local para
+                vivir de cerca la vibrante realidad del siglo que despunta.
+              </p>
+
+              <p>
+                Tiempo después, se le presentará la oportunidad de viajar como
+                corresponsal a la cruenta y fervorosa contienda civil en Chile.
+                Junto al avezado periodista Eric Whelan, Emilia se encontrará de
+                pronto con una nación en quiebra, al borde del abismo. Mientras
+                cubre el conflicto bélico entre el presidente Balmaceda y el
+                congreso rebelde, aprovechará la estancia en el país para
+                explorar sus raíces olvidadas, los lazos profundos con la
+                familia Del Valle y el destino inexorable de su propio padre.
+              </p>
+            </div>
+
+            <blockquote
+              class="p-4 bg-stone-100/80 border-l-4 border-[#C05621] rounded-r-xl text-xs italic text-stone-700"
+            >
+              “Una cautivadora e inolvidable historia de amor y de guerra, de
+              descubrimiento y redención, protagonizada por una mujer que
+              desafía las convenciones de su época. Emilia del Valle se suma con
+              brillo propio a la formidable galería de heroínas de la saga Del
+              Valle.”
+            </blockquote>
+
+            <div class="pt-2 flex flex-wrap items-center gap-2">
+              <span
+                class="text-[11px] font-bold uppercase tracking-wider text-stone-400 mr-2"
+              >
+                Temáticas:
+              </span>
+
+              <span
+                class="px-3 py-1 rounded-full bg-stone-100 text-stone-700 text-xs font-medium"
+              >
+                Ficción Histórica
+              </span>
+
+              <span
+                class="px-3 py-1 rounded-full bg-stone-100 text-stone-700 text-xs font-medium"
+              >
+                Saga Familiar
+              </span>
+
+              <span
+                class="px-3 py-1 rounded-full bg-stone-100 text-stone-700 text-xs font-medium"
+              >
+                Literatura Latinoamericana
+              </span>
+
+              <span
+                class="px-3 py-1 rounded-full bg-stone-100 text-stone-700 text-xs font-medium"
+              >
+                Feminismo &amp; Corresponsalía
+              </span>
+            </div>
+          </div>
+
+          <!-- Ficha Técnica Editorial (5 cols) -->
+          <div
+            class="lg:col-span-5 bg-white border border-stone-200 rounded-2xl p-6 sm:p-8 shadow-sm"
+          >
+            <div
+              class="flex items-center justify-between pb-4 border-b border-stone-100 mb-6"
+            >
+              <h3 class="font-editorial text-2xl font-bold text-stone-900">
+                Ficha Técnica
+              </h3>
+
+              <i data-lucide="sliders" class="w-4 h-4 text-stone-400"></i>
+            </div>
+
+            <p class="text-xs text-stone-500 mb-6">
+              Metadatos bibliográficos y especificaciones de impresión de la
+              presente tirada comercial.
+            </p>
+
+            <dl class="space-y-3 text-xs">
+              <div class="flex justify-between py-2 border-b border-stone-50">
+                <dt class="text-stone-500">Formato</dt>
+
+                <dd class="font-semibold text-stone-800 text-right">
+                  Libro Físico
+                </dd>
+              </div>
+
+              <div class="flex justify-between py-2 border-b border-stone-50">
+                <dt class="text-stone-500">Sello Editorial</dt>
+
+                <dd class="font-semibold text-stone-800 text-right">
+                  Sudamericana
+                </dd>
+              </div>
+
+              <div class="flex justify-between py-2 border-b border-stone-50">
+                <dt class="text-stone-500">Tipo de Encuadernación</dt>
+
+                <dd class="font-semibold text-stone-800 text-right">
+                  Tapa Blanda con solapas
+                </dd>
+              </div>
+
+              <div class="flex justify-between py-2 border-b border-stone-50">
+                <dt class="text-stone-500">Idioma</dt>
+
+                <dd class="font-semibold text-stone-800 text-right">Español</dd>
+              </div>
+
+              <div class="flex justify-between py-2 border-b border-stone-50">
+                <dt class="text-stone-500">ISBN-13</dt>
+
+                <dd class="font-mono font-semibold text-stone-800 text-right">
+                  978-950-07-7187-0
+                </dd>
+              </div>
+
+              <div class="flex justify-between py-2 border-b border-stone-50">
+                <dt class="text-stone-500">Número de Páginas</dt>
+
+                <dd class="font-semibold text-stone-800 text-right">
+                  368 páginas
+                </dd>
+              </div>
+
+              <div class="flex justify-between py-2 border-b border-stone-50">
+                <dt class="text-stone-500">Año de Publicación</dt>
+
+                <dd class="font-semibold text-stone-800 text-right">2025</dd>
+              </div>
+
+              <div class="flex justify-between py-2 border-b border-stone-50">
+                <dt class="text-stone-500">Dimensiones</dt>
+
+                <dd class="font-semibold text-stone-800 text-right">
+                  15.0 × 23.0 cm
+                </dd>
+              </div>
+
+              <div class="flex justify-between py-2">
+                <dt class="text-stone-500">Peso Estimado</dt>
+
+                <dd class="font-semibold text-stone-800 text-right">480 g</dd>
+              </div>
+            </dl>
+
+            <!-- Tarjeta de autor -->
+            <div
+              class="mt-8 pt-6 border-t border-stone-100 flex items-center gap-4 bg-stone-50 p-4 rounded-xl"
+            >
+              <img
+                src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=200&auto=format&fit=crop"
+                alt="Retrato de la autora Isabel Allende"
+                class="w-12 h-12 rounded-full object-cover border border-stone-200 shrink-0"
+              />
+
+              <div class="flex-1 min-w-0">
+                <h4 class="text-xs font-bold text-stone-900">
+                  Sobre Isabel Allende
+                </h4>
+
+                <p class="text-[11px] text-stone-500 truncate">
+                  Nacida en Lima en 1942, es la escritora viva en lengua
+                  española más leída del mundo.
+                </p>
+
+                <a
+                  href="catalogo.html?autor=isabel-allende"
+                  class="text-[11px] text-[#C05621] font-semibold hover:underline mt-0.5 inline-block"
+                >
+                  Ver todos sus títulos
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Obras Relacionadas / Recomendadas de la Misma Autora -->
+      <section
+        class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 border-t border-stone-200"
+      >
+        <div class="flex items-center justify-between mb-8">
+          <div>
+            <span
+              class="text-xs uppercase font-bold tracking-widest text-[#C05621] block mb-1"
+            >
+              Curaduría de la Casa
+            </span>
+
+            <h2
+              class="font-editorial text-2xl sm:text-3xl font-bold text-stone-900"
+            >
+              Obras Recomendadas del Universo Allende
+            </h2>
+          </div>
+
+          <a
+            href="catalogo.html"
+            class="inline-flex items-center gap-1 text-xs font-semibold text-[#C05621] hover:underline"
+          >
+            <span> Explorar colección completa </span>
+
+            <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+          </a>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+          <!-- Libro Relacionado 1 -->
+          <div
+            class="bg-white border border-stone-200 rounded-2xl p-4 shadow-sm hover:shadow-md transition-shadow group flex flex-col justify-between"
+          >
+            <div>
+              <div
+                class="relative rounded-xl overflow-hidden aspect-[2/3] bg-stone-100 mb-4"
+              >
+                <img
+                  src="https://images.unsplash.com/photo-1543002588-bfa74002ed7e?q=80&w=400&auto=format&fit=crop"
+                  alt="La casa de los espíritus"
+                  class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+
+                <span
+                  class="absolute top-2 right-2 bg-emerald-50 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full border border-emerald-200"
+                >
+                  En Stock
+                </span>
+              </div>
+
+              <span
+                class="text-[10px] font-bold uppercase text-stone-400 block mb-1"
+              >
+                Debolsillo
+              </span>
+
+              <h3
+                class="font-editorial text-sm font-bold text-stone-900 group-hover:text-[#C05621] transition-colors leading-snug"
+              >
+                La casa de los espíritus
+              </h3>
+
+              <p class="text-xs text-stone-500">Isabel Allende</p>
+            </div>
+
+            <div
+              class="mt-4 pt-3 border-t border-stone-100 flex items-center justify-between"
+            >
+              <span class="text-sm font-bold text-stone-900"> $19.200 </span>
+
+              <a
+                href="libro.html"
+                class="text-xs font-semibold text-[#C05621] hover:underline"
+              >
+                Ver detalle
+              </a>
+            </div>
+          </div>
+
+          <!-- Libro Relacionado 2 -->
+          <div
+            class="bg-white border border-stone-200 rounded-2xl p-4 shadow-sm hover:shadow-md transition-shadow group flex flex-col justify-between"
+          >
+            <div>
+              <div
+                class="relative rounded-xl overflow-hidden aspect-[2/3] bg-stone-100 mb-4"
+              >
+                <img
+                  src="https://images.unsplash.com/photo-1512820790803-83ca734da794?q=80&w=400&auto=format&fit=crop"
+                  alt="Hija de la fortuna"
+                  class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+
+                <span
+                  class="absolute top-2 right-2 bg-emerald-50 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full border border-emerald-200"
+                >
+                  En Stock
+                </span>
+              </div>
+
+              <span
+                class="text-[10px] font-bold uppercase text-stone-400 block mb-1"
+              >
+                Plaza &amp; Janés
+              </span>
+
+              <h3
+                class="font-editorial text-sm font-bold text-stone-900 group-hover:text-[#C05621] transition-colors leading-snug"
+              >
+                Hija de la fortuna
+              </h3>
+
+              <p class="text-xs text-stone-500">Isabel Allende</p>
+            </div>
+
+            <div
+              class="mt-4 pt-3 border-t border-stone-100 flex items-center justify-between"
+            >
+              <span class="text-sm font-bold text-stone-900"> $21.800 </span>
+
+              <a
+                href="libro.html"
+                class="text-xs font-semibold text-[#C05621] hover:underline"
+              >
+                Ver detalle
+              </a>
+            </div>
+          </div>
+
+          <!-- Libro Relacionado 3 -->
+          <div
+            class="bg-white border border-stone-200 rounded-2xl p-4 shadow-sm hover:shadow-md transition-shadow group flex flex-col justify-between"
+          >
+            <div>
+              <div
+                class="relative rounded-xl overflow-hidden aspect-[2/3] bg-stone-100 mb-4"
+              >
+                <img
+                  src="https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?q=80&w=400&auto=format&fit=crop"
+                  alt="Retrato en sepia"
+                  class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+
+                <span
+                  class="absolute top-2 right-2 bg-emerald-50 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full border border-emerald-200"
+                >
+                  En Stock
+                </span>
+              </div>
+
+              <span
+                class="text-[10px] font-bold uppercase text-stone-400 block mb-1"
+              >
+                Sudamericana
+              </span>
+
+              <h3
+                class="font-editorial text-sm font-bold text-stone-900 group-hover:text-[#C05621] transition-colors leading-snug"
+              >
+                Retrato en sepia
+              </h3>
+
+              <p class="text-xs text-stone-500">Isabel Allende</p>
+            </div>
+
+            <div
+              class="mt-4 pt-3 border-t border-stone-100 flex items-center justify-between"
+            >
+              <span class="text-sm font-bold text-stone-900"> $20.500 </span>
+
+              <a
+                href="libro.html"
+                class="text-xs font-semibold text-[#C05621] hover:underline"
+              >
+                Ver detalle
+              </a>
+            </div>
+          </div>
+
+          <!-- Libro Relacionado 4 -->
+          <div
+            class="bg-white border border-stone-200 rounded-2xl p-4 shadow-sm hover:shadow-md transition-shadow group flex flex-col justify-between"
+          >
+            <div>
+              <div
+                class="relative rounded-xl overflow-hidden aspect-[2/3] bg-stone-100 mb-4"
+              >
+                <img
+                  src="https://images.unsplash.com/photo-1497633762265-9d179a990aa6?q=80&w=400&auto=format&fit=crop"
+                  alt="Violeta"
+                  class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+
+                <span
+                  class="absolute top-2 right-2 bg-emerald-50 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full border border-emerald-200"
+                >
+                  En Stock
+                </span>
+              </div>
+
+              <span
+                class="text-[10px] font-bold uppercase text-stone-400 block mb-1"
+              >
+                Plaza &amp; Janés
+              </span>
+
+              <h3
+                class="font-editorial text-sm font-bold text-stone-900 group-hover:text-[#C05621] transition-colors leading-snug"
+              >
+                Violeta
+              </h3>
+
+              <p class="text-xs text-stone-500">Isabel Allende</p>
+            </div>
+
+            <div
+              class="mt-4 pt-3 border-t border-stone-100 flex items-center justify-between"
+            >
+              <span class="text-sm font-bold text-stone-900"> $23.100 </span>
+
+              <a
+                href="libro.html"
+                class="text-xs font-semibold text-[#C05621] hover:underline"
+              >
+                Ver detalle
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Newsletter: El Correo del Lector -->
+      <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 mb-6">
+        <div
+          class="bg-stone-100 border border-stone-200/90 rounded-2xl p-8 text-center sm:text-left flex flex-col sm:flex-row items-center justify-between gap-6"
+        >
+          <div>
+            <span
+              class="text-[10px] uppercase font-bold tracking-widest text-[#C05621] block mb-1"
+            >
+              El Correo del Lector
+            </span>
+
+            <h2 class="font-editorial text-2xl font-bold text-stone-900">
+              Suscribite para no perderte las novedades
+            </h2>
+
+            <p class="text-xs text-stone-500 mt-1">
+              Recomendaciones exclusivas, notas críticas y lanzamientos
+              editoriales de cada semana.
+            </p>
+          </div>
+
+          <form
+            class="flex w-full sm:w-auto max-w-md gap-2"
+            onsubmit="
+              event.preventDefault();
+              alert('¡Gracias por suscribirte al Correo del Lector!');
+            "
+          >
+            <input
+              type="email"
+              placeholder="Ingresá tu correo electrónico..."
+              required
+              class="px-4 py-2.5 rounded-lg border border-stone-300 bg-white text-xs focus:outline-none focus:border-[#C05621] flex-1 min-w-[220px]"
+            />
+
+            <button
+              type="submit"
+              class="px-5 py-2.5 bg-[#C05621] hover:bg-[#a34415] text-white text-xs font-bold rounded-lg transition-colors shrink-0"
+            >
+              Suscribirme
+            </button>
+          </form>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer Editorial -->
+    <footer
+      class="bg-stone-100 border-t border-stone-200 text-stone-600 text-xs mt-auto"
+    >
+      <div
+        class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 grid grid-cols-1 md:grid-cols-4 gap-8"
+      >
+        <!-- Identidad y bio -->
+        <div class="space-y-3">
+          <div class="flex items-center gap-2">
+            <div
+              class="w-7 h-7 rounded bg-[#C05621] text-white flex items-center justify-center"
+            >
+              <i data-lucide="book-open" class="w-4 h-4 text-[#FAF8F5]"></i>
+            </div>
+
+            <span class="font-editorial font-bold text-base text-stone-900">
+              Libros<span class="text-[#C05621]">Libros</span>
+            </span>
+          </div>
+
+          <p class="text-stone-500 leading-relaxed text-[11px]">
+            Una librería independiente y espacio de encuentro pensado para
+            amantes de la palabra escrita, las primeras ediciones y la lectura
+            pausada.
+          </p>
+
+          <span
+            class="inline-flex items-center gap-1.5 text-stone-500 text-[10px]"
+          >
+            <i data-lucide="library" class="w-3.5 h-3.5 text-[#C05621]"></i>
+
+            Curaduría Editorial
+          </span>
+        </div>
+
+        <!-- Navegación -->
+        <div>
+          <h5
+            class="font-bold text-stone-900 text-xs uppercase tracking-wider mb-3"
+          >
+            Navegación
+          </h5>
+
+          <ul class="space-y-2 text-[11px]">
+            <li>
+              <a
+                href="inicio.html"
+                class="hover:text-[#C05621] transition-colors"
+              >
+                Inicio
+              </a>
+            </li>
+
+            <li>
+              <a
+                href="catalogo.html"
+                class="hover:text-[#C05621] transition-colors"
+              >
+                Catálogo Completo
+              </a>
+            </li>
+
+            <li>
+              <a
+                href="categorias.html"
+                class="hover:text-[#C05621] transition-colors"
+              >
+                Colecciones &amp; Géneros
+              </a>
+            </li>
+
+            <li>
+              <a
+                href="sobre-nosotros.html"
+                class="hover:text-[#C05621] transition-colors"
+              >
+                Sobre Nosotros
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Atención al Lector -->
+        <div>
+          <h5
+            class="font-bold text-stone-900 text-xs uppercase tracking-wider mb-3"
+          >
+            Atención al Lector
+          </h5>
+
+          <ul class="space-y-2 text-[11px]">
+            <li>
+              <a
+                href="contacto.html"
+                class="hover:text-[#C05621] transition-colors"
+              >
+                Contacto &amp; Consultas
+              </a>
+            </li>
+
+            <li>
+              <a href="#" class="hover:text-[#C05621] transition-colors">
+                Términos y Condiciones
+              </a>
+            </li>
+
+            <li>
+              <a href="#" class="hover:text-[#C05621] transition-colors">
+                Políticas de Envíos
+              </a>
+            </li>
+
+            <li>
+              <a href="#" class="hover:text-[#C05621] transition-colors">
+                Preguntas Frecuentes
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Ubicación física -->
+        <div>
+          <h5
+            class="font-bold text-stone-900 text-xs uppercase tracking-wider mb-3"
+          >
+            Nuestra Librería
+          </h5>
+
+          <ul class="space-y-2 text-[11px] text-stone-500">
+            <li class="flex items-start gap-2">
+              <i
+                data-lucide="map-pin"
+                class="w-3.5 h-3.5 text-[#C05621] shrink-0 mt-0.5"
+              ></i>
+
+              <span> Av. de las Letras 1420, Barrio Antiguo, Ciudad </span>
+            </li>
+
+            <li class="flex items-center gap-2">
+              <i
+                data-lucide="phone"
+                class="w-3.5 h-3.5 text-[#C05621] shrink-0"
+              ></i>
+
+              <span> +54 11 4821-9000 </span>
+            </li>
+
+            <li class="flex items-center gap-2">
+              <i
+                data-lucide="clock"
+                class="w-3.5 h-3.5 text-[#C05621] shrink-0"
+              ></i>
+
+              <span>
+                Lunes a Sábado: 10:00 — 20:30<br />
+                Domingos: 14:00 — 19:30
+              </span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div
+        class="border-t border-stone-200/80 py-4 px-4 text-center text-[10px] text-stone-400 max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-2"
+      >
+        <p>© 2025 Libros Libros. Hecho con pasión por los libros.</p>
+
+        <p class="tracking-widest uppercase text-stone-400 font-medium">
+          Ediciones Clásicas &amp; Contemporáneas
+        </p>
+      </div>
+    </footer>
+
+    <!-- Inicialización de iconos de Lucide -->
+    <script>
+      lucide.createIcons();
+    </script>
+  </body>
+</html>

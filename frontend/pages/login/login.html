@@ -1,0 +1,428 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Iniciar Sesión — Libros Libros Librería Editorial</title>
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+      body {
+        background-color: #faf8f5;
+        color: #1c1917;
+        font-family: "Plus Jakarta Sans", sans-serif;
+      }
+
+      .font-editorial {
+        font-family: "Playfair Display", Georgia, serif;
+      }
+    </style>
+  </head>
+
+  <body
+    class="min-h-screen flex flex-col antialiased selection:bg-[#C05621] selection:text-white"
+  >
+    <!-- Cinta superior de anuncios -->
+    <div
+      class="bg-[#1C1917] text-[#FAF8F5] text-xs py-2 px-4 text-center tracking-wide border-b border-stone-800 flex items-center justify-center gap-2"
+    >
+      <i data-lucide="truck" class="w-3.5 h-3.5 text-[#C05621]"></i>
+
+      <span>
+        Envíos sin cargo en compras superiores a $35.000 • Entregas y envíos
+        asegurados a todo el país
+      </span>
+    </div>
+
+    <!-- Header / Barra de navegación principal -->
+    <header
+      class="sticky top-0 z-40 bg-[#FAF8F5]/95 backdrop-blur-md border-b border-stone-200"
+    >
+      <div
+        class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-6"
+      >
+        <!-- Logotipo de la marca -->
+        <a href="index.html" class="flex items-center gap-3 group">
+          <div
+            class="w-10 h-10 rounded-lg bg-[#C05621] text-white flex items-center justify-center shadow-sm group-hover:bg-[#a34415] transition-colors"
+          >
+            <i data-lucide="book-open" class="w-5 h-5 text-[#FAF8F5]"></i>
+          </div>
+
+          <div class="flex flex-col">
+            <span
+              class="font-editorial text-2xl font-bold tracking-tight text-stone-900 leading-none"
+            >
+              Libros<span class="text-[#C05621]">Libros</span>
+            </span>
+
+            <span
+              class="text-[10px] tracking-[0.2em] uppercase font-semibold text-stone-500 mt-1"
+            >
+              Librería Editorial
+            </span>
+          </div>
+        </a>
+
+        <!-- Menú de navegación principal -->
+        <nav
+          class="hidden md:flex items-center gap-8 text-sm font-medium text-stone-700"
+        >
+          <a href="index.html" class="hover:text-[#C05621] transition-colors">
+            Inicio
+          </a>
+
+          <a
+            href="categorias.html"
+            class="hover:text-[#C05621] transition-colors"
+          >
+            Categorías
+          </a>
+
+          <a
+            href="productos.html"
+            class="hover:text-[#C05621] transition-colors"
+          >
+            Catálogo
+          </a>
+
+          <a href="acerca.html" class="hover:text-[#C05621] transition-colors">
+            Sobre Nosotros
+          </a>
+
+          <a
+            href="contacto.html"
+            class="hover:text-[#C05621] transition-colors"
+          >
+            Contacto
+          </a>
+        </nav>
+
+        <!-- Buscador y botón de Iniciar Sesión (Sin carrito ni favoritos) -->
+        <div class="flex items-center gap-4 flex-1 md:flex-initial justify-end">
+          <div class="relative w-full max-w-xs hidden sm:block">
+            <input
+              type="search"
+              placeholder="Buscar autor, título o corriente..."
+              class="w-full pl-9 pr-4 py-2 bg-stone-100/80 border border-stone-300 rounded-full text-xs placeholder:text-stone-400 focus:outline-none focus:border-[#C05621] focus:bg-white transition-all"
+            />
+
+            <i
+              data-lucide="search"
+              class="w-4 h-4 text-stone-400 absolute left-3 top-2.5"
+            ></i>
+          </div>
+
+          <a
+            href="login.html"
+            class="flex items-center gap-2 text-sm font-medium text-stone-800 hover:text-[#C05621] px-3 py-1.5 rounded-full bg-stone-100/60 hover:bg-stone-100 transition-colors"
+          >
+            <div
+              class="w-8 h-8 rounded-full bg-[#C05621] flex items-center justify-center text-white"
+            >
+              <i data-lucide="user" class="w-4 h-4"></i>
+            </div>
+
+            <span class="hidden lg:inline text-xs font-semibold">
+              Iniciar Sesión
+            </span>
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <main class="flex-grow flex flex-col justify-center py-10 sm:py-14">
+      <!-- Migas de pan -->
+      <div class="max-w-4xl mx-auto px-4 w-full mb-6">
+        <nav class="flex items-center gap-2 text-xs text-stone-500">
+          <a
+            href="index.html"
+            class="hover:text-[#C05621] transition-colors flex items-center gap-1"
+          >
+            <i data-lucide="home" class="w-3.5 h-3.5"></i>
+
+            <span>Inicio</span>
+          </a>
+
+          <span class="text-stone-300">/</span>
+
+          <span class="text-stone-900 font-medium"> Iniciar Sesión </span>
+        </nav>
+      </div>
+
+      <!-- Contenedor del Maquetado de Login (según Login.png de Figma) -->
+      <section class="max-w-2xl mx-auto px-4 w-full">
+        <div
+          class="border border-stone-300 bg-[#FAF8F5] p-8 sm:p-14 shadow-sm rounded-lg"
+        >
+          <!-- Título principal -->
+          <h1
+            class="font-editorial text-3xl sm:text-4xl font-bold text-stone-900 text-center mb-10 tracking-tight"
+          >
+            Iniciar sesion
+          </h1>
+
+          <form
+            class="space-y-6 max-w-md mx-auto"
+            onsubmit="
+              event.preventDefault();
+              alert('Iniciando sesión...');
+            "
+          >
+            <!-- Campo Usuario -->
+            <div>
+              <label
+                for="usuario"
+                class="block text-sm font-bold text-stone-800 mb-2"
+              >
+                Usuario
+              </label>
+
+              <input
+                type="text"
+                id="usuario"
+                required
+                placeholder="Ingresá tu usuario o correo"
+                class="w-full px-4 py-3 bg-stone-100/90 border border-stone-200 text-stone-800 text-sm focus:outline-none focus:border-[#C05621] focus:bg-white transition-all rounded"
+              />
+            </div>
+
+            <!-- Campo Contraseña -->
+            <div>
+              <label
+                for="password"
+                class="block text-sm font-bold text-stone-800 mb-2"
+              >
+                Contraseña
+              </label>
+
+              <div class="relative">
+                <input
+                  type="password"
+                  id="password"
+                  required
+                  placeholder="••••••••••••"
+                  class="w-full px-4 py-3 pr-11 bg-stone-100/90 border border-stone-200 text-stone-800 text-sm focus:outline-none focus:border-[#C05621] focus:bg-white transition-all rounded"
+                />
+
+                <button
+                  type="button"
+                  onclick="
+                    const p = document.getElementById('password');
+                    p.type = p.type === 'password' ? 'text' : 'password';
+                  "
+                  class="absolute right-3.5 top-3.5 text-stone-400 hover:text-stone-700"
+                  title="Mostrar / ocultar contraseña"
+                >
+                  <i data-lucide="eye" class="w-4 h-4"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Recuperar contraseña -->
+            <div class="text-center pt-1">
+              <a
+                href="#recuperar"
+                class="text-xs text-stone-600 hover:text-[#C05621] underline underline-offset-4 transition-colors"
+              >
+                Recuperar contraseña
+              </a>
+            </div>
+
+            <!-- Botones de Acción -->
+            <div class="space-y-3 pt-3">
+              <button
+                type="submit"
+                class="w-full py-3 px-6 bg-[#ecd8cf] hover:bg-[#e2c7bb] text-stone-900 font-semibold text-sm transition-colors text-center rounded shadow-sm"
+              >
+                Iniciar sesión
+              </button>
+
+              <a
+                href="registro.html"
+                class="w-full py-3 px-6 bg-stone-200 hover:bg-stone-300 text-stone-800 font-semibold text-sm transition-colors text-center block rounded"
+              >
+                Crear cuenta
+              </a>
+            </div>
+
+            <!-- Enlace Registrate -->
+            <div class="text-center pt-2">
+              <a
+                href="registro.html"
+                class="text-sm font-semibold text-stone-900 hover:text-[#C05621] transition-colors"
+              >
+                Registrate
+              </a>
+            </div>
+          </form>
+        </div>
+
+        <!-- Garantía sutil de seguridad -->
+        <div
+          class="mt-6 flex items-center justify-center gap-2 text-xs text-stone-400 text-center"
+        >
+          <i data-lucide="shield-check" class="w-4 h-4 text-[#C05621]"></i>
+
+          <span>
+            Conexión Segura SSL • Resguardo estricto y privacidad de tus
+            preferencias literarias.
+          </span>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer Editorial -->
+    <footer
+      class="bg-stone-100 border-t border-stone-200 text-stone-600 text-xs mt-auto"
+    >
+      <div
+        class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 grid grid-cols-1 md:grid-cols-4 gap-8"
+      >
+        <!-- Identidad y bio -->
+        <div class="space-y-3">
+          <div class="flex items-center gap-2">
+            <div
+              class="w-7 h-7 rounded bg-[#C05621] text-white flex items-center justify-center"
+            >
+              <i data-lucide="book-open" class="w-4 h-4 text-[#FAF8F5]"></i>
+            </div>
+
+            <span class="font-editorial font-bold text-base text-stone-900">
+              Libros<span class="text-[#C05621]">Libros</span>
+            </span>
+          </div>
+
+          <p class="text-stone-500 leading-relaxed text-[11px]">
+            Librería editorial independiente. Curaduría paciente de clásicos
+            perdidos, teoría contemporánea y autores emergentes.
+          </p>
+        </div>
+
+        <!-- Navegación -->
+        <div>
+          <h5
+            class="font-bold text-stone-900 text-xs uppercase tracking-wider mb-3"
+          >
+            Navegación
+          </h5>
+
+          <ul class="space-y-2 text-[11px]">
+            <li>
+              <a
+                href="inicio.html"
+                class="hover:text-[#C05621] transition-colors"
+              >
+                Inicio
+              </a>
+            </li>
+
+            <li>
+              <a
+                href="categorias.html"
+                class="hover:text-[#C05621] transition-colors"
+              >
+                Categorías &amp; Colecciones
+              </a>
+            </li>
+
+            <li>
+              <a
+                href="catalogo.html"
+                class="hover:text-[#C05621] transition-colors"
+              >
+                Catálogo Completo
+              </a>
+            </li>
+
+            <li>
+              <a
+                href="sobre-nosotros.html"
+                class="hover:text-[#C05621] transition-colors"
+              >
+                Sobre Nuestra Librería
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Atención al Lector -->
+        <div>
+          <h5
+            class="font-bold text-stone-900 text-xs uppercase tracking-wider mb-3"
+          >
+            Atención al Lector
+          </h5>
+
+          <ul class="space-y-2 text-[11px]">
+            <li>
+              <a href="#envios" class="hover:text-[#C05621] transition-colors">
+                Envíos y Seguimiento
+              </a>
+            </li>
+
+            <li>
+              <a href="#pedidos" class="hover:text-[#C05621] transition-colors">
+                Pedidos Especiales e Importaciones
+              </a>
+            </li>
+
+            <li>
+              <a
+                href="contacto.html"
+                class="hover:text-[#C05621] transition-colors"
+              >
+                Contacto Directo
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Ubicación física -->
+        <div>
+          <h5
+            class="font-bold text-stone-900 text-xs uppercase tracking-wider mb-3"
+          >
+            Nuestra Librería
+          </h5>
+
+          <ul class="space-y-2 text-[11px] text-stone-500">
+            <li class="flex items-start gap-2">
+              <i
+                data-lucide="map-pin"
+                class="w-3.5 h-3.5 text-[#C05621] shrink-0 mt-0.5"
+              ></i>
+
+              <span> Av. de las Letras 1420, Barrio Bellas Artes </span>
+            </li>
+
+            <li class="flex items-center gap-2">
+              <i
+                data-lucide="phone"
+                class="w-3.5 h-3.5 text-[#C05621] shrink-0"
+              ></i>
+
+              <span> +54 (11) 4892-0044 </span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div
+        class="border-t border-stone-200/80 py-4 px-4 text-center text-[10px] text-stone-400 max-w-7xl mx-auto"
+      >
+        <p>
+          © 2025 Libros Libros Librería Editorial. Todos los derechos
+          reservados.
+        </p>
+      </div>
+    </footer>
+
+    <!-- Inicialización de iconos de Lucide -->
+    <script>
+      lucide.createIcons();
+    </script>
+  </body>
+</html>

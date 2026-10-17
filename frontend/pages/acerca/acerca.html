@@ -1,0 +1,838 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Sobre Nosotros — Libros Libros Librería Editorial</title>
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+      body {
+        background-color: #faf8f5;
+        color: #1c1917;
+        font-family: "Plus Jakarta Sans", sans-serif;
+      }
+
+      .font-editorial {
+        font-family: "Playfair Display", Georgia, serif;
+      }
+    </style>
+  </head>
+
+  <body
+    class="min-h-screen flex flex-col antialiased selection:bg-[#C05621] selection:text-white"
+  >
+    <!-- Cinta superior de anuncios -->
+    <div
+      class="bg-[#1C1917] text-[#FAF8F5] text-xs py-2 px-4 text-center tracking-wide border-b border-stone-800 flex items-center justify-center gap-2"
+    >
+      <i data-lucide="truck" class="w-3.5 h-3.5 text-[#C05621]"></i>
+      <span
+        >Envíos sin cargo en compras superiores a $35.000 • Entregas a todo el
+        país</span
+      >
+    </div>
+
+    <!-- Header / Barra de navegación principal (Sin carrito y sin botón de Favoritos) -->
+    <header
+      class="sticky top-0 z-40 bg-[#FAF8F5]/95 backdrop-blur-md border-b border-stone-200"
+    >
+      <div
+        class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-6"
+      >
+        <!-- Logotipo de la marca -->
+        <a href="inicio.html" class="flex items-center gap-3 group">
+          <div
+            class="w-10 h-10 rounded-lg bg-[#1C1917] text-amber-50 flex items-center justify-center shadow-sm group-hover:bg-[#C05621] transition-colors"
+          >
+            <i data-lucide="book-open" class="w-5 h-5 text-[#FAF8F5]"></i>
+          </div>
+
+          <div class="flex flex-col">
+            <span
+              class="font-editorial text-2xl font-bold tracking-tight text-stone-900 leading-none"
+            >
+              Libros<span class="text-[#C05621]">Libros</span>
+            </span>
+
+            <span
+              class="text-[10px] tracking-[0.2em] uppercase font-semibold text-stone-500 mt-1"
+            >
+              Librería Editorial
+            </span>
+          </div>
+        </a>
+
+        <!-- Menú de navegación principal -->
+        <nav
+          class="hidden md:flex items-center gap-8 text-sm font-medium text-stone-700"
+        >
+          <a href="index.html" class="hover:text-[#C05621] transition-colors"
+            >Inicio</a
+          >
+          <a
+            href="categorias.html"
+            class="hover:text-[#C05621] transition-colors"
+            >Categorías</a
+          >
+          <a
+            href="productos.html"
+            class="hover:text-[#C05621] transition-colors"
+            >Catálogo</a
+          >
+          <a
+            href="#"
+            class="text-[#C05621] font-semibold border-b-2 border-[#C05621] pb-1"
+          >
+            Sobre Nosotros
+          </a>
+          <a href="contacto.html" class="hover:text-[#C05621] transition-colors"
+            >Contacto</a
+          >
+        </nav>
+
+        <!-- Buscador e inicio de sesión (Sin Favoritos y sin Carrito) -->
+        <div class="flex items-center gap-4 flex-1 md:flex-initial justify-end">
+          <div class="relative w-full max-w-xs hidden sm:block">
+            <input
+              type="search"
+              placeholder="Buscar libro, autor..."
+              class="w-full pl-9 pr-4 py-2 bg-stone-100/80 border border-stone-300 rounded-full text-xs placeholder:text-stone-400 focus:outline-none focus:border-[#C05621] focus:bg-white transition-all"
+            />
+            <i
+              data-lucide="search"
+              class="w-4 h-4 text-stone-400 absolute left-3 top-2.5"
+            ></i>
+          </div>
+
+          <a
+            href="login.html"
+            class="flex items-center gap-2 text-sm font-medium text-stone-800 hover:text-[#C05621] px-3 py-1.5 rounded-full hover:bg-stone-100 transition-colors"
+          >
+            <div
+              class="w-8 h-8 rounded-full bg-stone-200 flex items-center justify-center text-stone-700"
+            >
+              <i data-lucide="user" class="w-4 h-4"></i>
+            </div>
+
+            <span class="hidden lg:inline text-xs font-semibold">
+              Iniciar Sesión
+            </span>
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <main class="flex-grow">
+      <!-- Encabezado / Migas de pan y Título principal -->
+      <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-6">
+        <nav class="flex items-center gap-2 text-xs text-stone-500 mb-4">
+          <a href="index.html" class="hover:text-[#C05621] transition-colors">
+            Inicio
+          </a>
+
+          <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-stone-400"></i>
+
+          <span class="text-stone-900 font-medium"> Sobre Nosotros </span>
+        </nav>
+
+        <div class="max-w-3xl">
+          <div class="flex items-center gap-2 mb-3">
+            <span class="w-2 h-2 rounded-full bg-[#C05621]"></span>
+
+            <span
+              class="text-[11px] font-bold uppercase tracking-widest text-stone-500"
+            >
+              Nuestra Casa Editorial • Cuarenta Años de Oficio • Fundada en 1984
+            </span>
+          </div>
+
+          <h1
+            class="font-editorial text-4xl sm:text-5xl lg:text-6xl font-bold text-stone-900 leading-[1.15] mb-4"
+          >
+            Sobre Nosotros:
+            <span class="italic font-normal text-[#C05621]">
+              Nuestra Historia &amp; El Oficio de la Palabra
+            </span>
+          </h1>
+
+          <p
+            class="text-stone-600 text-base sm:text-lg font-light leading-relaxed"
+          >
+            Nacimos como un pequeño taller de encuadernación y hoy preservamos
+            un refugio tangible de literatura independiente. Creemos en la
+            lentitud como virtud, en el olor a tinta fresca y en la conversación
+            compartida que nace de abrir un buen libro.
+          </p>
+        </div>
+      </section>
+
+      <!-- Sección Génesis & Memoria (Historia fundacional) -->
+      <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+          <!-- Texto de historia -->
+          <div
+            class="lg:col-span-7 space-y-6 text-stone-700 text-sm sm:text-base leading-relaxed"
+          >
+            <div
+              class="inline-flex items-center gap-2 text-xs font-semibold text-[#C05621] uppercase tracking-wider"
+            >
+              <i data-lucide="feather" class="w-4 h-4"></i>
+              Génesis &amp; Memoria
+            </div>
+
+            <h2
+              class="font-editorial text-2xl sm:text-3xl font-bold text-stone-900 leading-snug"
+            >
+              Un refugio de papel frente a la vorágine de lo efímero
+            </h2>
+
+            <p>
+              En el otoño de <strong>1984</strong>, en un antiguo zaguán de la
+              calle Corrientes, Mateo Viterbo y Clara Silveyra encendieron las
+              prensas tipográficas de una modesta imprenta artesanal. Su premisa
+              era elemental pero resistente: dar refugio a títulos que el
+              mercado acelerado prefería descatalogar, imprimiendo tiradas
+              cuidadas sobre papeles libres de ácido y con encuadernaciones
+              cosidas a mano.
+            </p>
+
+            <p>
+              Con el transcurrir de cuatro décadas,
+              <strong>Libros Libros</strong> floreció hasta convertirse en
+              librería de autor y sello editorial sin resignar un solo milímetro
+              de su espíritu fundacional. Defendemos la
+              <em>lectura pausada</em> (el llamado slow reading), la dignidad
+              material del objeto libro y el rol insustituible del librero como
+              mediador cómplice entre el texto y la vida del lector.
+            </p>
+
+            <p>
+              Hoy trabajamos en alianza con más de 120 editoriales
+              independientes iberoamericanas, importando tesoros de pequeña
+              escala, ensayos de pensamiento crítico y traducciones exquisitas
+              que escapan a los algoritmos de recomendación masiva.
+            </p>
+
+            <!-- Métricas editoriales -->
+            <div class="grid grid-cols-3 gap-6 pt-6 border-t border-stone-200">
+              <div>
+                <p class="font-editorial text-3xl font-bold text-[#C05621]">
+                  1984
+                </p>
+
+                <p
+                  class="text-xs text-stone-500 uppercase tracking-wider mt-1 font-medium"
+                >
+                  Año de fundación
+                </p>
+              </div>
+
+              <div>
+                <p class="font-editorial text-3xl font-bold text-stone-900">
+                  14.000+
+                </p>
+
+                <p
+                  class="text-xs text-stone-500 uppercase tracking-wider mt-1 font-medium"
+                >
+                  Títulos curados
+                </p>
+              </div>
+
+              <div>
+                <p class="font-editorial text-3xl font-bold text-stone-900">
+                  120+
+                </p>
+
+                <p
+                  class="text-xs text-stone-500 uppercase tracking-wider mt-1 font-medium"
+                >
+                  Editoriales independientes
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Imagen histórica de taller -->
+          <div class="lg:col-span-5">
+            <div
+              class="relative rounded-2xl overflow-hidden shadow-xl border border-stone-200/90 group"
+            >
+              <img
+                src="https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?q=80&w=1000&auto=format&fit=crop"
+                alt="Taller tipográfico histórico y libros apilados"
+                class="w-full h-[460px] object-cover group-hover:scale-105 transition-transform duration-700"
+              />
+
+              <div
+                class="absolute inset-0 bg-gradient-to-t from-stone-950/80 via-stone-950/20 to-transparent"
+              ></div>
+
+              <div class="absolute bottom-6 left-6 right-6 text-white">
+                <span
+                  class="text-[10px] uppercase font-bold tracking-widest text-amber-300"
+                >
+                  Taller tipográfico histórico
+                </span>
+
+                <p class="font-editorial text-lg font-bold mt-1">
+                  El amor por la textura de la tinta viva
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Los Cuatro Pilares del Oficio -->
+      <section
+        class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 border-t border-stone-200"
+      >
+        <div class="text-center max-w-2xl mx-auto mb-12">
+          <span
+            class="text-xs uppercase font-bold tracking-widest text-[#C05621] block mb-2"
+          >
+            Nuestra Filosofía
+          </span>
+
+          <h2
+            class="font-editorial text-3xl sm:text-4xl font-bold text-stone-900"
+          >
+            Los cuatro pilares que nos sostienen
+          </h2>
+
+          <p class="text-stone-500 text-xs sm:text-sm mt-2">
+            Principios irrenunciables que guían cada ejemplar que seleccionamos
+            y cada charla tras el mostrador.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <!-- Pilar 1 -->
+          <div
+            class="bg-white border border-stone-200 rounded-xl p-6 shadow-sm flex flex-col justify-between hover:border-[#C05621] transition-colors"
+          >
+            <div>
+              <div
+                class="w-10 h-10 rounded-lg bg-stone-100 flex items-center justify-center text-[#C05621] mb-4"
+              >
+                <i data-lucide="library" class="w-5 h-5"></i>
+              </div>
+
+              <span
+                class="text-[10px] font-bold text-stone-400 uppercase tracking-wider block mb-1"
+              >
+                01 / Curaduría
+              </span>
+
+              <h3 class="font-editorial text-lg font-bold text-stone-900 mb-2">
+                Curaduría Independiente
+              </h3>
+
+              <p class="text-xs text-stone-600 leading-relaxed">
+                No seguimos listas automáticas de bestsellers comerciales. Cada
+                título es examinado, leído y defendido por su valor estético,
+                literario y social.
+              </p>
+            </div>
+
+            <span class="text-[11px] font-semibold text-[#C05621] mt-5 block">
+              Sellos de autor
+            </span>
+          </div>
+
+          <!-- Pilar 2 -->
+          <div
+            class="bg-white border border-stone-200 rounded-xl p-6 shadow-sm flex flex-col justify-between hover:border-[#C05621] transition-colors"
+          >
+            <div>
+              <div
+                class="w-10 h-10 rounded-lg bg-stone-100 flex items-center justify-center text-emerald-700 mb-4"
+              >
+                <i data-lucide="message-square" class="w-5 h-5"></i>
+              </div>
+
+              <span
+                class="text-[10px] font-bold text-stone-400 uppercase tracking-wider block mb-1"
+              >
+                02 / Comunidad
+              </span>
+
+              <h3 class="font-editorial text-lg font-bold text-stone-900 mb-2">
+                Encuentro &amp; Diálogo
+              </h3>
+
+              <p class="text-xs text-stone-600 leading-relaxed">
+                Una librería es un parlamento civil. Aloja clubes de lectura,
+                mesas redondas y el intercambio pausado entre lectores,
+                traductores y autores noveles.
+              </p>
+            </div>
+
+            <span class="text-[11px] font-semibold text-emerald-700 mt-5 block">
+              Comunidad activa
+            </span>
+          </div>
+
+          <!-- Pilar 3 -->
+          <div
+            class="bg-white border border-stone-200 rounded-xl p-6 shadow-sm flex flex-col justify-between hover:border-[#C05621] transition-colors"
+          >
+            <div>
+              <div
+                class="w-10 h-10 rounded-lg bg-stone-100 flex items-center justify-center text-[#C05621] mb-4"
+              >
+                <i data-lucide="book-marked" class="w-5 h-5"></i>
+              </div>
+
+              <span
+                class="text-[10px] font-bold text-stone-400 uppercase tracking-wider block mb-1"
+              >
+                03 / Materialidad
+              </span>
+
+              <h3 class="font-editorial text-lg font-bold text-stone-900 mb-2">
+                El Valor del Papel
+              </h3>
+
+              <p class="text-xs text-stone-600 leading-relaxed">
+                Celebramos la experiencia sensorial de la encuadernación, el
+                gramaje de las hojas y la tipografía bien compuesta. El libro
+                físico es una obra perdurable.
+              </p>
+            </div>
+
+            <span class="text-[11px] font-semibold text-[#C05621] mt-5 block">
+              Ediciones cuidadas
+            </span>
+          </div>
+
+          <!-- Pilar 4 -->
+          <div
+            class="bg-white border border-stone-200 rounded-xl p-6 shadow-sm flex flex-col justify-between hover:border-[#C05621] transition-colors"
+          >
+            <div>
+              <div
+                class="w-10 h-10 rounded-lg bg-stone-100 flex items-center justify-center text-blue-700 mb-4"
+              >
+                <i data-lucide="heart-handshake" class="w-5 h-5"></i>
+              </div>
+
+              <span
+                class="text-[10px] font-bold text-stone-400 uppercase tracking-wider block mb-1"
+              >
+                04 / Calidez
+              </span>
+
+              <h3 class="font-editorial text-lg font-bold text-stone-900 mb-2">
+                Atención de Oficio
+              </h3>
+
+              <p class="text-xs text-stone-600 leading-relaxed">
+                Libreros vocacionales que escuchan, recuerdan tus gustos previos
+                y se toman el tiempo de recomendarte la página justa para tu
+                estado de ánimo.
+              </p>
+            </div>
+
+            <span class="text-[11px] font-semibold text-blue-700 mt-5 block">
+              Libreros de vocación
+            </span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Manifiesto Destacado / Cita de los Fundadores -->
+      <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <div
+          class="relative bg-white border border-stone-200 rounded-2xl p-8 sm:p-14 shadow-sm overflow-hidden"
+        >
+          <span
+            class="font-editorial text-8xl text-stone-100 font-bold absolute -bottom-6 right-6 select-none pointer-events-none"
+          >
+            ”
+          </span>
+
+          <div class="relative z-10 max-w-3xl">
+            <div
+              class="w-8 h-8 rounded bg-amber-100 text-[#C05621] flex items-center justify-center font-editorial font-bold text-lg mb-6"
+            >
+              “
+            </div>
+
+            <blockquote
+              class="font-editorial text-2xl sm:text-3xl lg:text-4xl text-stone-900 font-bold leading-tight mb-6"
+            >
+              «Un libro jamás es mercancía muerta; es una conversación íntima
+              entre dos desconocidos a través del tiempo. Mientras exista quien
+              prefiera encender una lámpara para leer en silencio antes que
+              rendirse al vértigo, nosotros mantendremos abiertas las puertas.»
+            </blockquote>
+
+            <div class="flex items-center gap-3 pt-2">
+              <div
+                class="w-10 h-10 rounded-full bg-[#1C1917] text-white flex items-center justify-center font-bold text-xs"
+              >
+                MV
+              </div>
+
+              <div>
+                <p class="text-xs font-bold text-stone-900">
+                  Mateo Viterbo &amp; Clara Silveyra
+                </p>
+
+                <p class="text-[11px] text-stone-500">
+                  Fundadores y Editores Principales de Libros Libros
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Un vistazo a nuestras estanterías (Galería visual sin experiencia presencial comercial) -->
+      <section
+        class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 border-t border-stone-200"
+      >
+        <div
+          class="flex flex-col sm:flex-row sm:items-end justify-between mb-8 pb-3 border-b border-stone-200 gap-4"
+        >
+          <div>
+            <span
+              class="text-xs uppercase font-bold tracking-widest text-[#C05621] block mb-1"
+            >
+              Nuestra Casa Literaria
+            </span>
+
+            <h2 class="font-editorial text-3xl font-bold text-stone-900">
+              Un vistazo a nuestras estanterías
+            </h2>
+          </div>
+
+          <p class="text-xs text-stone-500 max-w-md">
+            El aroma a papel recién cortado, sillones de lectura en cuero
+            gastado y música en vinilo acompasando la tarde en pleno corazón de
+            Buenos Aires.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <!-- Rincón 1 -->
+          <div
+            class="relative rounded-xl overflow-hidden h-72 shadow-sm border border-stone-200 group"
+          >
+            <img
+              src="https://images.unsplash.com/photo-1507842229458-57793a5e840d?q=80&w=800&auto=format&fit=crop"
+              alt="El Salón Principal de la Librería"
+              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            />
+
+            <div
+              class="absolute inset-0 bg-gradient-to-t from-stone-950/90 via-stone-950/40 to-transparent"
+            ></div>
+
+            <div class="absolute bottom-5 left-5 right-5 text-white">
+              <span
+                class="text-[10px] uppercase font-bold tracking-widest text-amber-300"
+              >
+                Piso Principal
+              </span>
+
+              <h3 class="font-editorial text-xl font-bold mt-0.5">
+                El Salón Principal
+              </h3>
+
+              <p class="text-xs text-stone-300 mt-1">
+                Más de 14.000 títulos en permanente rotación, clasificados por
+                escuelas y corrientes del pensamiento universal.
+              </p>
+            </div>
+          </div>
+
+          <!-- Rincón 2 -->
+          <div
+            class="relative rounded-xl overflow-hidden h-72 shadow-sm border border-stone-200 group"
+          >
+            <img
+              src="https://images.unsplash.com/photo-1495446815901-a7297e633e8d?q=80&w=800&auto=format&fit=crop"
+              alt="Mesa de novedades y recomendaciones"
+              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            />
+
+            <div
+              class="absolute inset-0 bg-gradient-to-t from-stone-950/90 via-stone-950/40 to-transparent"
+            ></div>
+
+            <div class="absolute bottom-5 left-5 right-5 text-white">
+              <span
+                class="text-[10px] uppercase font-bold tracking-widest text-amber-300"
+              >
+                Novedades &amp; Hallazgos
+              </span>
+
+              <h3 class="font-editorial text-xl font-bold mt-0.5">
+                Mesa de Novedades
+              </h3>
+
+              <p class="text-xs text-stone-300 mt-1">
+                Recomendaciones semanales de autores latinoamericanos, poesía
+                traducida y colecciones de pequeñas imprentas.
+              </p>
+            </div>
+          </div>
+
+          <!-- Rincón 3 -->
+          <div
+            class="relative rounded-xl overflow-hidden h-72 shadow-sm border border-stone-200 group"
+          >
+            <img
+              src="https://images.unsplash.com/photo-1521587760476-6c12a4b040da?q=80&w=800&auto=format&fit=crop"
+              alt="Rincón de lectura y silencio"
+              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            />
+
+            <div
+              class="absolute inset-0 bg-gradient-to-t from-stone-950/90 via-stone-950/40 to-transparent"
+            ></div>
+
+            <div class="absolute bottom-5 left-5 right-5 text-white">
+              <span
+                class="text-[10px] uppercase font-bold tracking-widest text-amber-300"
+              >
+                Pausa Literaria
+              </span>
+
+              <h3 class="font-editorial text-xl font-bold mt-0.5">
+                Rincón de Lectura
+              </h3>
+
+              <p class="text-xs text-stone-300 mt-1">
+                Sillones de lectura libres donde podés hojear las primeras
+                páginas mientras disfrutás de café filtrado.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Newsletter: El Correo del Lector -->
+      <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <div
+          class="bg-stone-100 border border-stone-200/90 rounded-2xl p-8 text-center sm:text-left flex flex-col sm:flex-row items-center justify-between gap-6"
+        >
+          <div>
+            <h4 class="font-editorial text-2xl font-bold text-stone-900">
+              El Correo del Lector
+            </h4>
+
+            <p class="text-xs text-stone-500 mt-1">
+              Suscribite para recibir recomendaciones exclusivas, notas críticas
+              y novedades literarias cada semana.
+            </p>
+          </div>
+
+          <form
+            class="flex w-full sm:w-auto max-w-md gap-2"
+            onsubmit="
+              event.preventDefault();
+              alert('¡Gracias por suscribirte al Correo del Lector!');
+            "
+          >
+            <input
+              type="email"
+              placeholder="Ingresá tu correo electrónico"
+              required
+              class="px-4 py-2.5 rounded-lg border border-stone-300 bg-white text-xs focus:outline-none focus:border-[#C05621] flex-1 min-w-[220px]"
+            />
+
+            <button
+              type="submit"
+              class="px-5 py-2.5 bg-[#C05621] hover:bg-[#a34415] text-white text-xs font-bold rounded-lg transition-colors shrink-0"
+            >
+              Suscribirme
+            </button>
+          </form>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer Editorial -->
+    <footer
+      class="bg-stone-100 border-t border-stone-200 text-stone-600 text-xs mt-auto"
+    >
+      <div
+        class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 grid grid-cols-1 md:grid-cols-4 gap-8"
+      >
+        <!-- Identidad y bio -->
+        <div class="space-y-3">
+          <div class="flex items-center gap-2">
+            <div
+              class="w-7 h-7 rounded bg-[#1C1917] text-white flex items-center justify-center"
+            >
+              <i data-lucide="book-open" class="w-4 h-4 text-[#FAF8F5]"></i>
+            </div>
+
+            <span class="font-editorial font-bold text-base text-stone-900">
+              Libros Libros
+            </span>
+          </div>
+
+          <p class="text-stone-500 leading-relaxed text-[11px]">
+            Una librería independiente y espacio de encuentro pensado para
+            amantes de la palabra escrita, las primeras ediciones y la lectura
+            pausada.
+          </p>
+
+          <span
+            class="inline-flex items-center gap-1.5 text-stone-500 text-[10px]"
+          >
+            <i data-lucide="library" class="w-3.5 h-3.5 text-[#C05621]"></i>
+            Curaduría Editorial
+          </span>
+        </div>
+
+        <!-- Navegación -->
+        <div>
+          <h5
+            class="font-bold text-stone-900 text-xs uppercase tracking-wider mb-3"
+          >
+            Navegación
+          </h5>
+
+          <ul class="space-y-2 text-[11px]">
+            <li>
+              <a
+                href="inicio.html"
+                class="hover:text-[#C05621] transition-colors"
+              >
+                Inicio
+              </a>
+            </li>
+
+            <li>
+              <a
+                href="catalogo.html"
+                class="hover:text-[#C05621] transition-colors"
+              >
+                Catálogo Completo
+              </a>
+            </li>
+
+            <li>
+              <a
+                href="categorias.html"
+                class="hover:text-[#C05621] transition-colors"
+              >
+                Colecciones &amp; Géneros
+              </a>
+            </li>
+
+            <li>
+              <a
+                href="sobre-nosotros.html"
+                class="text-[#C05621] font-semibold"
+              >
+                Sobre Nosotros
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Atención al Lector -->
+        <div>
+          <h5
+            class="font-bold text-stone-900 text-xs uppercase tracking-wider mb-3"
+          >
+            Atención al Lector
+          </h5>
+
+          <ul class="space-y-2 text-[11px]">
+            <li>
+              <a
+                href="contacto.html"
+                class="hover:text-[#C05621] transition-colors"
+              >
+                Contacto &amp; Consultas
+              </a>
+            </li>
+
+            <li>
+              <a href="#" class="hover:text-[#C05621] transition-colors">
+                Términos y Condiciones
+              </a>
+            </li>
+
+            <li>
+              <a href="#" class="hover:text-[#C05621] transition-colors">
+                Políticas de Envíos
+              </a>
+            </li>
+
+            <li>
+              <a href="#" class="hover:text-[#C05621] transition-colors">
+                Preguntas Frecuentes
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Ubicación física -->
+        <div>
+          <h5
+            class="font-bold text-stone-900 text-xs uppercase tracking-wider mb-3"
+          >
+            Nuestra Librería
+          </h5>
+
+          <ul class="space-y-2 text-[11px] text-stone-500">
+            <li class="flex items-start gap-2">
+              <i
+                data-lucide="map-pin"
+                class="w-3.5 h-3.5 text-[#C05621] shrink-0 mt-0.5"
+              ></i>
+              <span> Av. de las Letras 1420, Barrio Antiguo, Ciudad </span>
+            </li>
+
+            <li class="flex items-center gap-2">
+              <i
+                data-lucide="phone"
+                class="w-3.5 h-3.5 text-[#C05621] shrink-0"
+              ></i>
+              <span> +54 11 4821-9000 </span>
+            </li>
+
+            <li class="flex items-center gap-2">
+              <i
+                data-lucide="clock"
+                class="w-3.5 h-3.5 text-[#C05621] shrink-0"
+              ></i>
+              <span>
+                Lunes a Sábado: 10:00 — 20:30<br />
+                Domingos: 14:00 — 19:30
+              </span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div
+        class="border-t border-stone-200/80 py-4 px-4 text-center text-[10px] text-stone-400 max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-2"
+      >
+        <p>© 2025 Libros Libros. Hecho con pasión por los libros.</p>
+
+        <p class="tracking-widest uppercase text-stone-400 font-medium">
+          Ediciones Clásicas &amp; Contemporáneas
+        </p>
+      </div>
+    </footer>
+
+    <!-- Inicialización de iconos de Lucide -->
+    <script>
+      lucide.createIcons();
+    </script>
+  </body>
+</html>
