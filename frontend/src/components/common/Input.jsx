@@ -1,5 +1,6 @@
 // Campo de formulario accesible: label asociado, ayuda, y error anunciado
-// a lectores de pantalla. `as="textarea"` para campos multilínea.
+// a lectores de pantalla. `as="textarea"` para campos multilínea y
+// `trailing` para un botón dentro del campo (p. ej. mostrar contraseña).
 export default function Input({
   id,
   label,
@@ -8,6 +9,7 @@ export default function Input({
   required = false,
   optional = false,
   as: Tag = "input",
+  trailing,
   className = "",
   ...rest
 }) {
@@ -26,18 +28,19 @@ export default function Input({
         {optional && <span className="font-normal text-brand-muted"> (opcional)</span>}
       </label>
 
-      <Tag
-        id={id}
-        aria-invalid={error ? "true" : undefined}
-        aria-describedby={describedBy}
-        aria-required={required || undefined}
-        className={`w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm transition-colors focus:outline-none ${
-          error
-            ? "border-red-500 focus:border-red-600"
-            : "border-stone-300 focus:border-brand-terracotta"
-        }`}
-        {...rest}
-      />
+      <div className="relative">
+        <Tag
+          id={id}
+          aria-invalid={error ? "true" : undefined}
+          aria-describedby={describedBy}
+          aria-required={required || undefined}
+          className={`w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm transition-colors focus:outline-none ${
+            trailing ? "pr-11" : ""
+          } ${error ? "border-red-500 focus:border-red-600" : "border-stone-300 focus:border-brand-terracotta"}`}
+          {...rest}
+        />
+        {trailing && <div className="absolute right-2 top-1/2 -translate-y-1/2">{trailing}</div>}
+      </div>
 
       {hint && !error && (
         <p id={`${id}-hint`} className="mt-1 text-xs text-brand-muted">

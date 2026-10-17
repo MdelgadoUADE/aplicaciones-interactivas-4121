@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
-import { BookOpen, Menu, Search, User, X } from "lucide-react";
+import { BookOpen, LogOut, Menu, Search, User, X } from "lucide-react";
+import { useAuth } from "../../context/auth-context.js";
 
 const LINKS = [
   { to: "/", label: "Inicio", end: true },
@@ -44,6 +45,57 @@ function SearchForm({ className = "", onDone }) {
   );
 }
 
+// Acceso a la cuenta: "Iniciar sesión" para visitantes; "Mi panel" y
+// "Cerrar sesión" para el administrador.
+function CuentaMenu() {
+  const { user, status, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    await logout();
+    navigate("/");
+  };
+
+  if (status === "loading") return <span className="h-8 w-8" aria-hidden="true" />;
+
+  if (!user) {
+    return (
+      <Link
+        to="/login"
+        className="flex items-center gap-2 rounded-full px-2 py-1.5 text-sm font-medium text-stone-800 transition-colors hover:bg-stone-100 hover:text-brand-terracotta"
+      >
+        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-stone-200 text-stone-700">
+          <User className="h-4 w-4" aria-hidden="true" />
+        </span>
+        <span className="hidden text-xs font-semibold lg:inline">Iniciar sesión</span>
+      </Link>
+    );
+  }
+
+  return (
+    <div className="flex items-center gap-1">
+      <Link
+        to="/admin"
+        className="flex items-center gap-2 rounded-full px-2 py-1.5 text-sm font-medium text-stone-800 transition-colors hover:bg-stone-100 hover:text-brand-terracotta"
+      >
+        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-terracotta text-white">
+          <User className="h-4 w-4" aria-hidden="true" />
+        </span>
+        <span className="hidden text-xs font-semibold lg:inline">Mi panel</span>
+      </Link>
+      <button
+        type="button"
+        onClick={handleLogout}
+        aria-label="Cerrar sesión"
+        title="Cerrar sesión"
+        className="rounded-full p-2 text-stone-600 transition-colors hover:bg-stone-100 hover:text-brand-terracotta"
+      >
+        <LogOut className="h-4 w-4" aria-hidden="true" />
+      </button>
+    </div>
+  );
+}
+
 export default function Header() {
   const [menuAbierto, setMenuAbierto] = useState(false);
   const cerrarMenu = () => setMenuAbierto(false);
@@ -75,15 +127,7 @@ export default function Header() {
 
         <div className="flex items-center gap-3">
           <SearchForm className="hidden w-64 lg:block" />
-          <Link
-            to="/login"
-            className="flex items-center gap-2 rounded-full px-2 py-1.5 text-sm font-medium text-stone-800 transition-colors hover:bg-stone-100 hover:text-brand-terracotta"
-          >
-            <span className="flex h-8 w-8 items-center justify-center rounded-full bg-stone-200 text-stone-700">
-              <User className="h-4 w-4" aria-hidden="true" />
-            </span>
-            <span className="hidden text-xs font-semibold lg:inline">Iniciar sesión</span>
-          </Link>
+          <CuentaMenu />
           <button
             type="button"
             className="rounded-md p-2 text-stone-800 hover:bg-stone-100 md:hidden"

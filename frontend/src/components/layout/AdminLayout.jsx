@@ -1,4 +1,6 @@
-import { NavLink, Outlet } from "react-router-dom";
+import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
+import { LogOut } from "lucide-react";
+import { useAuth } from "../../context/auth-context.js";
 
 const LINKS = [
   { to: "/admin", label: "Dashboard", end: true },
@@ -10,13 +12,35 @@ const LINKS = [
 ];
 
 // Layout provisorio: en F5 se reemplaza por el definitivo (sidebar
-// responsive, logout, contador de consultas pendientes).
+// responsive y contador de consultas pendientes).
 export default function AdminLayout() {
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    await logout();
+    navigate("/");
+  };
+
   return (
     <div className="min-h-screen bg-stone-50">
       <header className="border-b border-stone-200 bg-brand-dark px-4 py-3 text-brand-paper">
-        <p className="font-editorial text-lg font-bold">Panel de administración</p>
-        <nav aria-label="Administración" className="mt-2 flex flex-wrap gap-x-5 gap-y-1 text-sm">
+        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-2">
+          <p className="font-editorial text-lg font-bold">Panel de administración</p>
+          <div className="flex items-center gap-4 text-sm">
+            <span className="hidden sm:inline">
+              {user?.nombre} {user?.apellido}
+            </span>
+            <Link to="/" className="hover:text-brand-terracotta">
+              Ver sitio
+            </Link>
+            <button type="button" onClick={handleLogout} className="flex items-center gap-1.5 hover:text-brand-terracotta">
+              <LogOut className="h-4 w-4" aria-hidden="true" />
+              Cerrar sesión
+            </button>
+          </div>
+        </div>
+        <nav aria-label="Administración" className="mx-auto mt-2 flex max-w-7xl flex-wrap gap-x-5 gap-y-1 text-sm">
           {LINKS.map((l) => (
             <NavLink
               key={l.to}

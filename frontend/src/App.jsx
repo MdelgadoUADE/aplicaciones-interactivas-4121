@@ -1,5 +1,8 @@
 import { Route, Routes } from "react-router-dom";
 import ComercioProvider from "./context/ComercioProvider.jsx";
+import AuthProvider from "./context/AuthProvider.jsx";
+import AdminRoute from "./components/auth/AdminRoute.jsx";
+import GuestRoute from "./components/auth/GuestRoute.jsx";
 import PublicLayout from "./components/layout/PublicLayout.jsx";
 import AdminLayout from "./components/layout/AdminLayout.jsx";
 
@@ -27,6 +30,7 @@ import AdminPerfil from "./pages/admin/AdminPerfil.jsx";
 export default function App() {
   return (
     <ComercioProvider>
+      <AuthProvider>
       <Routes>
         {/* Sitio público */}
         <Route element={<PublicLayout />}>
@@ -36,26 +40,32 @@ export default function App() {
           <Route path="categorias" element={<Categorias />} />
           <Route path="acerca" element={<Acerca />} />
           <Route path="contacto" element={<Contacto />} />
-          <Route path="login" element={<Login />} />
-          <Route path="registro" element={<Registro />} />
-          <Route path="forgot-password" element={<ForgotPassword />} />
+          {/* Si ya hay sesión iniciada, estas tres rutas redirigen al panel */}
+          <Route element={<GuestRoute />}>
+            <Route path="login" element={<Login />} />
+            <Route path="registro" element={<Registro />} />
+            <Route path="forgot-password" element={<ForgotPassword />} />
+          </Route>
           {/* El mail del back arma el link como /reset-password?token=... */}
           <Route path="reset-password" element={<ResetPassword />} />
           <Route path="*" element={<NotFound />} />
         </Route>
 
-        {/* Administración (la protección con AdminRoute llega en F4) */}
-        <Route path="admin" element={<AdminLayout />}>
-          <Route index element={<Dashboard />} />
-          <Route path="productos" element={<AdminProductos />} />
-          <Route path="productos/nuevo" element={<AdminProductoForm />} />
-          <Route path="productos/:id/editar" element={<AdminProductoForm />} />
-          <Route path="categorias" element={<AdminCategorias />} />
-          <Route path="consultas" element={<AdminConsultas />} />
-          <Route path="comercio" element={<AdminComercio />} />
-          <Route path="perfil" element={<AdminPerfil />} />
+        {/* Administración: solo con sesión de admin (AdminRoute) */}
+        <Route element={<AdminRoute />}>
+          <Route path="admin" element={<AdminLayout />}>
+            <Route index element={<Dashboard />} />
+            <Route path="productos" element={<AdminProductos />} />
+            <Route path="productos/nuevo" element={<AdminProductoForm />} />
+            <Route path="productos/:id/editar" element={<AdminProductoForm />} />
+            <Route path="categorias" element={<AdminCategorias />} />
+            <Route path="consultas" element={<AdminConsultas />} />
+            <Route path="comercio" element={<AdminComercio />} />
+            <Route path="perfil" element={<AdminPerfil />} />
+          </Route>
         </Route>
       </Routes>
+      </AuthProvider>
     </ComercioProvider>
   );
 }
