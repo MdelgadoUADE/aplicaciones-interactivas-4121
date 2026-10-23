@@ -3,6 +3,12 @@
   "version": "1.0.0",
   "description": "Trabajo practico integrador de materia Aplicaciones Interactivas curso 4121",
   "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "db:migrate": "sequelize-cli db:migrate",
+    "db:seed": "sequelize-cli db:seed:all"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/MdelgadoUADE/aplicaciones-interactivas-4121.git"

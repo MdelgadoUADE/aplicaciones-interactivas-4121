@@ -35,8 +35,7 @@ proyecto-libros/
 │   ├── services/            # lógica de negocio (antes de tocar los models)
 │   ├── models/              # definiciones de Sequelize
 │   ├── migrations/          # generadas por sequelize-cli
-│   ├── seeders/             # datos de prueba 
-│   ├── routes/ 
+│   ├── routes/
 │   ├── middlewares/         # validaciones, manejo de errores, auth guard
 │   ├── .env.example
 │   ├── .gitignore
@@ -45,7 +44,6 @@ proyecto-libros/
 │   └── (proyecto de React)
 └── SETUP.md
 ```
-
 
 ## 1. Clonar el repositorio
 
@@ -84,6 +82,7 @@ DB_PORT=5432
 DB_NAME=libreria_db
 DB_USER=postgres
 DB_PASSWORD=tu_contraseña_local
+DB_SSL=true
 
 JWT_SECRET=una_clave_secreta_para_los_tokens
 JWT_EXPIRES_IN=2h
@@ -109,6 +108,42 @@ FRONTEND_URL=http://localhost:3000
 
 > **Importante:** `.env` va en `.gitignore`. Lo que sí se sube al repo es `.env.example`, con las mismas claves pero sin valores reales, para que cada uno sepa qué variables tiene que definir. `DB_DIALECT` no hace falta: `config/config.js` ya tiene `dialect: 'postgres'` fijo en el código, no lo lee del `.env`.
 
+## 3.b Conectar el backend a Supabase (opcional, en vez del Postgres local)
+
+Si en vez de un Postgres local usan la base compartida de **Supabase**, hay dos
+detalles que hacen que la conexión falle si se copian los datos "obvios" del
+panel de Supabase:
+
+1. **Hay que usar el host del pooler, no el host directo.**
+   El host directo `db.<project-ref>.supabase.co` resuelve **solo a IPv6** en
+   los proyectos nuevos. En una red sin IPv6 (la mayoría de las redes
+   domésticas/universitarias) la conexión muere con
+   `connect ENETUNREACH <ipv6>:5432`. El pooler (Supavisor) sí tiene IPv4.
+2. **Con el pooler cambian el usuario y la base.** El usuario lleva el sufijo
+   del proyecto (`postgres.<project-ref>`) y la base es siempre `postgres`
+   (no el nombre que le hayan puesto en el panel).
+
+En Supabase: **Project Settings → Database → Connection string → Session pooler**
+(no "Direct connection"). Queda algo así:
+
+```
+DB_HOST=aws-0-<region>.pooler.supabase.com   # p. ej. aws-0-us-east-1.pooler.supabase.com
+DB_PORT=5432                                  # 5432 = session pooler (recomendado para Sequelize)
+DB_NAME=postgres
+DB_USER=postgres.<project-ref>
+DB_PASSWORD=<password de la base>
+DB_SSL=true                                   # Supabase exige TLS
+```
+
+Para saber la `<region>`: mirala en el panel de Supabase, o probá las regiones
+con el host del pooler hasta que una responda. Si el usuario es correcto pero
+la base no existe, el error es `database "<nombre>" does not exist` (señal de
+que la región y el usuario están bien, pero la base tiene que ser `postgres`).
+
+Una vez configurado, el resto es igual: `npm run dev` y los endpoints ya leen
+de Supabase. No hace falta correr `db:migrate` ni los seeders si la base de
+Supabase ya tiene el esquema y los datos cargados.
+
 ## 4. Instalar dependencias
 
 ```bash
@@ -123,7 +158,7 @@ npm install
 
 ## 5. Crear la base de datos, cargar el esquema y las migraciones
 
-⚠️ **Importante:** en este proyecto el esquema completo (todas las tablas,
+**Importante:** en este proyecto el esquema completo (todas las tablas,
 foreign keys y checks) está escrito a mano en `backend/bbdd_seed.sql`, **no**
 en migraciones de Sequelize — en `migrations/` solo hay una migración
 puntual (`add-visitas-producto`, que agrega una columna sobre la tabla
@@ -169,6 +204,22 @@ npm run dev
 ```
 
 Esto debería levantar el servidor Express en `http://localhost:3001` (el puerto que definiste en `PORT` dentro del `.env` — si no lo definís, `server.js` cae por defecto a `3000`, que es el mismo puerto que usa React, así que no lo dejes sin definir), usando `nodemon` para reiniciar automáticamente con cada cambio.
+
+Al arrancar, `server.js` **prueba la conexión a la base antes de escuchar
+requests**:
+
+- Si conecta, imprime `Conexión a la base de datos OK.` y sigue normal.
+- Si falla, imprime el host/base/usuario que intentó, el detalle del error y
+  una **pista** según el caso (host inalcanzable, base inexistente, usuario o
+  contraseña mal, TLS, etc.), y **no levanta el servidor** (`process.exit(1)`).
+  Con `nodemon`, al guardar cualquier archivo se reintenta el arranque solo.
+
+El chequeo tiene un timeout de 10 segundos, así que si la base no responde no
+te quedás esperando ~60s sin saber qué pasa.
+
+> Si preferís que el servidor arranque igual cuando la base está caída (para
+> poder pegarle a `/api/health`, por ejemplo), sacá el `process.exit(1)` del
+> `else` en `iniciar()` dentro de `server.js`.
 
 Agregá este script en tu `package.json` si todavía no está:
 
