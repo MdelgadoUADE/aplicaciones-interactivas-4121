@@ -1,0 +1,42 @@
+@import "tailwindcss";
+
+@theme {
+  --font-serif: "Playfair Display", Georgia, serif;
+  --font-editorial: "Playfair Display", Georgia, serif;
+  --font-sans: "Plus Jakarta Sans", system-ui, sans-serif;
+
+  --color-brand-terracotta: #c05621;
+  --color-brand-dark: #1c1917;
+  --color-brand-paper: #faf8f5;
+  --color-brand-cream: #f4efe6;
+  --color-brand-muted: #78716c;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    background-color: var(--color-brand-paper);
+    color: var(--color-brand-dark);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-serif);
+  }
+
+  ::selection {
+    background-color: var(--color-brand-terracotta);
+    color: #fff;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-brand-terracotta);
+    outline-offset: 2px;
+  }
+}

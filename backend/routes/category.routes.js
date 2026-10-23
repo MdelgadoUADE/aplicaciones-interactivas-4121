@@ -8,8 +8,11 @@ const { body } = require('express-validator');
 const { manejarValidacion } = require('../middlewares/validation.middleware');
 
 const validarCategoria = [
-  body('name').trim().notEmpty().withMessage('El nombre es obligatorio'),
-  body('description').optional().trim(),
+  body('nombre')
+    .trim()
+    .notEmpty().withMessage('El nombre es obligatorio')
+    .isLength({ max: 100 }).withMessage('El nombre no puede superar los 100 caracteres'),
+  body('descripcion').optional({ nullable: true }).trim(),
 ];
 
 // Públicas

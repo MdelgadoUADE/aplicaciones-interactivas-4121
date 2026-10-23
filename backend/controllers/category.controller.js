@@ -21,8 +21,8 @@ async function obtenerPorId(req, res, next) {
 
 async function crear(req, res, next) {
   try {
-    const { name, description } = req.body;
-    const categoria = await categoryService.crear({ name, description });
+    const { nombre, descripcion } = req.body;
+    const categoria = await categoryService.crear({ nombre, descripcion });
     res.status(201).json(categoria);
   } catch (err) {
     next(err);
@@ -31,8 +31,8 @@ async function crear(req, res, next) {
 
 async function actualizar(req, res, next) {
   try {
-    const { name, description } = req.body;
-    const categoria = await categoryService.actualizar(req.params.id, { name, description });
+    const { nombre, descripcion } = req.body;
+    const categoria = await categoryService.actualizar(req.params.id, { nombre, descripcion });
     res.status(200).json(categoria);
   } catch (err) {
     next(err);

@@ -26,7 +26,9 @@ const validarForgotPassword = [
 
 const validarResetPassword = [
   body('token').trim().notEmpty().withMessage('Falta el token'),
-  body('password').isLength({ min: 8 }).withMessage('La contraseña debe tener al menos 8 caracteres'),
+  body('password')
+    .isLength({ min: 8 }).withMessage('La contraseña debe tener al menos 8 caracteres').bail()
+    .isLength({ max: 72 }).withMessage('La contraseña no puede superar los 72 caracteres'),
 ];
 
 router.post('/register', validarRegistro, manejarValidacion, authController.register);
