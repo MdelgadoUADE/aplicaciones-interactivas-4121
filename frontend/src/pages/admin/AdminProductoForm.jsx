@@ -7,6 +7,7 @@ import EmptyState from "../../components/common/EmptyState.jsx";
 import Input from "../../components/common/Input.jsx";
 import Spinner from "../../components/common/Spinner.jsx";
 import Panel from "../../components/admin/Panel.jsx";
+import ProductoImagenes from "../../components/admin/ProductoImagenes.jsx";
 import { useToast } from "../../context/toast-context.js";
 import { useFetch } from "../../hooks/useFetch.js";
 import { useForm } from "../../hooks/useForm.js";
@@ -143,6 +144,7 @@ function Formulario({ producto, categorias, onGuardado }) {
   };
 
   return (
+    <>
     <form onSubmit={handleSubmit} noValidate>
       {errorGeneral && <Alert className="mb-6">{errorGeneral}</Alert>}
 
@@ -285,6 +287,12 @@ function Formulario({ producto, categorias, onGuardado }) {
         </Button>
       </div>
     </form>
+
+    {/* Fuera del <form>: sube y guarda las imágenes por su cuenta, sin pasar por "Guardar cambios". */}
+    {esEdicion && (
+      <ProductoImagenes productoId={producto.id} nombre={producto.nombre} imagenesIniciales={producto.images ?? []} />
+    )}
+    </>
   );
 }
 

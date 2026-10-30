@@ -17,8 +17,20 @@ const validarImagen = [
   body('esPrincipal').optional().isBoolean(),
 ];
 
+const validarActualizacion = [
+  body('esPrincipal').optional().isBoolean().withMessage('esPrincipal debe ser true o false'),
+  body('orden').optional().isInt({ min: 0 }).withMessage('orden debe ser un entero mayor o igual a 0'),
+];
+
+const validarOrden = [
+  body('orden').isArray({ min: 1 }).withMessage('orden debe ser una lista de ids de imagen'),
+  body('orden.*').isInt({ min: 1 }).withMessage('Id de imagen inválido'),
+];
+
 router.get('/', productImageController.listar);
 router.post('/', requireAuth, requireRole('admin'), validarImagen, manejarValidacion, productImageController.agregar);
+router.put('/orden', requireAuth, requireRole('admin'), validarOrden, manejarValidacion, productImageController.reordenar);
+router.patch('/:imageId', requireAuth, requireRole('admin'), validarActualizacion, manejarValidacion, productImageController.actualizar);
 router.delete('/:imageId', requireAuth, requireRole('admin'), productImageController.eliminar);
 
 module.exports = router;

@@ -12,7 +12,8 @@ import { usePageTitle } from "../hooks/usePageTitle.js";
 import { getProduct } from "../services/products.service.js";
 
 function Galeria({ imagenes, nombre }) {
-  const [indice, setIndice] = useState(0);
+  // Arranca en la principal (si ninguna lo es, en la primera).
+  const [indice, setIndice] = useState(() => Math.max(0, imagenes.findIndex((img) => img.esPrincipal)));
   const actual = imagenes[indice];
 
   return (

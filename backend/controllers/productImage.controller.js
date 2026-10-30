@@ -20,6 +20,25 @@ async function agregar(req, res, next) {
   }
 }
 
+async function actualizar(req, res, next) {
+  try {
+    const { esPrincipal, orden } = req.body;
+    const imagen = await productImageService.actualizar(req.params.id, req.params.imageId, { esPrincipal, orden });
+    res.status(200).json(imagen);
+  } catch (err) {
+    next(err);
+  }
+}
+
+async function reordenar(req, res, next) {
+  try {
+    const imagenes = await productImageService.reordenar(req.params.id, req.body.orden);
+    res.status(200).json(imagenes);
+  } catch (err) {
+    next(err);
+  }
+}
+
 async function eliminar(req, res, next) {
   try {
     await productImageService.eliminar(req.params.id, req.params.imageId);
@@ -32,5 +51,7 @@ async function eliminar(req, res, next) {
 module.exports = {
   listar,
   agregar,
+  actualizar,
+  reordenar,
   eliminar,
 };
