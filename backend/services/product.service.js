@@ -97,6 +97,23 @@ function condicionUnaccent(columna, palabra) {
 const DIAS_NOVEDAD = 7;
 
 /**
+ * Expresión SQL del precio final (precio con el descuento ya aplicado),
+ * redondeada a 2 decimales igual que precioFinal en la respuesta.
+ *
+ * Se usa para ORDENAR y para FILTRAR por rango: el usuario que elige
+ * "mayor a menor" o un rango de precio está hablando del precio que ve en
+ * la tarjeta, que es el final. Antes se usaba `precio` (el de lista) y el
+ * orden/rango quedaba desfasado en todo producto con descuento.
+ *
+ * Va como literal y con la tabla calificada ("Producto") porque el listado
+ * se arma con subQuery:false y varios includes, donde Sequelize no traduce
+ * un atributo del modelo a la columna física dentro de ORDER BY.
+ */
+function precioFinalSql() {
+  return sequelize.literal('ROUND(("Producto"."precio" * (1 - "Producto"."descuento" / 100.0)), 2)');
+}
+
+/**
  * Listado paginado con filtros. isAdmin decide si se respeta el filtro
  * 'estado' que pide el cliente o si se fuerza 'activo' — la misma regla
  * documentada en el api.yaml: un visitante nunca debe poder ver
@@ -159,10 +176,21 @@ async function listar({
     );
   }
 
+  // Rango de precio sobre el precio FINAL (con descuento), que es el que se
+  // muestra. Van como condiciones del AND en vez de un objeto sobre
+  // `where.precio` para poder comparar contra la expresión calculada.
+  // Se apilan ANTES de asignar where[Op.and]: si se empujaran después, un
+  // request con solo ?minPrice= (sin search ni categoría) dejaría el array
+  // vacío en el momento de la asignación y el filtro no se aplicaría nunca.
+  if (minPrice !== undefined) {
+    condiciones.push(sequelize.where(precioFinalSql(), { [Op.gte]: minPrice }));
+  }
+  if (maxPrice !== undefined) {
+    condiciones.push(sequelize.where(precioFinalSql(), { [Op.lte]: maxPrice }));
+  }
+
   if (condiciones.length > 0) where[Op.and] = condiciones;
 
-  if (minPrice !== undefined) where.precio = { ...where.precio, [Op.gte]: minPrice };
-  if (maxPrice !== undefined) where.precio = { ...where.precio, [Op.lte]: maxPrice };
   if (inStock === true) where.stock = { [Op.gt]: 0 };
   if (onSale === true) where.descuento = { [Op.gt]: 0 };
 
@@ -175,8 +203,10 @@ async function listar({
   ];
 
   const orderMap = {
-    price_asc: [['precio', 'ASC']],
-    price_desc: [['precio', 'DESC']],
+    // El orden por precio es sobre el precio FINAL (con descuento aplicado),
+    // que es el que ve el usuario en la tarjeta del producto.
+    price_asc: [[precioFinalSql(), 'ASC']],
+    price_desc: [[precioFinalSql(), 'DESC']],
     title_asc: [['nombre', 'ASC']],
     // Nombre de columna física ('created_at'), no el atributo del
     // modelo ('createdAt') — mismo motivo que en el filtro de
