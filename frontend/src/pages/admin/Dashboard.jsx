@@ -109,7 +109,7 @@ export default function Dashboard() {
             valor={data.totales.consultas}
             detalle={pendientes > 0 ? `${pendientes} pendiente${pendientes === 1 ? "" : "s"} de respuesta` : "Sin pendientes"}
             tono={pendientes > 0 ? "alerta" : "marca"}
-            to="/admin/consultas"
+            to={pendientes > 0 ? "/admin/consultas?estado=pendiente" : "/admin/consultas"}
           />
           <StatCard
             icono={DollarSign}

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
+import { Link, NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import {
   BookOpen,
   ExternalLink,
@@ -14,6 +14,8 @@ import {
   X,
 } from "lucide-react";
 import { useAuth } from "../../context/auth-context.js";
+import { useFetch } from "../../hooks/useFetch.js";
+import { getPendientesCount } from "../../services/consultas.service.js";
 
 const LINKS = [
   { to: "/admin", label: "Dashboard", icono: LayoutDashboard, end: true },
@@ -36,6 +38,15 @@ export default function AdminLayout() {
   const navigate = useNavigate();
   const [abierto, setAbierto] = useState(false);
   const botonCerrarRef = useRef(null);
+  const { pathname } = useLocation();
+
+  // Contador de consultas pendientes del menú. Se vuelve a pedir al cambiar de
+  // sección, y AdminConsultas lo refresca al instante cuando cambia un estado.
+  // Si falla, simplemente no se muestra: no es información crítica.
+  const { data: pendientes, reload: refrescarPendientes } = useFetch(
+    (signal) => getPendientesCount({ signal }),
+    [pathname],
+  );
 
   const cerrar = () => setAbierto(false);
 
@@ -113,12 +124,24 @@ export default function AdminLayout() {
         </div>
 
         <nav aria-label="Secciones" className="flex-1 space-y-1 overflow-y-auto px-3 py-2">
-          {LINKS.map(({ to, label, icono: Icono, end }) => (
-            <NavLink key={to} to={to} end={end} onClick={cerrar} className={linkClass}>
-              <Icono className="h-4 w-4" aria-hidden="true" />
-              {label}
-            </NavLink>
-          ))}
+          {LINKS.map(({ to, label, icono: Icono, end }) => {
+            const cantidad = to === "/admin/consultas" ? pendientes : 0;
+            return (
+              <NavLink key={to} to={to} end={end} onClick={cerrar} className={linkClass}>
+                <Icono className="h-4 w-4" aria-hidden="true" />
+                {label}
+                {cantidad > 0 && (
+                  <span className="ml-auto rounded-full bg-brand-terracotta px-2 py-0.5 text-xs font-semibold tabular-nums text-white">
+                    <span aria-hidden="true">{cantidad > 99 ? "99+" : cantidad}</span>
+                    <span className="sr-only">
+                      {" "}
+                      ({cantidad} {cantidad === 1 ? "pendiente" : "pendientes"})
+                    </span>
+                  </span>
+                )}
+              </NavLink>
+            );
+          })}
         </nav>
 
         <div className="space-y-1 border-t border-white/10 px-3 py-4">
@@ -137,7 +160,7 @@ export default function AdminLayout() {
       </aside>
 
       <main id="contenido-admin" className="min-w-0 flex-1 px-4 py-8 sm:px-6 lg:px-10">
-        <Outlet />
+        <Outlet context={{ refrescarPendientes }} />
       </main>
     </div>
   );

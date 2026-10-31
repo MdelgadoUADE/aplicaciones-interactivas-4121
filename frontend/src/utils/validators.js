@@ -213,3 +213,19 @@ export function validarProducto(v) {
 
   return errores;
 }
+
+// ---------------------------------------------------------------------------
+// Categorías (mismas reglas y mensajes que routes/category.routes.js del back)
+// ---------------------------------------------------------------------------
+
+export const LIMITES_CATEGORIA = { nombre: 100 };
+
+export function validarCategoria({ nombre }) {
+  const errores = {};
+  const v = String(nombre ?? "").trim();
+  if (!v) errores.nombre = "El nombre es obligatorio";
+  else if (v.length > LIMITES_CATEGORIA.nombre) {
+    errores.nombre = `El nombre no puede superar los ${LIMITES_CATEGORIA.nombre} caracteres`;
+  }
+  return errores;
+}
