@@ -229,3 +229,81 @@ export function validarCategoria({ nombre }) {
   }
   return errores;
 }
+
+// ---------------------------------------------------------------------------
+// Comercio y perfil (mismas reglas y mensajes que routes/comercio.routes.js y
+// routes/auth.routes.js del back)
+// ---------------------------------------------------------------------------
+
+const MENSAJE_TELEFONO = "Teléfono inválido (solo números, espacios, +, - y paréntesis; hasta 30 caracteres)";
+
+export const LIMITES_COMERCIO = { nombre: 150, telefono: 30, tipoRed: 50, urlRed: 500, maxRedes: 10 };
+
+export function validarComercio({ nombre, direccion, telefono }) {
+  const errores = {};
+
+  const n = String(nombre ?? "").trim();
+  if (!n) errores.nombre = "El nombre es obligatorio";
+  else if (n.length > LIMITES_COMERCIO.nombre) {
+    errores.nombre = `El nombre no puede superar los ${LIMITES_COMERCIO.nombre} caracteres`;
+  }
+
+  if (!String(direccion ?? "").trim()) errores.direccion = "La dirección es obligatoria";
+
+  const t = String(telefono ?? "").trim();
+  if (!t) errores.telefono = "El teléfono es obligatorio";
+  else if (!TELEFONO_RE.test(t)) errores.telefono = MENSAJE_TELEFONO;
+
+  return errores;
+}
+
+// http(s) con dominio (el back exige protocolo y TLD).
+export function esUrlWeb(valor) {
+  try {
+    const url = new URL(String(valor ?? "").trim());
+    return (url.protocol === "http:" || url.protocol === "https:") && url.hostname.includes(".");
+  } catch {
+    return false;
+  }
+}
+
+// `filas` = [{ uid, tipo, url }]. Devuelve { [uid]: { tipo?, url? } } solo con las filas inválidas.
+export function validarRedesSociales(filas) {
+  const errores = {};
+  const vistos = new Set();
+
+  filas.forEach(({ uid, tipo, url }) => {
+    const e = {};
+    const t = String(tipo ?? "").trim().toLowerCase();
+    const u = String(url ?? "").trim();
+
+    if (!t) e.tipo = "Cada red social necesita un tipo";
+    else if (t.length > LIMITES_COMERCIO.tipoRed) {
+      e.tipo = `El tipo de red social no puede superar los ${LIMITES_COMERCIO.tipoRed} caracteres`;
+    } else if (vistos.has(t)) e.tipo = "Ya cargaste una red de este tipo";
+    if (t) vistos.add(t);
+
+    if (!esUrlWeb(u)) e.url = "Cada red social necesita una URL válida (con http:// o https://)";
+    else if (u.length > LIMITES_COMERCIO.urlRed) e.url = `La URL no puede superar los ${LIMITES_COMERCIO.urlRed} caracteres`;
+
+    if (e.tipo || e.url) errores[uid] = e;
+  });
+
+  return errores;
+}
+
+export function validarPerfil({ nombre, apellido, telefono }) {
+  const errores = {};
+
+  const eNombre = requerido(nombre, "El nombre es obligatorio", 100, "El nombre no puede superar los 100 caracteres");
+  if (eNombre) errores.nombre = eNombre;
+
+  const eApellido = requerido(apellido, "El apellido es obligatorio", 100, "El apellido no puede superar los 100 caracteres");
+  if (eApellido) errores.apellido = eApellido;
+
+  const t = String(telefono ?? "").trim();
+  if (!t) errores.telefono = "El teléfono es obligatorio";
+  else if (!TELEFONO_RE.test(t)) errores.telefono = MENSAJE_TELEFONO;
+
+  return errores;
+}

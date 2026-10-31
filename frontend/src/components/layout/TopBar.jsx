@@ -18,7 +18,8 @@ export default function TopBar() {
         {comercio.horarios && (
           <span className="flex items-center gap-1.5">
             <Clock className="h-3.5 w-3.5 text-brand-terracotta" aria-hidden="true" />
-            {comercio.horarios}
+            {/* En el cintillo va en una sola línea: los saltos de línea pasan a " · " */}
+            {comercio.horarios.split(/\r?\n/).map((l) => l.trim()).filter(Boolean).join(" · ")}
           </span>
         )}
       </div>

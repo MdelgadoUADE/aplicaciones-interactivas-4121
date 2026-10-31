@@ -9,6 +9,10 @@ export const register = (datos) => api.post("/auth/register", datos);
 // GET /auth/me -> user
 export const getMe = (options) => api.get("/auth/me", options);
 
+// PATCH /auth/me -> user actualizado. Body: { nombre, apellido, telefono, direccion }
+// El email y el rol no se pueden cambiar desde acá (el back los ignora).
+export const updateMe = (datos) => api.patch("/auth/me", datos);
+
 // POST /auth/logout -> 204 (revoca el JWT en el back)
 export const logout = () => api.post("/auth/logout");
 
