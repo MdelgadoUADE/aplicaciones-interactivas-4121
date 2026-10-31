@@ -11,10 +11,27 @@ const {
   validarLogin,
 } = require('../middlewares/validation.middleware');
 
+// Mismas reglas y mensajes que el registro (validation.middleware.js) y que el
+// formulario de perfil del front (utils/validators.js).
+const TELEFONO_REGEX = /^[0-9+()\-\s]{6,30}$/;
+
 const validarUpdateMe = [
-  body('nombre').optional().trim().notEmpty(),
-  body('apellido').optional().trim().notEmpty(),
-  body('telefono').optional().trim().notEmpty(),
+  body('nombre')
+    .optional()
+    .trim()
+    .notEmpty().withMessage('El nombre es obligatorio').bail()
+    .isLength({ max: 100 }).withMessage('El nombre no puede superar los 100 caracteres'),
+  body('apellido')
+    .optional()
+    .trim()
+    .notEmpty().withMessage('El apellido es obligatorio').bail()
+    .isLength({ max: 100 }).withMessage('El apellido no puede superar los 100 caracteres'),
+  body('telefono')
+    .optional()
+    .trim()
+    .notEmpty().withMessage('El teléfono es obligatorio').bail()
+    .matches(TELEFONO_REGEX)
+    .withMessage('Teléfono inválido (solo números, espacios, +, - y paréntesis; hasta 30 caracteres)'),
   body('direccion').optional().trim(),
   // Sin validators para 'rol' ni 'email' a propósito: el controller ni
   // siquiera los lee del body (ver authService.actualizarPerfil).

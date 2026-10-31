@@ -26,7 +26,7 @@ export default function Footer() {
           {comercio?.horarios && (
             <p className="flex items-start gap-2">
               <Clock className="mt-0.5 h-4 w-4 shrink-0 text-brand-terracotta" aria-hidden="true" />
-              {comercio.horarios}
+              <span className="whitespace-pre-line">{comercio.horarios}</span>
             </p>
           )}
           {comercio?.telefono && (
