@@ -1,9 +1,11 @@
 // controllers/category.controller.js
-const categoryService = require('../services/category.service');
+const categoryService = require("../services/category.service");
 
 async function listar(req, res, next) {
   try {
-    const categorias = await categoryService.listar();
+    const incluirOcultos =
+      req.userRole === "admin" && req.query.scope === "todos";
+    const categorias = await categoryService.listar({ incluirOcultos });
     res.status(200).json(categorias);
   } catch (err) {
     next(err);
@@ -32,7 +34,10 @@ async function crear(req, res, next) {
 async function actualizar(req, res, next) {
   try {
     const { nombre, descripcion } = req.body;
-    const categoria = await categoryService.actualizar(req.params.id, { nombre, descripcion });
+    const categoria = await categoryService.actualizar(req.params.id, {
+      nombre,
+      descripcion,
+    });
     res.status(200).json(categoria);
   } catch (err) {
     next(err);
@@ -52,7 +57,10 @@ async function listarProductos(req, res, next) {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 20;
-    const resultado = await categoryService.listarProductosDeCategoria(req.params.id, { page, limit });
+    const resultado = await categoryService.listarProductosDeCategoria(
+      req.params.id,
+      { page, limit },
+    );
     res.status(200).json(resultado);
   } catch (err) {
     next(err);

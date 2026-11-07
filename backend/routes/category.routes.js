@@ -3,7 +3,7 @@ const express = require('express');
 const router = express.Router();
 
 const categoryController = require('../controllers/category.controller');
-const { requireAuth, requireRole } = require('../middlewares/auth.middleware');
+const { requireAuth, requireRole, optionalAuth } = require('../middlewares/auth.middleware');
 const { body } = require('express-validator');
 const { manejarValidacion } = require('../middlewares/validation.middleware');
 
@@ -15,8 +15,8 @@ const validarCategoria = [
   body('descripcion').optional({ nullable: true }).trim(),
 ];
 
-// Públicas
-router.get('/', categoryController.listar);
+// Públicas (optionalAuth: el conteo cambia si sos admin, pero no bloquea)
+router.get('/', optionalAuth, categoryController.listar);
 router.get('/:id', categoryController.obtenerPorId);
 router.get('/:id/products', categoryController.listarProductos);
 

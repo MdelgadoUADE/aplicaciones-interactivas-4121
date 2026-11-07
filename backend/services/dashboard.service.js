@@ -146,7 +146,9 @@ async function consultasUltimosDias(dias) {
 async function productoMasVisitado() {
   const producto = await Producto.findOne({
     where: { visitas: { [Op.gt]: 0 } },
-    order: [['visitas', 'DESC']],
+    // Desempate por id: sin él, dos productos con las mismas visitas podían
+    // alternar cuál se devuelve como "más visitado" entre requests.
+    order: [['visitas', 'DESC'], ['idProducto', 'ASC']],
     attributes: ['idProducto', 'nombre', 'visitas'],
   });
 

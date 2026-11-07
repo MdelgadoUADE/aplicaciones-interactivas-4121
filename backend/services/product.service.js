@@ -100,8 +100,10 @@ function serializarProducto(producto, { isAdmin = false } = {}) {
  * búsqueda) también matchea.
  */
 function condicionUnaccent(columna, palabra) {
+  // Se escapan los comodines de LIKE % y _ y la barra invertida
+  const patron = `%${palabra.replace(/([\\%_])/g, "\\$1")}%`;
   return sequelize.where(sequelize.fn("unaccent", sequelize.col(columna)), {
-    [Op.iLike]: sequelize.fn("unaccent", `%${palabra}%`),
+    [Op.iLike]: sequelize.fn("unaccent", patron),
   });
 }
 

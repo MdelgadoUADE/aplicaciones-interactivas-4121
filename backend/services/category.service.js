@@ -1,29 +1,48 @@
 // services/category.service.js
-const db = require('../models');
-const { Categoria } = db;
-const productService = require('./product.service');
+const db = require("../models");
+const { Categoria, Producto } = db;
+const { fn, col } = require("sequelize");
+const productService = require("./product.service");
 
-async function listar() {
+async function listar({ incluirOcultos = false } = {}) {
   const categorias = await Categoria.findAll({
-    order: [['nombre', 'ASC']],
+    attributes: [
+      "idCategoria",
+      "nombre",
+      "descripcion",
+      [fn("COUNT", col("productos.id_producto")), "productCount"],
+    ],
+    include: [
+      {
+        model: Producto,
+        as: "productos",
+        attributes: [],
+        through: { attributes: [] },
+        required: false, // LEFT JOIN una categoría sin productos aparece con 0
+        ...(incluirOcultos ? {} : { where: { estado: "activo" } }),
+      },
+    ],
+    group: [
+      "Categoria.id_categoria",
+      "Categoria.nombre",
+      "Categoria.descripcion",
+    ],
+    order: [["nombre", "ASC"]],
+    raw: true,
   });
 
-  // productCount no es una columna real (ver api.yaml: Category.productCount),
-  // se calcula contando la relación N:N vía producto_categoria.
-  const conConteo = await Promise.all(
-    categorias.map(async (cat) => {
-      const productCount = await cat.countProductos();
-      return { ...cat.toJSON(), productCount };
-    })
-  );
-
-  return conConteo;
+  return categorias.map((c) => ({
+    idCategoria: c.idCategoria,
+    nombre: c.nombre,
+    descripcion: c.descripcion,
+    productCount: parseInt(c.productCount, 10),
+  }));
 }
 
 async function obtenerPorId(id) {
   const categoria = await Categoria.findByPk(id);
   if (!categoria) {
-    const error = new Error('Categoría no encontrada.');
+    const error = new Error("Categoría no encontrada.");
     error.status = 404;
     throw error;
   }
@@ -34,7 +53,7 @@ async function obtenerPorId(id) {
 async function crear({ nombre, descripcion }) {
   const existente = await Categoria.findOne({ where: { nombre } });
   if (existente) {
-    const error = new Error('Ya existe una categoría con ese nombre.');
+    const error = new Error("Ya existe una categoría con ese nombre.");
     error.status = 409;
     throw error;
   }
@@ -50,7 +69,7 @@ async function crear({ nombre, descripcion }) {
 async function actualizar(id, { nombre, descripcion }) {
   const categoria = await Categoria.findByPk(id);
   if (!categoria) {
-    const error = new Error('Categoría no encontrada.');
+    const error = new Error("Categoría no encontrada.");
     error.status = 404;
     throw error;
   }
@@ -58,7 +77,7 @@ async function actualizar(id, { nombre, descripcion }) {
   if (nombre && nombre !== categoria.nombre) {
     const existente = await Categoria.findOne({ where: { nombre } });
     if (existente) {
-      const error = new Error('Ya existe una categoría con ese nombre.');
+      const error = new Error("Ya existe una categoría con ese nombre.");
       error.status = 409;
       throw error;
     }
@@ -66,7 +85,8 @@ async function actualizar(id, { nombre, descripcion }) {
 
   await categoria.update({
     nombre: nombre ?? categoria.nombre,
-    descripcion: descripcion !== undefined ? descripcion : categoria.descripcion,
+    descripcion:
+      descripcion !== undefined ? descripcion : categoria.descripcion,
   });
 
   const productCount = await categoria.countProductos();
@@ -83,7 +103,7 @@ async function actualizar(id, { nombre, descripcion }) {
 async function eliminar(id) {
   const categoria = await Categoria.findByPk(id);
   if (!categoria) {
-    const error = new Error('Categoría no encontrada.');
+    const error = new Error("Categoría no encontrada.");
     error.status = 404;
     throw error;
   }
@@ -94,7 +114,7 @@ async function eliminar(id) {
     const categoriasDelProducto = await producto.countCategorias();
     if (categoriasDelProducto <= 1) {
       const error = new Error(
-        `El producto "${producto.nombre}" quedaría sin categorías. No se puede eliminar.`
+        `El producto "${producto.nombre}" quedaría sin categorías. No se puede eliminar.`,
       );
       error.status = 409;
       throw error;
@@ -107,7 +127,7 @@ async function eliminar(id) {
 async function listarProductosDeCategoria(id, { page = 1, limit = 20 } = {}) {
   const categoria = await Categoria.findByPk(id);
   if (!categoria) {
-    const error = new Error('Categoría no encontrada.');
+    const error = new Error("Categoría no encontrada.");
     error.status = 404;
     throw error;
   }
@@ -116,7 +136,12 @@ async function listarProductosDeCategoria(id, { page = 1, limit = 20 } = {}) {
   // misma forma que GET /products y, sobre todo, solo productos ACTIVOS:
   // antes devolvía filas crudas del modelo e incluía productos inactivos
   // a cualquier visitante.
-  return productService.listar({ page, limit, categoryId: Number(id), isAdmin: false });
+  return productService.listar({
+    page,
+    limit,
+    categoryId: Number(id),
+    isAdmin: false,
+  });
 }
 
 module.exports = {
