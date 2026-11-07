@@ -3,6 +3,17 @@ import { Clock, MapPin, Phone } from "lucide-react";
 import { useComercio } from "../../context/comercio-context.js";
 import SocialIcon from "../common/SocialIcon.jsx";
 
+
+function resumir(texto, maxOraciones = 3, maxCaracteres = 250) {
+  const oraciones = texto.replace(/\s+/g, " ").trim().split(/(?<=[.!?…])\s+/);
+  let resumen = oraciones[0];
+  for (const oracion of oraciones.slice(1, maxOraciones)) {
+    if (`${resumen} ${oracion}`.length > maxCaracteres) break;
+    resumen = `${resumen} ${oracion}`;
+  }
+  return resumen;
+}
+
 export default function Footer() {
   const { comercio } = useComercio();
   const redes = comercio?.redesSociales ?? [];
@@ -12,7 +23,7 @@ export default function Footer() {
       <div className="mx-auto grid max-w-7xl gap-8 px-4 py-10 sm:px-6 md:grid-cols-3 lg:px-8">
         <div>
           <p className="font-editorial text-xl font-bold text-stone-900">{comercio?.nombre ?? "MaxiLibrerías"}</p>
-          {comercio?.descripcion && <p className="mt-2 text-sm text-brand-muted">{comercio.descripcion}</p>}
+          {comercio?.descripcion && <p className="mt-2 text-sm text-brand-muted">{resumir(comercio.descripcion)}</p>}
         </div>
 
         <div className="space-y-2 text-sm text-stone-700">
