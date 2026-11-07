@@ -2,6 +2,8 @@
 // el back (routes/consulta.routes.js): el front las aplica para dar feedback
 // inmediato, y el back las vuelve a aplicar porque es quien tiene la última palabra.
 
+import { cantidadDecimales, parsearDecimal } from "./format.js";
+
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const TELEFONO_RE = /^[0-9+()\-\s]{6,30}$/;
 
@@ -171,11 +173,20 @@ export function validarProducto(v) {
     errores.descripcion = `La descripción no puede superar los ${LIMITES_PRODUCTO.descripcion} caracteres`;
   }
 
-  if (!esNumero(v.precio) || Number(v.precio) < 0) errores.precio = "El precio debe ser un número mayor o igual a 0";
-  else if (Number(v.precio) > LIMITES_PRODUCTO.precioMax) errores.precio = "El precio es demasiado alto";
+  // Precio y descuento admiten coma o punto, pero NO más de 2 decimales: la
+  // base guarda centavos, y un tercer decimal se redondearía en silencio.
+  const precio = parsearDecimal(v.precio);
+  if (!Number.isFinite(precio) || precio < 0) errores.precio = "El precio debe ser un número mayor o igual a 0";
+  else if (cantidadDecimales(v.precio) > 2) errores.precio = "El precio admite hasta 2 decimales";
+  else if (precio > LIMITES_PRODUCTO.precioMax) errores.precio = "El precio es demasiado alto";
 
-  if (String(v.descuento ?? "").trim() !== "" && (!esNumero(v.descuento) || Number(v.descuento) < 0 || Number(v.descuento) > 100)) {
-    errores.descuento = "El descuento debe estar entre 0 y 100";
+  if (String(v.descuento ?? "").trim() !== "") {
+    const descuento = parsearDecimal(v.descuento);
+    if (!Number.isFinite(descuento) || descuento < 0 || descuento > 100) {
+      errores.descuento = "El descuento debe estar entre 0 y 100";
+    } else if (cantidadDecimales(v.descuento) > 2) {
+      errores.descuento = "El descuento admite hasta 2 decimales";
+    }
   }
 
   if (String(v.stock ?? "").trim() !== "") {

@@ -14,7 +14,7 @@ import { useForm } from "../../hooks/useForm.js";
 import { usePageTitle } from "../../hooks/usePageTitle.js";
 import { getCategories } from "../../services/categories.service.js";
 import { createProduct, getProduct, updateProduct } from "../../services/products.service.js";
-import { formatPrice } from "../../utils/format.js";
+import { decimalAInput, formatPrice, parsearDecimal } from "../../utils/format.js";
 import { ESTADOS_PRODUCTO, TIPOS_PRODUCTO } from "../../utils/producto.js";
 import { LIMITES_PRODUCTO, validarProducto } from "../../utils/validators.js";
 
@@ -38,8 +38,8 @@ function valoresDesde(producto) {
     tipoProducto: producto.tipoProducto,
     nombre: producto.nombre,
     descripcion: producto.descripcion ?? "",
-    precio: String(producto.precio),
-    descuento: Number(producto.descuento) ? String(producto.descuento) : "",
+    precio: decimalAInput(producto.precio),
+    descuento: Number(producto.descuento) ? decimalAInput(producto.descuento) : "",
     stock: String(producto.stock),
     estado: producto.estado,
     categoryIds: (producto.categories ?? []).map((c) => Number(c.idCategoria)),
@@ -71,6 +71,8 @@ function Formulario({ producto, categorias, onGuardado }) {
 
   const [guardando, setGuardando] = useState(false);
   const [errorGeneral, setErrorGeneral] = useState("");
+  // Imágenes elegidas mientras se crea el producto (en edición se gestionan solas).
+  const [imagenesNuevas, setImagenesNuevas] = useState([]);
 
   const esLibro = valores.tipoProducto === "libro";
   const dejaDeSerLibro = esEdicion && inicial.tipoProducto === "libro" && !esLibro;
@@ -90,8 +92,8 @@ function Formulario({ producto, categorias, onGuardado }) {
   };
 
   // Vista previa del precio final con el descuento aplicado.
-  const precio = Number(valores.precio);
-  const descuento = Number(valores.descuento) || 0;
+  const precio = parsearDecimal(valores.precio);
+  const descuento = parsearDecimal(valores.descuento) || 0;
   const precioFinal =
     valores.precio !== "" && Number.isFinite(precio) && precio >= 0 && descuento >= 0 && descuento <= 100
       ? precio * (1 - descuento / 100)
@@ -108,8 +110,8 @@ function Formulario({ producto, categorias, onGuardado }) {
       tipoProducto: valores.tipoProducto,
       nombre: valores.nombre.trim(),
       descripcion: valores.descripcion.trim() || null,
-      precio: Number(valores.precio),
-      descuento: valores.descuento === "" ? 0 : Number(valores.descuento),
+      precio: parsearDecimal(valores.precio),
+      descuento: valores.descuento === "" ? 0 : parsearDecimal(valores.descuento),
       stock: valores.stock === "" ? 0 : parseInt(valores.stock, 10),
       estado: valores.estado,
       categoryIds: valores.categoryIds,
@@ -123,6 +125,16 @@ function Formulario({ producto, categorias, onGuardado }) {
       };
     }
 
+    if (!esEdicion && imagenesNuevas.length > 0) {
+      // Siempre tiene que haber una principal: si no se marcó ninguna, la primera.
+      const hayPrincipal = imagenesNuevas.some((i) => i.esPrincipal);
+      datos.images = imagenesNuevas.map((img, i) => ({
+        imageUrl: img.imagenUrl,
+        orden: i + 1,
+        esPrincipal: hayPrincipal ? Boolean(img.esPrincipal) : i === 0,
+      }));
+    }
+
     try {
       if (esEdicion) {
         await updateProduct(producto.id, datos);
@@ -130,7 +142,7 @@ function Formulario({ producto, categorias, onGuardado }) {
         onGuardado();
       } else {
         const creado = await createProduct(datos);
-        toast.exito("Producto creado. Ahora podés cargar sus imágenes.");
+        toast.exito("Producto creado.");
         navigate(`/admin/productos/${creado.id}/editar`, { replace: true });
         return;
       }
@@ -209,14 +221,21 @@ function Formulario({ producto, categorias, onGuardado }) {
         <div className="space-y-6">
           <Panel titulo="Precio y stock">
             <div className="space-y-5">
-              <Input {...campo("precio")} type="number" inputMode="decimal" step="0.01" min="0" label="Precio" required />
+              <Input
+                {...campo("precio")}
+                type="text"
+                inputMode="decimal"
+                autoComplete="off"
+                placeholder="0,00"
+                label="Precio"
+                required
+                hint="Podés usar coma o punto para los centavos (hasta 2 decimales)."
+              />
               <Input
                 {...campo("descuento")}
-                type="number"
+                type="text"
                 inputMode="decimal"
-                step="0.01"
-                min="0"
-                max="100"
+                autoComplete="off"
                 label="Descuento (%)"
                 optional
                 hint={precioFinal !== null && descuento > 0 ? `Precio final: ${formatPrice(precioFinal)}` : undefined}
@@ -288,9 +307,12 @@ function Formulario({ producto, categorias, onGuardado }) {
       </div>
     </form>
 
-    {/* Fuera del <form>: sube y guarda las imágenes por su cuenta, sin pasar por "Guardar cambios". */}
-    {esEdicion && (
+    {/* Fuera del <form>: al editar, sube y guarda las imágenes por su cuenta (sin pasar por "Guardar cambios").
+        Al crear, las deja listas en memoria y viajan con el producto al apretar "Crear producto". */}
+    {esEdicion ? (
       <ProductoImagenes productoId={producto.id} nombre={producto.nombre} imagenesIniciales={producto.images ?? []} />
+    ) : (
+      <ProductoImagenes nombre={valores.nombre || "el producto"} onChange={setImagenesNuevas} />
     )}
     </>
   );
