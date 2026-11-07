@@ -237,7 +237,7 @@ cd frontend
 npm start
 ```
 
-Por defecto React corre en `http://localhost:3000`. Asegurate de tener `cors` configurado en el backend para aceptar peticiones desde ese origen.
+Por defecto React corre en `http://localhost:3000`. El backend usa CORS con una **whitelist** (`backend/middlewares/cors.middleware.js`): acepta cualquier puerto de `localhost`/`127.0.0.1` y los dominios de producción (`maxilibrerias.com` con y sin `www`). Para habilitar otros orígenes sin tocar código, agregalos separados por comas en la variable `CORS_ORIGINS` del `.env`.
 
 ## 8. Probar los endpoints en Postman
 

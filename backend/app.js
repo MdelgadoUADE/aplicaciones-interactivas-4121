@@ -2,13 +2,12 @@
 require('dotenv').config();
 
 var express = require('express');
-var cors = require('cors');
 
 // Instancia de Express
 var app = express();
 
-// Habilita CORS para todas las rutas
-app.use(cors());
+// CORS con whitelist de orígenes (ver middlewares/cors.middleware.js)
+app.use(require('./middlewares/cors.middleware'));
 
 
 // Middleware para interpretar JSON y datos de formularios URL-encoded
