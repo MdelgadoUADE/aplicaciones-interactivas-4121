@@ -71,7 +71,8 @@ function serializarProducto(producto, { isAdmin = false } = {}) {
 
 /**
  * Arma la condición de búsqueda "todas las palabras deben aparecer, en
- * cualquier orden, en cualquiera de los campos buscables". No es fuzzy
+ * cualquier orden, en cualquiera de los campos buscables (nombre, autor
+ * y editorial)". No es fuzzy
  * (no tolera errores de tipeo) — es substring matching por palabra,
  * insensible a mayúsculas/minúsculas Y a tildes (usando unaccent() de
  * Postgres en ambos lados de la comparación, columna y término
@@ -81,7 +82,7 @@ function serializarProducto(producto, { isAdmin = false } = {}) {
  *   CREATE EXTENSION IF NOT EXISTS unaccent;
  *
  * Ejemplo: buscar "garcia marquez" arma (conceptualmente):
- *   (unaccent(nombre) ILIKE unaccent(%garcia%) OR ... OR unaccent(libro.autor) ILIKE unaccent(%garcia%))
+ *   (unaccent(nombre) ILIKE unaccent(%garcia%) OR unaccent(libro.autor) ILIKE ... OR unaccent(libro.editorial) ILIKE ...)
  *   AND
  *   (unaccent(nombre) ILIKE unaccent(%marquez%) OR ... )
  * Así "Márquez, García" (orden invertido, con o sin tildes en la
@@ -194,13 +195,12 @@ async function listar({
   if (inStock === true) where.stock = { [Op.gt]: 0 };
   if (onSale === true) where.descuento = { [Op.gt]: 0 };
 
-  const include = [
-    { model: Categoria, as: 'categorias', through: { attributes: [] } },
-    { model: ProductoImagen, as: 'imagenes' },
-    // required: false -> LEFT JOIN, así los productos que no son libros
-    // (sin fila en Libro) no quedan excluidos cuando hay búsqueda activa.
-    { model: Libro, as: 'libro', required: false },
-  ];
+  // Libro es 1:1 (su PK es el id del producto): un LEFT JOIN con él NO
+  // multiplica filas, así que acá limit/offset sí cuentan productos. Se
+  // usa para filtrar por autor/editorial y solo hace falta si hay búsqueda.
+  const includeFiltro = search
+    ? [{ model: Libro, as: 'libro', required: false, attributes: [] }]
+    : [];
 
   const orderMap = {
     // El orden por precio es sobre el precio FINAL (con descuento aplicado),
@@ -210,23 +210,55 @@ async function listar({
     title_asc: [['nombre', 'ASC']],
     // Nombre de columna física ('created_at'), no el atributo del
     // modelo ('createdAt') — mismo motivo que en el filtro de
-    // novedades más arriba: con subQuery:false y los includes actuales,
-    // Sequelize no traduce automáticamente el atributo camelCase al
-    // nombre real de columna dentro del ORDER BY.
+    // novedades más arriba: con subQuery:false, Sequelize no traduce
+    // automáticamente el atributo camelCase al nombre real de columna
+    // dentro del ORDER BY.
     newest: [[sequelize.col('Producto.created_at'), 'DESC']],
   };
 
-  const { count, rows } = await Producto.findAndCountAll({
+  // PASO 1 — ids de la página, con el total real.
+  //
+  // Antes se hacía un único findAndCountAll con los tres includes
+  // (categorías N:N + imágenes 1:N + libro) y limit/offset. Con
+  // subQuery:false el LIMIT se aplica a las FILAS del JOIN, no a los
+  // productos: un producto con 2 imágenes y 2 categorías ocupa 4 filas.
+  // Resultado: la página 1 devolvía 7 productos en vez de 12 (los otros
+  // quedaban "escondidos" detrás del LIMIT), la 2 devolvía 10, y como el
+  // offset también corría sobre filas, los productos se salteaban entre
+  // páginas.
+  //
+  // Acá solo se consulta la tabla producto (+ libro 1:1 si hay búsqueda),
+  // sin includes que multipliquen filas, así que LIMIT/OFFSET/COUNT
+  // trabajan sobre productos de verdad.
+  const { count, rows: filasPagina } = await Producto.findAndCountAll({
     where,
-    include,
+    include: includeFiltro,
+    attributes: ['idProducto'],
     limit,
     offset,
-    distinct: true, // necesario por el include N:N, si no count() cuenta filas duplicadas del JOIN
-    subQuery: false, // necesario para que el filtro '$libro.autor$' funcione junto con limit/offset
+    distinct: true,
+    subQuery: false, // necesario para que el filtro sobre libro.autor/editorial funcione junto con limit/offset
     // Desempate por id: sin él, productos con el mismo created_at pueden
     // repetirse o saltearse entre páginas.
     order: [...(orderMap[sort] || orderMap.newest), [sequelize.col('Producto.id_producto'), 'DESC']],
   });
+
+  const ids = filasPagina.map((f) => f.idProducto);
+
+  // PASO 2 — los productos completos de esos ids (categorías, imágenes y
+  // libro). Acá ya no hay LIMIT que pueda cortar el JOIN a la mitad.
+  let rows = [];
+  if (ids.length > 0) {
+    const completos = await Producto.findAll({
+      where: { idProducto: ids },
+      include: includeCompleto,
+    });
+
+    // El IN no garantiza orden: se reconstruye el orden del paso 1.
+    // (BIGINT llega como string desde pg, por eso se compara como string.)
+    const porId = new Map(completos.map((p) => [String(p.idProducto), p]));
+    rows = ids.map((id) => porId.get(String(id))).filter(Boolean);
+  }
 
   const data = rows.map((producto) => serializarProducto(producto, { isAdmin }));
 
@@ -241,8 +273,10 @@ async function listar({
 
 /**
  * Devuelve un array con una condición por palabra (todas deben cumplirse,
- * cada una en al menos uno de los campos buscables: nombre, descripción,
- * autor o editorial). Devuelve [] si no hay palabras.
+ * cada una en al menos uno de los campos buscables: nombre, autor o
+ * editorial). La descripción NO se busca a propósito: es texto largo y
+ * traía resultados que no tenían nada que ver con lo que se escribió.
+ * Devuelve [] si no hay palabras.
  */
 function armarCondicionesBusqueda(search) {
   const palabras = search.trim().split(/\s+/).filter(Boolean);
@@ -250,7 +284,6 @@ function armarCondicionesBusqueda(search) {
   return palabras.map((palabra) => ({
     [Op.or]: [
       condicionUnaccent('Producto.nombre', palabra),
-      condicionUnaccent('Producto.descripcion', palabra),
       condicionUnaccent('libro.autor', palabra),
       condicionUnaccent('libro.editorial', palabra),
     ],
