@@ -30,4 +30,22 @@ export const ESTADOS_PRODUCTO = [
   { value: "agotado", label: "Agotado" },
 ];
 
-export const etiquetaTipo = (valor) => TIPOS_PRODUCTO.find((t) => t.value === valor)?.label ?? valor;
+//Chequea stock que sea finito y no menor a 0
+export function tieneStock(stock) {
+  const n = Number(stock);
+  return Number.isFinite(n) && n > 0;
+}
+
+// Estados elegibles según el stock: sin stock, "Activo" no se puede elegir.
+export function estadosDisponibles(stock) {
+  return tieneStock(stock)
+    ? ESTADOS_PRODUCTO
+    : ESTADOS_PRODUCTO.filter((e) => e.value !== "activo");
+}
+
+export function estadoPermitido(estado, stock) {
+  return estado !== "activo" || tieneStock(stock);
+}
+
+export const etiquetaTipo = (valor) =>
+  TIPOS_PRODUCTO.find((t) => t.value === valor)?.label ?? valor;

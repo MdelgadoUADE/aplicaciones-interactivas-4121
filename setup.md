@@ -196,6 +196,33 @@ npx sequelize-cli db:migrate
 npx sequelize-cli db:seed:all
 ```
 
+## Reglas de negocio
+
+- **Un producto `activo` tiene que tener stock.** Publicar algo sin unidades no
+  tiene sentido (su estado natural es `agotado`). Se aplica en tres capas:
+  - **Panel**: el `<select>` de estado deshabilita la opción «Activo» cuando el
+    stock es 0 y, si el producto queda sin stock, lo pasa a «Agotado»
+    (`utils/producto.js`, `ProductoFila.jsx`, `AdminProductoForm.jsx`).
+  - **Backend**: `services/product.service.js` rechaza con `400` cualquier
+    `crear` / `actualizar` / `actualizarParcial` / `cambiarEstado` que intente
+    dejar un producto `activo` con stock 0.
+  - **Base de datos**: la constraint `producto_activo_requiere_stock`
+    (`CHECK (estado <> 'activo' OR stock > 0)`) lo hace imposible a nivel tabla.
+
+  Para alinear datos existentes (productos `activo` con stock 0 → `agotado`) y
+  crear la constraint, correr una vez en el cliente SQL (psql o el editor de
+  Supabase). El `UPDATE` va **antes** que el `ALTER`, o el `ALTER` falla:
+
+  ```sql
+  UPDATE producto
+  SET estado = 'agotado', updated_at = NOW()
+  WHERE stock = 0 AND estado = 'activo';
+
+  ALTER TABLE producto
+    ADD CONSTRAINT producto_activo_requiere_stock
+    CHECK (estado <> 'activo' OR stock > 0);
+  ```
+
 ## 6. Levantar el backend
 
 ```bash

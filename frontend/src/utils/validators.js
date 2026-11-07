@@ -197,6 +197,12 @@ export function validarProducto(v) {
   }
 
   if (!ESTADOS_VALIDOS.includes(v.estado)) errores.estado = "Estado inválido";
+  // Misma regla que el back (services/product.service.js): sin stock no se
+  // puede publicar como "activo". Es una red de seguridad: el formulario ya
+  // deshabilita la opción y auto-corrige a "agotado".
+  else if (v.estado === "activo" && !(Number(v.stock) > 0)) {
+    errores.estado = "Un producto sin stock no puede estar activo. Cargá stock o usá «Agotado».";
+  }
 
   if (!Array.isArray(v.categoryIds) || v.categoryIds.length === 0) {
     errores.categoryIds = "Debe incluir al menos una categoría";

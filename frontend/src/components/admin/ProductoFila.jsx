@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { ExternalLink, Pencil, Star, Trash2 } from "lucide-react";
 import ProductImage from "../products/ProductImage.jsx";
 import PriceTag from "../products/PriceTag.jsx";
-import { ESTADOS_PRODUCTO, etiquetaTipo } from "../../utils/producto.js";
+import { ESTADOS_PRODUCTO, etiquetaTipo, tieneStock } from "../../utils/producto.js";
 
 // Misma grilla para el encabezado y las filas (en pantallas chicas se apila).
 export const GRILLA_PRODUCTOS = "md:grid md:grid-cols-[3.5rem_minmax(0,1fr)_8rem_4.5rem_8.5rem_auto] md:items-center md:gap-4";
@@ -47,7 +47,7 @@ export default function ProductoFila({ producto, ocupado, onEstado, onDestacado,
         className="rounded-md border border-stone-300 bg-white px-2 py-1.5 text-sm focus:border-brand-terracotta focus:outline-none disabled:opacity-60"
       >
         {ESTADOS_PRODUCTO.map((e) => (
-          <option key={e.value} value={e.value}>
+          <option key={e.value} value={e.value} disabled={e.value === "activo" && !tieneStock(stock)}>
             {e.label}
           </option>
         ))}

@@ -1,7 +1,18 @@
 // services/product.service.js
-const db = require('../models');
+const db = require("../models");
 const { Producto, Libro, Categoria, ProductoImagen, sequelize } = db;
-const { Op } = require('sequelize');
+const { Op } = require("sequelize");
+
+// para activar tiene que tener stock
+function exigirStockSiActivo(estado, stock) {
+  if (estado === "activo" && !(Number(stock) > 0)) {
+    const error = new Error(
+      "Un producto sin stock no puede estar activo. Cargá stock o usá el estado «agotado».",
+    );
+    error.status = 400;
+    throw error;
+  }
+}
 
 /**
  * Include estándar para traer un producto "completo": sus categorías
@@ -12,9 +23,9 @@ const { Op } = require('sequelize');
  * ordenan en serializarProducto().
  */
 const includeCompleto = [
-  { model: Categoria, as: 'categorias', through: { attributes: [] } },
-  { model: ProductoImagen, as: 'imagenes' },
-  { model: Libro, as: 'libro', required: false },
+  { model: Categoria, as: "categorias", through: { attributes: [] } },
+  { model: ProductoImagen, as: "imagenes" },
+  { model: Libro, as: "libro", required: false },
 ];
 
 function calcularPrecioFinal(producto) {
@@ -37,7 +48,7 @@ function serializarProducto(producto, { isAdmin = false } = {}) {
   const json = producto.toJSON();
 
   const images = [...(json.imagenes || [])].sort(
-    (a, b) => a.orden - b.orden || Number(a.idImagen) - Number(b.idImagen)
+    (a, b) => a.orden - b.orden || Number(a.idImagen) - Number(b.idImagen),
   );
   const principal = images.find((img) => img.esPrincipal) || images[0];
 
@@ -89,10 +100,9 @@ function serializarProducto(producto, { isAdmin = false } = {}) {
  * búsqueda) también matchea.
  */
 function condicionUnaccent(columna, palabra) {
-  return sequelize.where(
-    sequelize.fn('unaccent', sequelize.col(columna)),
-    { [Op.iLike]: sequelize.fn('unaccent', `%${palabra}%`) }
-  );
+  return sequelize.where(sequelize.fn("unaccent", sequelize.col(columna)), {
+    [Op.iLike]: sequelize.fn("unaccent", `%${palabra}%`),
+  });
 }
 
 const DIAS_NOVEDAD = 7;
@@ -111,7 +121,9 @@ const DIAS_NOVEDAD = 7;
  * un atributo del modelo a la columna física dentro de ORDER BY.
  */
 function precioFinalSql() {
-  return sequelize.literal('ROUND(("Producto"."precio" * (1 - "Producto"."descuento" / 100.0)), 2)');
+  return sequelize.literal(
+    'ROUND(("Producto"."precio" * (1 - "Producto"."descuento" / 100.0)), 2)',
+  );
 }
 
 /**
@@ -133,7 +145,7 @@ async function listar({
   onSale,
   destacado,
   novedades,
-  sort = 'newest',
+  sort = "newest",
   isAdmin = false,
 }) {
   const where = {};
@@ -143,8 +155,8 @@ async function listar({
   // un estado puntual, o ?estado=todos para ver activos, inactivos y agotados
   // juntos (listado del panel). Es opt-in a propósito: así las pantallas
   // públicas no muestran productos ocultos aunque el admin tenga sesión.
-  if (!(isAdmin && estado === 'todos')) {
-    where.estado = isAdmin && estado ? estado : 'activo';
+  if (!(isAdmin && estado === "todos")) {
+    where.estado = isAdmin && estado ? estado : "activo";
   }
 
   if (tipoProducto) where.tipoProducto = tipoProducto;
@@ -161,7 +173,11 @@ async function listar({
     desde.setDate(desde.getDate() - DIAS_NOVEDAD);
     // Nombre de columna FÍSICO ('created_at'), no el atributo del modelo:
     // ver nota en el orderMap más abajo.
-    condiciones.push(sequelize.where(sequelize.col('Producto.created_at'), { [Op.gte]: desde }));
+    condiciones.push(
+      sequelize.where(sequelize.col("Producto.created_at"), {
+        [Op.gte]: desde,
+      }),
+    );
   }
 
   if (search) condiciones.push(...armarCondicionesBusqueda(search));
@@ -172,8 +188,8 @@ async function listar({
   if (Number.isInteger(categoryId)) {
     condiciones.push(
       sequelize.literal(
-        `"Producto"."id_producto" IN (SELECT id_producto FROM producto_categoria WHERE id_categoria = ${categoryId})`
-      )
+        `"Producto"."id_producto" IN (SELECT id_producto FROM producto_categoria WHERE id_categoria = ${categoryId})`,
+      ),
     );
   }
 
@@ -199,21 +215,21 @@ async function listar({
   // multiplica filas, así que acá limit/offset sí cuentan productos. Se
   // usa para filtrar por autor/editorial y solo hace falta si hay búsqueda.
   const includeFiltro = search
-    ? [{ model: Libro, as: 'libro', required: false, attributes: [] }]
+    ? [{ model: Libro, as: "libro", required: false, attributes: [] }]
     : [];
 
   const orderMap = {
     // El orden por precio es sobre el precio FINAL (con descuento aplicado),
     // que es el que ve el usuario en la tarjeta del producto.
-    price_asc: [[precioFinalSql(), 'ASC']],
-    price_desc: [[precioFinalSql(), 'DESC']],
-    title_asc: [['nombre', 'ASC']],
+    price_asc: [[precioFinalSql(), "ASC"]],
+    price_desc: [[precioFinalSql(), "DESC"]],
+    title_asc: [["nombre", "ASC"]],
     // Nombre de columna física ('created_at'), no el atributo del
     // modelo ('createdAt') — mismo motivo que en el filtro de
     // novedades más arriba: con subQuery:false, Sequelize no traduce
     // automáticamente el atributo camelCase al nombre real de columna
     // dentro del ORDER BY.
-    newest: [[sequelize.col('Producto.created_at'), 'DESC']],
+    newest: [[sequelize.col("Producto.created_at"), "DESC"]],
   };
 
   // PASO 1 — ids de la página, con el total real.
@@ -233,14 +249,17 @@ async function listar({
   const { count, rows: filasPagina } = await Producto.findAndCountAll({
     where,
     include: includeFiltro,
-    attributes: ['idProducto'],
+    attributes: ["idProducto"],
     limit,
     offset,
     distinct: true,
     subQuery: false, // necesario para que el filtro sobre libro.autor/editorial funcione junto con limit/offset
     // Desempate por id: sin él, productos con el mismo created_at pueden
     // repetirse o saltearse entre páginas.
-    order: [...(orderMap[sort] || orderMap.newest), [sequelize.col('Producto.id_producto'), 'DESC']],
+    order: [
+      ...(orderMap[sort] || orderMap.newest),
+      [sequelize.col("Producto.id_producto"), "DESC"],
+    ],
   });
 
   const ids = filasPagina.map((f) => f.idProducto);
@@ -260,7 +279,9 @@ async function listar({
     rows = ids.map((id) => porId.get(String(id))).filter(Boolean);
   }
 
-  const data = rows.map((producto) => serializarProducto(producto, { isAdmin }));
+  const data = rows.map((producto) =>
+    serializarProducto(producto, { isAdmin }),
+  );
 
   return {
     total: count,
@@ -283,9 +304,9 @@ function armarCondicionesBusqueda(search) {
 
   return palabras.map((palabra) => ({
     [Op.or]: [
-      condicionUnaccent('Producto.nombre', palabra),
-      condicionUnaccent('libro.autor', palabra),
-      condicionUnaccent('libro.editorial', palabra),
+      condicionUnaccent("Producto.nombre", palabra),
+      condicionUnaccent("libro.autor", palabra),
+      condicionUnaccent("libro.editorial", palabra),
     ],
   }));
 }
@@ -297,8 +318,8 @@ function armarCondicionesBusqueda(search) {
 async function obtenerPorId(id, { isAdmin = false } = {}) {
   const producto = await Producto.findByPk(id, { include: includeCompleto });
 
-  if (!producto || (producto.estado !== 'activo' && !isAdmin)) {
-    const error = new Error('Producto no encontrado.');
+  if (!producto || (producto.estado !== "activo" && !isAdmin)) {
+    const error = new Error("Producto no encontrado.");
     error.status = 404;
     throw error;
   }
@@ -320,7 +341,7 @@ async function obtenerPorId(id, { isAdmin = false } = {}) {
  * al mismo tiempo.
  */
 async function incrementarVisitas(id) {
-  await Producto.increment('visitas', { where: { idProducto: id } });
+  await Producto.increment("visitas", { where: { idProducto: id } });
 }
 
 /**
@@ -330,7 +351,24 @@ async function incrementarVisitas(id) {
  * (ej. ISBN duplicado), se revierte todo — no queda un producto a medias
  * sin categoría o sin su fila de libro.
  */
-async function crear({ tipoProducto, nombre, descripcion, precio, descuento, stock, estado, categoryIds, images, libro }) {
+async function crear({
+  tipoProducto,
+  nombre,
+  descripcion,
+  precio,
+  descuento,
+  stock,
+  estado,
+  categoryIds,
+  images,
+  libro,
+}) {
+  // Se calculan los defaults ACÁ (no dentro del create) para poder rechazar la
+  // combinación inválida 'activo' + stock 0 ANTES de abrir la transacción.
+  const stockFinal = stock || 0;
+  const estadoFinal = estado || "activo";
+  exigirStockSiActivo(estadoFinal, stockFinal);
+
   const t = await sequelize.transaction();
 
   try {
@@ -341,15 +379,17 @@ async function crear({ tipoProducto, nombre, descripcion, precio, descuento, sto
         descripcion: descripcion || null,
         precio,
         descuento: descuento || 0,
-        stock: stock || 0,
-        estado: estado || 'activo',
+        stock: stockFinal,
+        estado: estadoFinal,
       },
-      { transaction: t }
+      { transaction: t },
     );
 
-    if (tipoProducto === 'libro') {
+    if (tipoProducto === "libro") {
       if (!libro || !libro.isbn) {
-        const error = new Error('Los datos de libro (isbn) son obligatorios cuando tipoProducto es "libro".');
+        const error = new Error(
+          'Los datos de libro (isbn) son obligatorios cuando tipoProducto es "libro".',
+        );
         error.status = 400;
         throw error;
       }
@@ -361,7 +401,7 @@ async function crear({ tipoProducto, nombre, descripcion, precio, descuento, sto
           editorial: libro.editorial || null,
           anioPublicacion: libro.anioPublicacion || null,
         },
-        { transaction: t }
+        { transaction: t },
       );
     }
 
@@ -375,7 +415,7 @@ async function crear({ tipoProducto, nombre, descripcion, precio, descuento, sto
           orden: img.orden ?? index,
           esPrincipal: img.esPrincipal ?? index === 0,
         })),
-        { transaction: t }
+        { transaction: t },
       );
     }
 
@@ -385,8 +425,8 @@ async function crear({ tipoProducto, nombre, descripcion, precio, descuento, sto
   } catch (err) {
     await t.rollback();
     // Traducir el error de constraint UNIQUE de isbn a un mensaje claro
-    if (err.name === 'SequelizeUniqueConstraintError' && err.fields?.isbn) {
-      const error = new Error('Ya existe un producto con ese ISBN.');
+    if (err.name === "SequelizeUniqueConstraintError" && err.fields?.isbn) {
+      const error = new Error("Ya existe un producto con ese ISBN.");
       error.status = 409;
       throw error;
     }
@@ -398,28 +438,55 @@ async function crear({ tipoProducto, nombre, descripcion, precio, descuento, sto
  * PUT: reemplaza todos los campos, incluyendo el set completo de
  * categorías (setCategorias reemplaza, no agrega).
  */
-async function actualizar(id, { tipoProducto, nombre, descripcion, precio, descuento, stock, estado, categoryIds, libro }) {
+async function actualizar(
+  id,
+  {
+    tipoProducto,
+    nombre,
+    descripcion,
+    precio,
+    descuento,
+    stock,
+    estado,
+    categoryIds,
+    libro,
+  },
+) {
   const t = await sequelize.transaction();
 
   try {
     const producto = await Producto.findByPk(id, { transaction: t });
     if (!producto) {
-      const error = new Error('Producto no encontrado.');
+      const error = new Error("Producto no encontrado.");
       error.status = 404;
       throw error;
     }
 
+    // Si un campo no vino en el body, se conserva el valor actual del producto.
+    exigirStockSiActivo(estado ?? producto.estado, stock ?? producto.stock);
+
     await producto.update(
-      { tipoProducto, nombre, descripcion: descripcion || null, precio, descuento, stock, estado },
-      { transaction: t }
+      {
+        tipoProducto,
+        nombre,
+        descripcion: descripcion || null,
+        precio,
+        descuento,
+        stock,
+        estado,
+      },
+      { transaction: t },
     );
 
     if (categoryIds) {
       await producto.setCategorias(categoryIds, { transaction: t });
     }
 
-    if (tipoProducto === 'libro') {
-      const existente = await Libro.findOne({ where: { idProducto: id }, transaction: t });
+    if (tipoProducto === "libro") {
+      const existente = await Libro.findOne({
+        where: { idProducto: id },
+        transaction: t,
+      });
 
       if (libro) {
         // Se arma el objeto campo por campo (no se pasa `libro` tal cual):
@@ -432,14 +499,19 @@ async function actualizar(id, { tipoProducto, nombre, descripcion, precio, descu
           anioPublicacion: libro.anioPublicacion || null,
         };
         if (!datos.isbn) {
-          const error = new Error('Los datos de libro (isbn) son obligatorios cuando tipoProducto es "libro".');
+          const error = new Error(
+            'Los datos de libro (isbn) son obligatorios cuando tipoProducto es "libro".',
+          );
           error.status = 400;
           throw error;
         }
         if (existente) await existente.update(datos, { transaction: t });
-        else await Libro.create({ idProducto: id, ...datos }, { transaction: t });
+        else
+          await Libro.create({ idProducto: id, ...datos }, { transaction: t });
       } else if (!existente) {
-        const error = new Error('Los datos de libro (isbn) son obligatorios cuando tipoProducto es "libro".');
+        const error = new Error(
+          'Los datos de libro (isbn) son obligatorios cuando tipoProducto es "libro".',
+        );
         error.status = 400;
         throw error;
       }
@@ -454,8 +526,8 @@ async function actualizar(id, { tipoProducto, nombre, descripcion, precio, descu
   } catch (err) {
     await t.rollback();
     // Mismo mensaje que en crear(): ISBN repetido -> 409, no 500.
-    if (err.name === 'SequelizeUniqueConstraintError' && err.fields?.isbn) {
-      const error = new Error('Ya existe un producto con ese ISBN.');
+    if (err.name === "SequelizeUniqueConstraintError" && err.fields?.isbn) {
+      const error = new Error("Ya existe un producto con ese ISBN.");
       error.status = 409;
       throw error;
     }
@@ -470,10 +542,16 @@ async function actualizar(id, { tipoProducto, nombre, descripcion, precio, descu
 async function actualizarParcial(id, cambios) {
   const producto = await Producto.findByPk(id);
   if (!producto) {
-    const error = new Error('Producto no encontrado.');
+    const error = new Error("Producto no encontrado.");
     error.status = 404;
     throw error;
   }
+
+  // PATCH: solo vienen los campos enviados; el resto conserva su valor actual.
+  exigirStockSiActivo(
+    cambios.estado ?? producto.estado,
+    cambios.stock ?? producto.stock,
+  );
 
   const t = await sequelize.transaction();
   try {
@@ -494,10 +572,12 @@ async function actualizarParcial(id, cambios) {
 async function cambiarEstado(id, estado) {
   const producto = await Producto.findByPk(id);
   if (!producto) {
-    const error = new Error('Producto no encontrado.');
+    const error = new Error("Producto no encontrado.");
     error.status = 404;
     throw error;
   }
+  // No se puede publicar como activo un producto sin stock.
+  exigirStockSiActivo(estado, producto.stock);
   await producto.update({ estado });
   return obtenerPorId(id, { isAdmin: true });
 }
@@ -514,7 +594,7 @@ const MAX_DESTACADOS = 6;
 async function cambiarDestacado(id, destacado) {
   const producto = await Producto.findByPk(id);
   if (!producto) {
-    const error = new Error('Producto no encontrado.');
+    const error = new Error("Producto no encontrado.");
     error.status = 404;
     throw error;
   }
@@ -523,7 +603,7 @@ async function cambiarDestacado(id, destacado) {
     const cantidadActual = await Producto.count({ where: { destacado: true } });
     if (cantidadActual >= MAX_DESTACADOS) {
       const error = new Error(
-        `Ya hay ${MAX_DESTACADOS} productos destacados (el máximo permitido). Desmarcá alguno antes de agregar otro.`
+        `Ya hay ${MAX_DESTACADOS} productos destacados (el máximo permitido). Desmarcá alguno antes de agregar otro.`,
       );
       error.status = 409;
       throw error;
@@ -537,7 +617,7 @@ async function cambiarDestacado(id, destacado) {
 async function eliminar(id) {
   const producto = await Producto.findByPk(id);
   if (!producto) {
-    const error = new Error('Producto no encontrado.');
+    const error = new Error("Producto no encontrado.");
     error.status = 404;
     throw error;
   }
