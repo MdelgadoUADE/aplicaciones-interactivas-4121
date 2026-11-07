@@ -36,6 +36,16 @@ const validarProducto = [
   body('categoryIds').isArray({ min: 1 }).withMessage('Debe incluir al menos una categoría'),
   body('categoryIds.*').isInt({ min: 1 }).withMessage('Categoría inválida'),
 
+  // Imágenes iniciales (solo las usa POST; el PUT las ignora): permite crear
+  // el producto ya con sus fotos, en la misma transacción.
+  body('images').optional().isArray({ max: 20 }).withMessage('images debe ser una lista de hasta 20 imágenes'),
+  body('images.*.imageUrl')
+    .trim()
+    .notEmpty().withMessage('imageUrl es obligatorio').bail()
+    .isURL().withMessage('imageUrl debe ser una URL válida'),
+  body('images.*.orden').optional().isInt({ min: 0 }).withMessage('orden debe ser un entero mayor o igual a 0'),
+  body('images.*.esPrincipal').optional().isBoolean().withMessage('esPrincipal debe ser true o false'),
+
   // Datos de libro: solo se validan cuando el producto es un libro.
   body('libro.isbn')
     .if(esLibro)

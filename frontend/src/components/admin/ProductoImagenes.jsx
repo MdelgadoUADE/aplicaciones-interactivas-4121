@@ -23,9 +23,17 @@ import {
 
 const ordenar = (lista) => [...lista].sort((a, b) => a.orden - b.orden || Number(a.idImagen) - Number(b.idImagen));
 
-// Gestión de las imágenes de un producto ya creado: subir (varias a la vez),
-// marcar la principal, reordenar y borrar.
-export default function ProductoImagenes({ productoId, nombre, imagenesIniciales = [] }) {
+// Gestión de las imágenes de un producto: subir (varias a la vez), marcar la
+// principal, reordenar y borrar.
+//
+// Dos modos:
+//  - Con `productoId` (producto ya creado): cada cambio se guarda en el back
+//    al instante (POST/PATCH/PUT/DELETE /products/:id/images).
+//  - Sin `productoId` (producto nuevo): las fotos se suben a Cloudinary y se
+//    mantienen en memoria; el formulario las recibe por `onChange` y las manda
+//    junto con el producto en POST /products (campo `images`).
+export default function ProductoImagenes({ productoId, nombre, imagenesIniciales = [], onChange }) {
+  const modoLocal = productoId === undefined || productoId === null;
   const toast = useToast();
   const inputRef = useRef(null);
 
@@ -38,7 +46,15 @@ export default function ProductoImagenes({ productoId, nombre, imagenesIniciales
   const trabajando = Boolean(subiendo) || ocupado;
 
   const refrescar = async () => {
+    if (modoLocal) return;
     setImagenes(ordenar(await listProductImages(productoId)));
+  };
+
+  // Modo local: fija la lista (renumerando `orden`) y avisa al formulario.
+  const aplicarLocal = (lista) => {
+    const numerada = lista.map((img, i) => ({ ...img, orden: i + 1 }));
+    setImagenes(numerada);
+    onChange?.(numerada);
   };
 
   const handleArchivos = async (e) => {
@@ -55,16 +71,26 @@ export default function ProductoImagenes({ productoId, nombre, imagenesIniciales
     });
 
     let subidas = 0;
+    let listaLocal = [...imagenes];
     for (let i = 0; i < validos.length; i += 1) {
       setSubiendo({ actual: i + 1, total: validos.length });
       try {
         const url = await subirImagen(validos[i]);
-        await addProductImage(productoId, { imageUrl: url });
+        if (modoLocal) {
+          // La primera que se sube queda como principal, igual que en el back.
+          listaLocal = [
+            ...listaLocal,
+            { idImagen: `nueva-${Date.now()}-${i}`, imagenUrl: url, orden: listaLocal.length + 1, esPrincipal: listaLocal.length === 0 },
+          ];
+        } else {
+          await addProductImage(productoId, { imageUrl: url });
+        }
         subidas += 1;
       } catch (err) {
         nuevosErrores.push(`"${validos[i].name}": ${err.message}`);
       }
     }
+    if (modoLocal && subidas > 0) aplicarLocal(listaLocal);
 
     setErrores(nuevosErrores);
     try {
@@ -93,19 +119,33 @@ export default function ProductoImagenes({ productoId, nombre, imagenesIniciales
     }
   };
 
-  const marcarPrincipal = (img) =>
-    ejecutar(() => updateProductImage(productoId, img.idImagen, { esPrincipal: true }), "Imagen principal actualizada.");
+  const marcarPrincipal = (img) => {
+    if (modoLocal) {
+      aplicarLocal(imagenes.map((i) => ({ ...i, esPrincipal: i.idImagen === img.idImagen })));
+      return;
+    }
+    return ejecutar(() => updateProductImage(productoId, img.idImagen, { esPrincipal: true }), "Imagen principal actualizada.");
+  };
 
   const mover = (indice, delta) => {
     const lista = [...imagenes];
     const destino = indice + delta;
     if (destino < 0 || destino >= lista.length) return;
     [lista[indice], lista[destino]] = [lista[destino], lista[indice]];
+    if (modoLocal) {
+      aplicarLocal(lista);
+      return;
+    }
     return ejecutar(() => reorderProductImages(productoId, lista.map((i) => Number(i.idImagen))));
   };
 
   const confirmarBorrado = async () => {
     const img = aBorrar;
+    if (modoLocal) {
+      setABorrar(null);
+      aplicarLocal(imagenes.filter((i) => i.idImagen !== img.idImagen));
+      return;
+    }
     setOcupado(true);
     try {
       await deleteProductImage(productoId, img.idImagen);
@@ -171,6 +211,7 @@ export default function ProductoImagenes({ productoId, nombre, imagenesIniciales
 
       <p className="mb-4 text-xs text-brand-muted">
         JPG, PNG o WebP, hasta {TAMANIO_MAX_MB} MB cada una. La imagen principal es la que se ve en el catálogo.
+        {modoLocal && " Se guardan junto con el producto cuando lo crees."}
       </p>
 
       {haySinPrincipal && (
