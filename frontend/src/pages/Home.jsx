@@ -74,8 +74,7 @@ export default function Home() {
             El encanto de las buenas historias
           </h1>
           <p className="mb-8 text-base font-light leading-relaxed text-stone-300 sm:text-lg">
-            {comercio?.descripcion ??
-              "Descubrí novedades seleccionadas a mano y clásicos de siempre en un refugio para mentes curiosas y amantes del papel impreso."}
+            Descubrí novedades seleccionadas a mano y clásicos de siempre en un refugio para mentes curiosas y amantes del papel impreso.
           </p>
           <div className="flex flex-wrap gap-4">
             <a
