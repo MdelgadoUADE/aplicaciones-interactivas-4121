@@ -404,6 +404,22 @@ function Formulario({ producto, categorias, onGuardado }) {
           </div>
         </div>
 
+        {/* Las imágenes van antes de los botones. Aunque se ven dentro del <form>, no se envían con él: sus botones son type="button".
+          Al editar, sube y guarda las imágenes por su cuenta (sin pasar por "Guardar cambios").
+          Al crear, las deja listas en memoria y viajan con el producto al apretar "Crear producto". */}
+        {esEdicion ? (
+          <ProductoImagenes
+            productoId={producto.id}
+            nombre={producto.nombre}
+            imagenesIniciales={producto.images ?? []}
+          />
+        ) : (
+          <ProductoImagenes
+            nombre={valores.nombre || "el producto"}
+            onChange={setImagenesNuevas}
+          />
+        )}
+
         <div className="mt-6 flex flex-wrap items-center gap-3">
           <Button type="submit" loading={guardando}>
             {!guardando && <Save className="h-4 w-4" aria-hidden="true" />}
@@ -418,21 +434,6 @@ function Formulario({ producto, categorias, onGuardado }) {
           </Button>
         </div>
       </form>
-
-      {/* Fuera del <form>: al editar, sube y guarda las imágenes por su cuenta (sin pasar por "Guardar cambios").
-        Al crear, las deja listas en memoria y viajan con el producto al apretar "Crear producto". */}
-      {esEdicion ? (
-        <ProductoImagenes
-          productoId={producto.id}
-          nombre={producto.nombre}
-          imagenesIniciales={producto.images ?? []}
-        />
-      ) : (
-        <ProductoImagenes
-          nombre={valores.nombre || "el producto"}
-          onChange={setImagenesNuevas}
-        />
-      )}
     </>
   );
 }
