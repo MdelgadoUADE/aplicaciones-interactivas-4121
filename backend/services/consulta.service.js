@@ -1,21 +1,9 @@
 // services/consulta.service.js
-const db = require('../models');
+const db = require("../models");
 const { Consulta } = db;
-const { enviarNotificacionConsulta } = require('./email.service');
+const { enviarNotificacionConsulta } = require("./email.service");
 
-/**
- * Crea una consulta pública. 'estado' NUNCA se lee del input — se
- * asigna 'pendiente' de forma explícita, sin importar qué mande el
- * cliente (mismo criterio de allowlist que en auth.service.js).
- *
- * Envía notificación por mail al comercio (funcionalidad extra de la
- * consigna: "Envío de correos electrónicos desde el formulario de
- * contacto"). El fallo del envío de mail NO hace fallar la creación de
- * la consulta: la consulta ya quedó guardada en la base (que es el
- * requisito obligatorio), el mail es un extra — si Gmail está caído o
- * hay un problema de red, el visitante igual recibe su 201 y la
- * consulta queda registrada para que el admin la vea desde el panel.
- */
+// Crea una consulta pública.
 async function crear({ nombre, email, telefono, asunto, mensaje }) {
   const consulta = await Consulta.create({
     nombre,
@@ -23,13 +11,16 @@ async function crear({ nombre, email, telefono, asunto, mensaje }) {
     telefono: telefono || null,
     asunto,
     mensaje,
-    estado: 'pendiente',
+    estado: "pendiente",
   });
 
   try {
     await enviarNotificacionConsulta(consulta);
   } catch (err) {
-    console.error('No se pudo enviar el mail de notificación de consulta:', err.message);
+    console.error(
+      "No se pudo enviar el mail de notificación de consulta:",
+      err.message,
+    );
   }
 
   return consulta;
@@ -44,7 +35,7 @@ async function listar({ page = 1, limit = 20, estado } = {}) {
     where,
     limit,
     offset,
-    order: [['fecha', 'DESC']],
+    order: [["fecha", "DESC"]],
   });
 
   return {
@@ -58,7 +49,7 @@ async function listar({ page = 1, limit = 20, estado } = {}) {
 async function obtenerPorId(id) {
   const consulta = await Consulta.findByPk(id);
   if (!consulta) {
-    const error = new Error('Consulta no encontrada.');
+    const error = new Error("Consulta no encontrada.");
     error.status = 404;
     throw error;
   }

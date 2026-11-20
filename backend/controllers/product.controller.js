@@ -1,17 +1,29 @@
 // controllers/product.controller.js
-const productService = require('../services/product.service');
+const productService = require("../services/product.service");
 
 function parseBool(value) {
   if (value === undefined) return undefined;
-  return value === 'true' || value === true;
+  return value === "true" || value === true;
 }
 
+//funcion superlarga para listar todos los productos
 async function listar(req, res, next) {
   try {
-    const isAdmin = req.userRole === 'admin';
+    const isAdmin = req.userRole === "admin";
     const {
-      page, limit, categoryId, search, minPrice, maxPrice,
-      inStock, estado, tipoProducto, onSale, destacado, novedades, sort,
+      page,
+      limit,
+      categoryId,
+      search,
+      minPrice,
+      maxPrice,
+      inStock,
+      estado,
+      tipoProducto,
+      onSale,
+      destacado,
+      novedades,
+      sort,
     } = req.query;
 
     const resultado = await productService.listar({
@@ -37,25 +49,20 @@ async function listar(req, res, next) {
   }
 }
 
+//esta funcion se usa para el contador de visitas mayormente
 async function obtenerPorId(req, res, next) {
   try {
-    const isAdmin = req.userRole === 'admin';
-    const producto = await productService.obtenerPorId(req.params.id, { isAdmin });
+    const isAdmin = req.userRole === "admin";
+    const producto = await productService.obtenerPorId(req.params.id, {
+      isAdmin,
+    });
 
-    // Etapa 16 (dashboard): contador de vistas. Se incrementa acá, no
-    // dentro de productService.obtenerPorId(), porque esa función se
-    // reutiliza también para devolver el producto actualizado desde
-    // crear(), actualizar(), cambiarEstado(), cambiarDestacado(), etc.
-    // — todas operaciones de admin que NO deben contar como "interés
-    // real" de un visitante. Este controller es el único lugar que
-    // sabe con certeza que el request original fue un GET /products/:id.
-    //
-    // No se espera (await) la promesa a propósito: incrementar el
-    // contador es un efecto secundario que no debe demorar ni poder
-    // romper la respuesta al visitante si por lo que sea falla.
     if (!isAdmin) {
       productService.incrementarVisitas(req.params.id).catch((err) => {
-        console.error('No se pudo incrementar el contador de vistas:', err.message);
+        console.error(
+          "No se pudo incrementar el contador de vistas:",
+          err.message,
+        );
       });
     }
 
@@ -67,9 +74,29 @@ async function obtenerPorId(req, res, next) {
 
 async function crear(req, res, next) {
   try {
-    const { tipoProducto, nombre, descripcion, precio, descuento, stock, estado, categoryIds, images, libro } = req.body;
+    const {
+      tipoProducto,
+      nombre,
+      descripcion,
+      precio,
+      descuento,
+      stock,
+      estado,
+      categoryIds,
+      images,
+      libro,
+    } = req.body;
     const producto = await productService.crear({
-      tipoProducto, nombre, descripcion, precio, descuento, stock, estado, categoryIds, images, libro,
+      tipoProducto,
+      nombre,
+      descripcion,
+      precio,
+      descuento,
+      stock,
+      estado,
+      categoryIds,
+      images,
+      libro,
     });
     res.status(201).json(producto);
   } catch (err) {
@@ -79,9 +106,27 @@ async function crear(req, res, next) {
 
 async function actualizar(req, res, next) {
   try {
-    const { tipoProducto, nombre, descripcion, precio, descuento, stock, estado, categoryIds, libro } = req.body;
+    const {
+      tipoProducto,
+      nombre,
+      descripcion,
+      precio,
+      descuento,
+      stock,
+      estado,
+      categoryIds,
+      libro,
+    } = req.body;
     const producto = await productService.actualizar(req.params.id, {
-      tipoProducto, nombre, descripcion, precio, descuento, stock, estado, categoryIds, libro,
+      tipoProducto,
+      nombre,
+      descripcion,
+      precio,
+      descuento,
+      stock,
+      estado,
+      categoryIds,
+      libro,
     });
     res.status(200).json(producto);
   } catch (err) {
@@ -91,9 +136,23 @@ async function actualizar(req, res, next) {
 
 async function actualizarParcial(req, res, next) {
   try {
-    const { nombre, descripcion, precio, descuento, stock, estado, categoryIds } = req.body;
+    const {
+      nombre,
+      descripcion,
+      precio,
+      descuento,
+      stock,
+      estado,
+      categoryIds,
+    } = req.body;
     const producto = await productService.actualizarParcial(req.params.id, {
-      nombre, descripcion, precio, descuento, stock, estado, categoryIds,
+      nombre,
+      descripcion,
+      precio,
+      descuento,
+      stock,
+      estado,
+      categoryIds,
     });
     res.status(200).json(producto);
   } catch (err) {
@@ -103,7 +162,10 @@ async function actualizarParcial(req, res, next) {
 
 async function cambiarEstado(req, res, next) {
   try {
-    const producto = await productService.cambiarEstado(req.params.id, req.body.estado);
+    const producto = await productService.cambiarEstado(
+      req.params.id,
+      req.body.estado,
+    );
     res.status(200).json(producto);
   } catch (err) {
     next(err);
@@ -112,7 +174,10 @@ async function cambiarEstado(req, res, next) {
 
 async function cambiarDestacado(req, res, next) {
   try {
-    const producto = await productService.cambiarDestacado(req.params.id, req.body.destacado);
+    const producto = await productService.cambiarDestacado(
+      req.params.id,
+      req.body.destacado,
+    );
     res.status(200).json(producto);
   } catch (err) {
     next(err);

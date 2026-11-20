@@ -3,7 +3,6 @@ const db = require("../models");
 const { Producto, Libro, Categoria, ProductoImagen, sequelize } = db;
 const { Op } = require("sequelize");
 
-// para activar tiene que tener stock
 function exigirStockSiActivo(estado, stock) {
   if (estado === "activo" && !(Number(stock) > 0)) {
     const error = new Error(
@@ -14,14 +13,9 @@ function exigirStockSiActivo(estado, stock) {
   }
 }
 
-/**
- * Include estándar para traer un producto "completo": sus categorías
- * (N:N), sus imágenes (1:N) y su fila de libro (1:1, si corresponde).
- *
- * El orden de las imágenes NO se define acá (un `order` dentro de un
- * include no es una opción válida de Sequelize y se ignoraba): se
- * ordenan en serializarProducto().
- */
+// Producto "completo": categorías + imágenes + libro (si aplica).
+// Ojo: el orden de las imágenes se resuelve en serializarProducto(), no acá
+// (meter un order dentro de un include no es válido y Sequelize lo ignora).
 const includeCompleto = [
   { model: Categoria, as: "categorias", through: { attributes: [] } },
   { model: ProductoImagen, as: "imagenes" },
@@ -34,16 +28,7 @@ function calcularPrecioFinal(producto) {
   return +(precio - (precio * descuento) / 100).toFixed(2);
 }
 
-/**
- * ÚNICA forma de producto que devuelve la API (listado y detalle).
- * Antes el detalle devolvía idProducto/categorias/imagenes y el listado
- * id/categories: el front tenía que manejar dos formas para lo mismo.
- *
- *   id, tipoProducto, nombre, descripcion,
- *   precio, descuento, precioFinal, stock, estado, destacado,
- *   imagenPrincipal, images[], categories[], libro | null,
- *   createdAt, updatedAt, (visitas solo para admin)
- */
+// Única forma de producto que devuelve la API (listado y detalle).
 function serializarProducto(producto, { isAdmin = false } = {}) {
   const json = producto.toJSON();
 
@@ -66,41 +51,22 @@ function serializarProducto(producto, { isAdmin = false } = {}) {
     imagenPrincipal: principal?.imagenUrl || null,
     images,
     categories: json.categorias || [],
-    libro: json.libro || null, // { isbn, autor, editorial, anioPublicacion }
-    // El modelo declara createdAt: 'created_at', así que según la
-    // versión de Sequelize el atributo puede salir con cualquiera de
-    // los dos nombres. Se aceptan ambos para no devolver null.
+    libro: json.libro || null,
+    // Puede venir como createdAt o created_at según la versión de Sequelize.
     createdAt: json.createdAt ?? json.created_at,
     updatedAt: json.updatedAt ?? json.updated_at,
   };
 
-  // Las vistas son una métrica interna del dashboard: no se publican.
+  // Las vistas son métricas internas: solo las ve el admin.
   if (isAdmin) item.visitas = json.visitas;
 
   return item;
 }
 
-/**
- * Arma la condición de búsqueda "todas las palabras deben aparecer, en
- * cualquier orden, en cualquiera de los campos buscables (nombre, autor
- * y editorial)". No es fuzzy
- * (no tolera errores de tipeo) — es substring matching por palabra,
- * insensible a mayúsculas/minúsculas Y a tildes (usando unaccent() de
- * Postgres en ambos lados de la comparación, columna y término
- * buscado), para que "garcia" encuentre "García".
- *
- * Requiere la extensión unaccent activada en la base:
- *   CREATE EXTENSION IF NOT EXISTS unaccent;
- *
- * Ejemplo: buscar "garcia marquez" arma (conceptualmente):
- *   (unaccent(nombre) ILIKE unaccent(%garcia%) OR unaccent(libro.autor) ILIKE ... OR unaccent(libro.editorial) ILIKE ...)
- *   AND
- *   (unaccent(nombre) ILIKE unaccent(%marquez%) OR ... )
- * Así "Márquez, García" (orden invertido, con o sin tildes en la
- * búsqueda) también matchea.
- */
+// Búsqueda por palabra, ignorando mayúsculas y tildes (unaccent).
+// Necesita CREATE EXTENSION IF NOT EXISTS unaccent; en la base.
 function condicionUnaccent(columna, palabra) {
-  // Se escapan los comodines de LIKE % y _ y la barra invertida
+  // Escapamos los comodines de LIKE (%, _) y la barra invertida.
   const patron = `%${palabra.replace(/([\\%_])/g, "\\$1")}%`;
   return sequelize.where(sequelize.fn("unaccent", sequelize.col(columna)), {
     [Op.iLike]: sequelize.fn("unaccent", patron),
@@ -109,31 +75,15 @@ function condicionUnaccent(columna, palabra) {
 
 const DIAS_NOVEDAD = 7;
 
-/**
- * Expresión SQL del precio final (precio con el descuento ya aplicado),
- * redondeada a 2 decimales igual que precioFinal en la respuesta.
- *
- * Se usa para ORDENAR y para FILTRAR por rango: el usuario que elige
- * "mayor a menor" o un rango de precio está hablando del precio que ve en
- * la tarjeta, que es el final. Antes se usaba `precio` (el de lista) y el
- * orden/rango quedaba desfasado en todo producto con descuento.
- *
- * Va como literal y con la tabla calificada ("Producto") porque el listado
- * se arma con subQuery:false y varios includes, donde Sequelize no traduce
- * un atributo del modelo a la columna física dentro de ORDER BY.
- */
+// Precio final (con descuento) para ordenar y filtrar: es el que ve el usuario.
+// Literal y calificado: con subQuery:false Sequelize no traduce el atributo.
 function precioFinalSql() {
   return sequelize.literal(
     'ROUND(("Producto"."precio" * (1 - "Producto"."descuento" / 100.0)), 2)',
   );
 }
 
-/**
- * Listado paginado con filtros. isAdmin decide si se respeta el filtro
- * 'estado' que pide el cliente o si se fuerza 'activo' — la misma regla
- * documentada en el api.yaml: un visitante nunca debe poder ver
- * productos inactivos, sin importar qué pida.
- */
+// Listado paginado. Un visitante nunca ve inactivos, pida lo que pida.
 async function listar({
   page = 1,
   limit = 20,
@@ -153,10 +103,7 @@ async function listar({
   const where = {};
   const offset = (page - 1) * limit;
 
-  // Público (y admin navegando el sitio): solo activos. El admin puede pedir
-  // un estado puntual, o ?estado=todos para ver activos, inactivos y agotados
-  // juntos (listado del panel). Es opt-in a propósito: así las pantallas
-  // públicas no muestran productos ocultos aunque el admin tenga sesión.
+  // El admin puede pedir ?estado=todos; el público siempre ve activos.
   if (!(isAdmin && estado === "todos")) {
     where.estado = isAdmin && estado ? estado : "activo";
   }
@@ -164,17 +111,13 @@ async function listar({
   if (tipoProducto) where.tipoProducto = tipoProducto;
   if (destacado === true) where.destacado = true;
 
-  // Todas las condiciones que van con AND se acumulan en un array y se
-  // asignan UNA sola vez al final. Antes, "novedades" y "search" asignaban
-  // cada una su propio where[Op.and] y la segunda pisaba a la primera:
-  // ?novedades=true&search=x ignoraba el filtro de novedades.
+  // Se apilan las AND y se asignan una sola vez: si no, se pisan entre sí.
   const condiciones = [];
 
   if (novedades === true) {
     const desde = new Date();
     desde.setDate(desde.getDate() - DIAS_NOVEDAD);
-    // Nombre de columna FÍSICO ('created_at'), no el atributo del modelo:
-    // ver nota en el orderMap más abajo.
+    // Columna física (created_at), no el atributo del modelo.
     condiciones.push(
       sequelize.where(sequelize.col("Producto.created_at"), {
         [Op.gte]: desde,
@@ -184,9 +127,7 @@ async function listar({
 
   if (search) condiciones.push(...armarCondicionesBusqueda(search));
 
-  // Filtro por categoría con subconsulta, y no con un `where` dentro del
-  // include de categorías: ese `where` hacía que cada producto viniera
-  // con SOLO la categoría filtrada en `categories`, aunque tuviera más.
+  // Subconsulta para que el include no deje solo la categoría filtrada.
   if (Number.isInteger(categoryId)) {
     condiciones.push(
       sequelize.literal(
@@ -195,12 +136,7 @@ async function listar({
     );
   }
 
-  // Rango de precio sobre el precio FINAL (con descuento), que es el que se
-  // muestra. Van como condiciones del AND en vez de un objeto sobre
-  // `where.precio` para poder comparar contra la expresión calculada.
-  // Se apilan ANTES de asignar where[Op.and]: si se empujaran después, un
-  // request con solo ?minPrice= (sin search ni categoría) dejaría el array
-  // vacío en el momento de la asignación y el filtro no se aplicaría nunca.
+  // Se apilan antes de asignar where[Op.and] o el filtro se pierde.
   if (minPrice !== undefined) {
     condiciones.push(sequelize.where(precioFinalSql(), { [Op.gte]: minPrice }));
   }
@@ -213,41 +149,21 @@ async function listar({
   if (inStock === true) where.stock = { [Op.gt]: 0 };
   if (onSale === true) where.descuento = { [Op.gt]: 0 };
 
-  // Libro es 1:1 (su PK es el id del producto): un LEFT JOIN con él NO
-  // multiplica filas, así que acá limit/offset sí cuentan productos. Se
-  // usa para filtrar por autor/editorial y solo hace falta si hay búsqueda.
+  // Libro es 1:1: el LEFT JOIN no multiplica filas.
   const includeFiltro = search
     ? [{ model: Libro, as: "libro", required: false, attributes: [] }]
     : [];
 
   const orderMap = {
-    // El orden por precio es sobre el precio FINAL (con descuento aplicado),
-    // que es el que ve el usuario en la tarjeta del producto.
+    // El orden por precio va sobre el precio final; newest, por columna física.
     price_asc: [[precioFinalSql(), "ASC"]],
     price_desc: [[precioFinalSql(), "DESC"]],
     title_asc: [["nombre", "ASC"]],
-    // Nombre de columna física ('created_at'), no el atributo del
-    // modelo ('createdAt') — mismo motivo que en el filtro de
-    // novedades más arriba: con subQuery:false, Sequelize no traduce
-    // automáticamente el atributo camelCase al nombre real de columna
-    // dentro del ORDER BY.
     newest: [[sequelize.col("Producto.created_at"), "DESC"]],
   };
 
-  // PASO 1 — ids de la página, con el total real.
-  //
-  // Antes se hacía un único findAndCountAll con los tres includes
-  // (categorías N:N + imágenes 1:N + libro) y limit/offset. Con
-  // subQuery:false el LIMIT se aplica a las FILAS del JOIN, no a los
-  // productos: un producto con 2 imágenes y 2 categorías ocupa 4 filas.
-  // Resultado: la página 1 devolvía 7 productos en vez de 12 (los otros
-  // quedaban "escondidos" detrás del LIMIT), la 2 devolvía 10, y como el
-  // offset también corría sobre filas, los productos se salteaban entre
-  // páginas.
-  //
-  // Acá solo se consulta la tabla producto (+ libro 1:1 si hay búsqueda),
-  // sin includes que multipliquen filas, así que LIMIT/OFFSET/COUNT
-  // trabajan sobre productos de verdad.
+  // PASO 1: ids de la página + total real, sin includes que multipliquen filas.
+  // Así LIMIT/OFFSET/COUNT cuentan productos y no filas del JOIN.
   const { count, rows: filasPagina } = await Producto.findAndCountAll({
     where,
     include: includeFiltro,
@@ -255,9 +171,8 @@ async function listar({
     limit,
     offset,
     distinct: true,
-    subQuery: false, // necesario para que el filtro sobre libro.autor/editorial funcione junto con limit/offset
-    // Desempate por id: sin él, productos con el mismo created_at pueden
-    // repetirse o saltearse entre páginas.
+    subQuery: false, // necesario para filtrar por libro.autor/editorial con limit/offset
+    // Desempate por id: que no se repitan ni se salteen productos entre páginas.
     order: [
       ...(orderMap[sort] || orderMap.newest),
       [sequelize.col("Producto.id_producto"), "DESC"],
@@ -266,8 +181,7 @@ async function listar({
 
   const ids = filasPagina.map((f) => f.idProducto);
 
-  // PASO 2 — los productos completos de esos ids (categorías, imágenes y
-  // libro). Acá ya no hay LIMIT que pueda cortar el JOIN a la mitad.
+  // PASO 2: los productos completos de esos ids.
   let rows = [];
   if (ids.length > 0) {
     const completos = await Producto.findAll({
@@ -275,8 +189,7 @@ async function listar({
       include: includeCompleto,
     });
 
-    // El IN no garantiza orden: se reconstruye el orden del paso 1.
-    // (BIGINT llega como string desde pg, por eso se compara como string.)
+    // El IN no garantiza orden: lo reconstruimos (BIGINT llega como string).
     const porId = new Map(completos.map((p) => [String(p.idProducto), p]));
     rows = ids.map((id) => porId.get(String(id))).filter(Boolean);
   }
@@ -294,13 +207,7 @@ async function listar({
   };
 }
 
-/**
- * Devuelve un array con una condición por palabra (todas deben cumplirse,
- * cada una en al menos uno de los campos buscables: nombre, autor o
- * editorial). La descripción NO se busca a propósito: es texto largo y
- * traía resultados que no tenían nada que ver con lo que se escribió.
- * Devuelve [] si no hay palabras.
- */
+// Una condición por palabra; la descripción queda afuera a propósito.
 function armarCondicionesBusqueda(search) {
   const palabras = search.trim().split(/\s+/).filter(Boolean);
 
@@ -313,10 +220,6 @@ function armarCondicionesBusqueda(search) {
   }));
 }
 
-/**
- * Detalle completo. isAdmin decide si un producto inactivo se muestra
- * o se responde 404 (no filtrar su existencia a un visitante).
- */
 async function obtenerPorId(id, { isAdmin = false } = {}) {
   const producto = await Producto.findByPk(id, { include: includeCompleto });
 
@@ -329,30 +232,12 @@ async function obtenerPorId(id, { isAdmin = false } = {}) {
   return serializarProducto(producto, { isAdmin });
 }
 
-/**
- * Etapa 16 (dashboard): incrementa en 1 el contador de vistas de un
- * producto. A propósito NO llama a obtenerPorId ni se usa desde ahí —
- * ver la nota grande en product.controller.js (obtenerPorId) sobre por
- * qué el incremento vive en el controller y no acá: este service se
- * reutiliza desde crear/actualizar/cambiarEstado/cambiarDestacado, que
- * son siempre operaciones de admin y no deben sumar una "vista".
- *
- * Sequelize.increment() hace un UPDATE ... SET visitas = visitas + 1
- * atómico a nivel de base (no un read-modify-write en JS), así que no
- * hay condición de carrera si dos visitantes piden el mismo producto
- * al mismo tiempo.
- */
+// increment() es atómico y solo suma vistas de visitantes, no de admin.
 async function incrementarVisitas(id) {
   await Producto.increment("visitas", { where: { idProducto: id } });
 }
 
-/**
- * Crea un producto, y dentro de la MISMA transacción: su fila en libro
- * (si tipoProducto='libro'), sus categorías (producto_categoria) y sus
- * imágenes iniciales, si vinieron en el input. Si cualquier paso falla
- * (ej. ISBN duplicado), se revierte todo — no queda un producto a medias
- * sin categoría o sin su fila de libro.
- */
+// Todo en una transacción: si algo falla, no queda un producto a medias.
 async function crear({
   tipoProducto,
   nombre,
@@ -365,8 +250,7 @@ async function crear({
   images,
   libro,
 }) {
-  // Se calculan los defaults ACÁ (no dentro del create) para poder rechazar la
-  // combinación inválida 'activo' + stock 0 ANTES de abrir la transacción.
+  // Defaults acá para rebotar "activo" sin stock antes de abrir la transacción.
   const stockFinal = stock || 0;
   const estadoFinal = estado || "activo";
   exigirStockSiActivo(estadoFinal, stockFinal);
@@ -426,7 +310,7 @@ async function crear({
     return obtenerPorId(producto.idProducto, { isAdmin: true });
   } catch (err) {
     await t.rollback();
-    // Traducir el error de constraint UNIQUE de isbn a un mensaje claro
+    // ISBN duplicado: 409 en vez de 500.
     if (err.name === "SequelizeUniqueConstraintError" && err.fields?.isbn) {
       const error = new Error("Ya existe un producto con ese ISBN.");
       error.status = 409;
@@ -436,10 +320,7 @@ async function crear({
   }
 }
 
-/**
- * PUT: reemplaza todos los campos, incluyendo el set completo de
- * categorías (setCategorias reemplaza, no agrega).
- */
+// PUT: reemplaza todo; setCategorias reemplaza, no agrega.
 async function actualizar(
   id,
   {
@@ -464,7 +345,6 @@ async function actualizar(
       throw error;
     }
 
-    // Si un campo no vino en el body, se conserva el valor actual del producto.
     exigirStockSiActivo(estado ?? producto.estado, stock ?? producto.stock);
 
     await producto.update(
@@ -491,9 +371,7 @@ async function actualizar(
       });
 
       if (libro) {
-        // Se arma el objeto campo por campo (no se pasa `libro` tal cual):
-        // antes un body con "idProducto" dentro de libro podía reasignar la
-        // fila de libro a otro producto.
+        // Campo por campo, para que un idProducto del body no reasigne la fila.
         const datos = {
           isbn: libro.isbn ?? existente?.isbn,
           autor: libro.autor || null,
@@ -518,8 +396,6 @@ async function actualizar(
         throw error;
       }
     } else {
-      // Si el producto dejó de ser un libro, se borra su ficha de libro:
-      // si no, el detalle seguiría mostrando autor/ISBN de algo que ya no es un libro.
       await Libro.destroy({ where: { idProducto: id }, transaction: t });
     }
 
@@ -527,7 +403,6 @@ async function actualizar(
     return obtenerPorId(id, { isAdmin: true });
   } catch (err) {
     await t.rollback();
-    // Mismo mensaje que en crear(): ISBN repetido -> 409, no 500.
     if (err.name === "SequelizeUniqueConstraintError" && err.fields?.isbn) {
       const error = new Error("Ya existe un producto con ese ISBN.");
       error.status = 409;
@@ -537,10 +412,7 @@ async function actualizar(
   }
 }
 
-/**
- * PATCH: solo actualiza los campos enviados. Reusa actualizar() con los
- * valores actuales como default para los campos no enviados.
- */
+// PATCH: solo pisa los campos enviados.
 async function actualizarParcial(id, cambios) {
   const producto = await Producto.findByPk(id);
   if (!producto) {
@@ -549,7 +421,6 @@ async function actualizarParcial(id, cambios) {
     throw error;
   }
 
-  // PATCH: solo vienen los campos enviados; el resto conserva su valor actual.
   exigirStockSiActivo(
     cambios.estado ?? producto.estado,
     cambios.stock ?? producto.stock,
@@ -578,7 +449,6 @@ async function cambiarEstado(id, estado) {
     error.status = 404;
     throw error;
   }
-  // No se puede publicar como activo un producto sin stock.
   exigirStockSiActivo(estado, producto.stock);
   await producto.update({ estado });
   return obtenerPorId(id, { isAdmin: true });
@@ -586,13 +456,7 @@ async function cambiarEstado(id, estado) {
 
 const MAX_DESTACADOS = 6;
 
-/**
- * Marca o desmarca un producto como destacado. Al marcar (destacado=true),
- * si ya hay MAX_DESTACADOS productos destacados, rechaza con 409 — el
- * admin tiene que desmarcar uno manualmente antes de agregar otro (en
- * vez de reemplazar automáticamente el más viejo, que sería una
- * sorpresa para el admin).
- */
+// Si ya hay 6 destacados, rebota con 409: el admin desmarca uno a mano.
 async function cambiarDestacado(id, destacado) {
   const producto = await Producto.findByPk(id);
   if (!producto) {
@@ -623,8 +487,7 @@ async function eliminar(id) {
     error.status = 404;
     throw error;
   }
-  // ON DELETE CASCADE en la base se encarga de libro, producto_categoria
-  // y producto_imagen — no hace falta borrarlos a mano acá.
+  // El CASCADE de la base borra libro, categorías e imágenes.
   await producto.destroy();
 }
 

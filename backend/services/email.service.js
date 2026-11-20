@@ -1,5 +1,5 @@
 // services/email.service.js
-const nodemailer = require('nodemailer');
+const nodemailer = require("nodemailer");
 
 const transporter = nodemailer.createTransport({
   host: process.env.EMAIL_HOST,
@@ -11,32 +11,26 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-/**
- * Escapa texto que viene de un visitante antes de meterlo en el HTML de un
- * mail. El formulario de contacto es público: sin esto, cualquiera podía
- * inyectar HTML (links, imágenes, "botones") en el mail que recibe el dueño.
- */
+// Escapa texto que viene de un visitante antes de meterlo en el HTML de un mail.
+
 function escapeHtml(texto) {
-  return String(texto ?? '')
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
+  return String(texto ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
 }
 
-/**
- * Envía un email de recuperación de contraseña.
- * @param {string} destinatario - email del usuario
- * @param {string} tokenPlano - token en texto plano (NO el hash guardado en la DB)
- */
+// Envía un email de recuperación de contraseña.
+
 async function enviarEmailRecuperacion(destinatario, tokenPlano) {
   const resetUrl = `${process.env.FRONTEND_URL}/reset-password?token=${tokenPlano}`;
 
   await transporter.sendMail({
     from: process.env.EMAIL_FROM,
     to: destinatario,
-    subject: 'Recuperación de contraseña — MaxiLibrerías',
+    subject: "Recuperación de contraseña — MaxiLibrerías",
     html: `
       <p>Recibimos una solicitud para restablecer tu contraseña.</p>
       <p>Hacé clic en el siguiente enlace (válido por 30 minutos):</p>
@@ -46,10 +40,8 @@ async function enviarEmailRecuperacion(destinatario, tokenPlano) {
   });
 }
 
-/**
- * Envía una notificación al comercio cuando llega una consulta nueva
- * (funcionalidad extra: "Envío de correos desde el formulario de contacto").
- */
+// Envía una notificación al comercio cuando llega una consulta nueva
+
 async function enviarNotificacionConsulta(consulta) {
   await transporter.sendMail({
     from: process.env.EMAIL_FROM,
@@ -59,24 +51,23 @@ async function enviarNotificacionConsulta(consulta) {
     subject: `Nueva consulta: ${consulta.asunto}`,
     html: `
       <p><strong>De:</strong> ${escapeHtml(consulta.nombre)} (${escapeHtml(consulta.email)})</p>
-      <p><strong>Teléfono:</strong> ${escapeHtml(consulta.telefono) || 'No especificado'}</p>
+      <p><strong>Teléfono:</strong> ${escapeHtml(consulta.telefono) || "No especificado"}</p>
       <p><strong>Mensaje:</strong></p>
-      <p>${escapeHtml(consulta.mensaje).replace(/\r?\n/g, '<br>')}</p>
+      <p>${escapeHtml(consulta.mensaje).replace(/\r?\n/g, "<br>")}</p>
     `,
   });
 }
 
-/**
- * Alerta al dueño de la cuenta cuando se detectan intentos fallidos de
- * login consecutivos contra su email. Se envía UNA vez al llegar al
- * umbral (no en cada intento posterior mientras dure el bloqueo), para
- * no inundar la bandeja de entrada si alguien insiste.
- */
-async function enviarAlertaIntentosFallidos(destinatario, { intentos, minutosBloqueo }) {
+// Alerta al dueño de la cuenta cuando se detectan intentos fallidos de
+// login consecutivos contra su email.
+async function enviarAlertaIntentosFallidos(
+  destinatario,
+  { intentos, minutosBloqueo },
+) {
   await transporter.sendMail({
     from: process.env.EMAIL_FROM,
     to: destinatario,
-    subject: 'Actividad sospechosa en tu cuenta — Maxilibros',
+    subject: "Actividad sospechosa en tu cuenta — Maxilibros",
     html: `
       <p>Detectamos ${intentos} intentos fallidos de inicio de sesión
       seguidos en tu cuenta.</p>

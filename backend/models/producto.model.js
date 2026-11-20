@@ -1,7 +1,7 @@
 // models/producto.model.js
 module.exports = (sequelize, DataTypes) => {
   const Producto = sequelize.define(
-    'Producto',
+    "Producto",
     {
       idProducto: {
         type: DataTypes.BIGINT,
@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING(30),
         allowNull: false,
         validate: {
-          isIn: [['libro', 'papeleria', 'accesorio', 'otros']],
+          isIn: [["libro", "papeleria", "accesorio", "otros"]],
         },
       },
       nombre: {
@@ -42,9 +42,9 @@ module.exports = (sequelize, DataTypes) => {
       estado: {
         type: DataTypes.STRING(20),
         allowNull: false,
-        defaultValue: 'activo',
+        defaultValue: "activo",
         validate: {
-          isIn: [['activo', 'inactivo', 'agotado']],
+          isIn: [["activo", "inactivo", "agotado"]],
         },
       },
       descuento: {
@@ -60,9 +60,7 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.BOOLEAN,
         allowNull: false,
         defaultValue: false,
-        // Máximo 6 productos con destacado=true al mismo tiempo — la
-        // regla se valida en el service (product.service.js), no acá,
-        // porque requiere contar filas de la tabla antes de decidir.
+        // Máximo 6 productos con destacado=true al mismo tiempo.
       },
       visitas: {
         type: DataTypes.INTEGER,
@@ -71,23 +69,15 @@ module.exports = (sequelize, DataTypes) => {
         validate: {
           min: 0,
         },
-        // Etapa 16 (dashboard): contador simple, sin tabla de detalle.
-        // Se incrementa en product.controller.js (obtenerPorId), NO acá
-        // ni en product.service.js — ese service se reutiliza también
-        // para devolver el producto recién creado/editado desde crear(),
-        // actualizar(), cambiarEstado(), cambiarDestacado(), etc., y
-        // esas operaciones de admin no deben sumar una "vista". El
-        // controller es el único lugar que sabe si el request original
-        // era GET /products/:id de un visitante real.
       },
     },
     {
-      tableName: 'producto',
+      tableName: "producto",
       underscored: true, // idProducto -> id_producto, tipoProducto -> tipo_producto, etc.
       timestamps: true,
-      createdAt: 'created_at', // Etapa 15: usado para el filtro de "novedades" (últimos 7 días)
-      updatedAt: 'updated_at',
-    }
+      createdAt: "created_at",
+      updatedAt: "updated_at",
+    },
   );
 
   // Getter para el precio final (no es una columna real, se calcula al vuelo)
@@ -100,22 +90,22 @@ module.exports = (sequelize, DataTypes) => {
   Producto.associate = (models) => {
     // 1:1 con Libro (especialización)
     Producto.hasOne(models.Libro, {
-      foreignKey: 'idProducto',
-      as: 'libro',
+      foreignKey: "idProducto",
+      as: "libro",
     });
 
     // N:N con Categoria a través de producto_categoria
     Producto.belongsToMany(models.Categoria, {
       through: models.ProductoCategoria,
-      foreignKey: 'idProducto',
-      otherKey: 'idCategoria',
-      as: 'categorias',
+      foreignKey: "idProducto",
+      otherKey: "idCategoria",
+      as: "categorias",
     });
 
     // 1:N con ProductoImagen
     Producto.hasMany(models.ProductoImagen, {
-      foreignKey: 'idProducto',
-      as: 'imagenes',
+      foreignKey: "idProducto",
+      as: "imagenes",
     });
   };
 

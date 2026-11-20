@@ -1,5 +1,7 @@
 // auth/hash.js
-const bcrypt = require('bcrypt');
+// funcion de hasheo para cuando se genera un
+// nuevo usuario se le aplica a la contraseña
+const bcrypt = require("bcrypt");
 
 const SALT_ROUNDS = 10;
 

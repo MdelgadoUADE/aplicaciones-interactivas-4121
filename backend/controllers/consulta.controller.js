@@ -1,10 +1,17 @@
 // controllers/consulta.controller.js
-const consultaService = require('../services/consulta.service');
+// Aqui viven todos las funciones para realizar consultas a la BBDD
+const consultaService = require("../services/consulta.service");
 
 async function crear(req, res, next) {
   try {
     const { nombre, email, telefono, asunto, mensaje } = req.body;
-    const consulta = await consultaService.crear({ nombre, email, telefono, asunto, mensaje });
+    const consulta = await consultaService.crear({
+      nombre,
+      email,
+      telefono,
+      asunto,
+      mensaje,
+    });
     res.status(201).json(consulta);
   } catch (err) {
     next(err);
@@ -34,7 +41,10 @@ async function obtenerPorId(req, res, next) {
 
 async function cambiarEstado(req, res, next) {
   try {
-    const consulta = await consultaService.cambiarEstado(req.params.id, req.body.estado);
+    const consulta = await consultaService.cambiarEstado(
+      req.params.id,
+      req.body.estado,
+    );
     res.status(200).json(consulta);
   } catch (err) {
     next(err);

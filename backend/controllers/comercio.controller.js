@@ -1,5 +1,6 @@
 // controllers/comercio.controller.js
-const comercioService = require('../services/comercio.service');
+// Aqui viven el manejo de los datos del negocio
+const comercioService = require("../services/comercio.service");
 
 async function obtener(req, res, next) {
   try {
@@ -12,7 +13,14 @@ async function obtener(req, res, next) {
 
 async function guardar(req, res, next) {
   try {
-    const { nombre, descripcion, direccion, telefono, horarios, redesSociales } = req.body;
+    const {
+      nombre,
+      descripcion,
+      direccion,
+      telefono,
+      horarios,
+      redesSociales,
+    } = req.body;
     const comercio = await comercioService.guardar({
       nombre,
       descripcion,

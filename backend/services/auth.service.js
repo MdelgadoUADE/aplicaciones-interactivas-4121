@@ -1,38 +1,37 @@
 // services/auth.service.js
-const crypto = require('crypto');
-const db = require('../models');
+const crypto = require("crypto");
+const db = require("../models");
 const { Usuario, PasswordResetToken, TokenRevocado } = db;
-const { hashPassword, comparePassword } = require('../auth/hash');
-const { generateToken } = require('../auth/jwt');
-const { enviarEmailRecuperacion, enviarAlertaIntentosFallidos } = require('./email.service');
+const { hashPassword, comparePassword } = require("../auth/hash");
+const { generateToken } = require("../auth/jwt");
+const {
+  enviarEmailRecuperacion,
+  enviarAlertaIntentosFallidos,
+} = require("./email.service");
 
 const MAX_INTENTOS_FALLIDOS = 3;
 const MINUTOS_BLOQUEO = 15;
 
-/**
- * Registra un nuevo usuario administrador.
- *
- * En este proyecto el único rol persistido es 'admin' (ver nota en
- * usuario.model.js: la consigna del TPO solo define "visitante" -sin
- * cuenta- y "administrador"). Como CUALQUIER registro exitoso otorga
- * rol admin, el endpoint deja de ser público sin control: exige un
- * inviteCode que coincide con process.env.ADMIN_INVITE_CODE, conocido
- * solo por el dueño del comercio. Esto reemplaza la defensa de "rol
- * cliente por defecto" que tendría sentido si hubiera más de un rol.
- *
- * Sigue habiendo allowlist explícita igual: el objeto que se pasa a
- * Usuario.create() se arma campo por campo, nunca Usuario.create(req.body).
- */
-async function registrar({ nombre, apellido, email, telefono, direccion, password, inviteCode }) {
+// Registra un nuevo usuario administrador.
+
+async function registrar({
+  nombre,
+  apellido,
+  email,
+  telefono,
+  direccion,
+  password,
+  inviteCode,
+}) {
   if (inviteCode !== process.env.ADMIN_INVITE_CODE) {
-    const error = new Error('Código de invitación inválido.');
+    const error = new Error("Código de invitación inválido.");
     error.status = 403;
     throw error;
   }
 
   const existente = await Usuario.findOne({ where: { email } });
   if (existente) {
-    const error = new Error('El email ya está registrado.');
+    const error = new Error("El email ya está registrado.");
     error.status = 409;
     throw error;
   }
@@ -46,7 +45,7 @@ async function registrar({ nombre, apellido, email, telefono, direccion, passwor
     telefono,
     direccion: direccion || null,
     passwordHash,
-    rol: 'admin', // único rol del sistema, explícito de todas formas
+    rol: "admin", // único rol del sistema, explícito igualmente
   });
 
   const { token } = generateToken(usuario);
@@ -59,20 +58,18 @@ async function registrar({ nombre, apellido, email, telefono, direccion, passwor
  * excluye passwordHash de toda consulta (ver models/usuario.model.js) —
  * este es el único lugar de todo el backend donde se necesita el hash.
  *
- * Rate limiting por email: tras 3 intentos fallidos consecutivos, la
- * cuenta queda bloqueada 15 minutos (bloqueadoHasta) y se manda un mail
- * de alerta UNA sola vez, al momento de llegar al umbral — no en cada
- * intento adicional mientras dure el bloqueo. El contador se resetea a
- * 0 en cualquier login exitoso.
+ * tras 3 intentos fallidos consecutivos, la  cuenta queda bloqueada 15
+ * minutos (bloqueadoHasta) y se manda un mail de alerta UNA sola vez
  */
 async function login({ email, password }) {
-  const usuario = await Usuario.scope('conPassword').findOne({ where: { email } });
+  const usuario = await Usuario.scope("conPassword").findOne({
+    where: { email },
+  });
 
   // Mismo mensaje de error tanto si el email no existe como si el
-  // password no coincide — no hay que darle a un atacante la pista de
-  // "este email sí existe, probá otra contraseña".
+  // password no coincide, a menos que quieras avisarle al criminal que la pifio
   const credencialesInvalidas = () => {
-    const error = new Error('Email o contraseña incorrectos.');
+    const error = new Error("Email o contraseña incorrectos.");
     error.status = 401;
     return error;
   };
@@ -81,26 +78,32 @@ async function login({ email, password }) {
     throw credencialesInvalidas();
   }
 
-  // Si está bloqueado y el bloqueo todavía no venció, cortar ACÁ, sin
-  // siquiera comparar la contraseña (evita gastar el costo de bcrypt
-  // en un intento que ya sabemos que va a ser rechazado).
+  // Si está bloqueado y el bloqueo todavía no venció, cortar ACÁ.
   if (usuario.bloqueadoHasta && usuario.bloqueadoHasta > new Date()) {
-    const minutosRestantes = Math.ceil((usuario.bloqueadoHasta - new Date()) / 60000);
-    const error = new Error(
-      `Cuenta bloqueada temporalmente por intentos fallidos. Probá de nuevo en ${minutosRestantes} minuto(s).`
+    const minutosRestantes = Math.ceil(
+      (usuario.bloqueadoHasta - new Date()) / 60000,
     );
-    error.status = 423; // 423 Locked
+    const error = new Error(
+      `Cuenta bloqueada temporalmente por intentos fallidos. Probá de nuevo en ${minutosRestantes} minuto(s).`,
+    );
+    error.status = 423; // 423 Locked, tantos mensajes de error y los simpletones usan 404
     throw error;
   }
 
-  const passwordCorrecta = await comparePassword(password, usuario.passwordHash);
+  const passwordCorrecta = await comparePassword(
+    password,
+    usuario.passwordHash,
+  );
 
   if (!passwordCorrecta) {
     const nuevosIntentos = usuario.intentosFallidos + 1;
 
     if (nuevosIntentos >= MAX_INTENTOS_FALLIDOS) {
       const bloqueadoHasta = new Date(Date.now() + MINUTOS_BLOQUEO * 60 * 1000);
-      await usuario.update({ intentosFallidos: nuevosIntentos, bloqueadoHasta });
+      await usuario.update({
+        intentosFallidos: nuevosIntentos,
+        bloqueadoHasta,
+      });
       await enviarAlertaIntentosFallidos(usuario.email, {
         intentos: nuevosIntentos,
         minutosBloqueo: MINUTOS_BLOQUEO,
@@ -144,29 +147,21 @@ module.exports = {
 async function obtenerPerfil(userId) {
   const usuario = await Usuario.findByPk(userId);
   if (!usuario) {
-    const error = new Error('Usuario no encontrado.');
+    const error = new Error("Usuario no encontrado.");
     error.status = 404;
     throw error;
   }
   return usuario;
 }
 
-/**
- * PATCH /auth/me. Mismo criterio: el ID a modificar es SIEMPRE
- * req.userId del token, nunca un id que venga en el body. No existe (ni
- * debe existir) un endpoint para que un usuario modifique a otro por id
- * — eso sería exactamente el bug de IDOR visto en la clase de
- * ciberseguridad (Investigación 2: "estoy autenticado como el usuario 25
- * y borro al usuario 26").
- *
- * No incluye 'rol' ni 'email' entre los campos aceptados — cambiar el
- * email requeriría un flujo de verificación aparte que no está
- * implementado, y 'rol' nunca debe poder auto-asignarse.
- */
-async function actualizarPerfil(userId, { nombre, apellido, telefono, direccion }) {
+// PATCH /auth/me.
+async function actualizarPerfil(
+  userId,
+  { nombre, apellido, telefono, direccion },
+) {
   const usuario = await Usuario.findByPk(userId);
   if (!usuario) {
-    const error = new Error('Usuario no encontrado.');
+    const error = new Error("Usuario no encontrado.");
     error.status = 404;
     throw error;
   }
@@ -184,7 +179,7 @@ async function actualizarPerfil(userId, { nombre, apellido, telefono, direccion 
 /**
  * POST /auth/logout. Agrega el jti del token actual a token_revocado,
  * para que ese JWT puntual deje de ser válido antes de su expiración
- * natural (ver auth/jwt.js y middlewares/auth.middleware.js).
+ * natural
  */
 async function logout(jti, tokenExpiraEn) {
   await TokenRevocado.create({
@@ -195,23 +190,19 @@ async function logout(jti, tokenExpiraEn) {
 
 /**
  * POST /auth/forgot-password.
+ * Por seguridad. si el email no existe, la función retorna sin hacer nada
  *
- * Seguridad: si el email no existe, la función retorna sin hacer nada
- * (silenciosamente) — el controller responde 200 en cualquier caso, para
- * no filtrar qué emails están registrados en el sistema (mismo criterio
- * que el mensaje genérico de login).
- *
- * El token en texto plano viaja SOLO por email (enviarEmailRecuperacion),
- * nunca se loguea ni se devuelve en la respuesta HTTP. Solo se persiste
- * su hash (sha256), nunca el token real — si la tabla se filtrara, nadie
- * podría reconstruir tokens válidos a partir de los hashes.
+ * El token en texto plano viaja SOLO por email (enviarEmailRecuperacion)
  */
 async function solicitarRecuperacion(email) {
   const usuario = await Usuario.findOne({ where: { email } });
   if (!usuario) return; // no revelamos si el email existe o no
 
-  const tokenPlano = crypto.randomBytes(32).toString('hex');
-  const tokenHash = crypto.createHash('sha256').update(tokenPlano).digest('hex');
+  const tokenPlano = crypto.randomBytes(32).toString("hex");
+  const tokenHash = crypto
+    .createHash("sha256")
+    .update(tokenPlano)
+    .digest("hex");
 
   await PasswordResetToken.create({
     idUsuario: usuario.idUsuario,
@@ -224,18 +215,21 @@ async function solicitarRecuperacion(email) {
 
 /**
  * POST /auth/reset-password. Busca el token por su HASH (nunca por el
- * texto plano recibido), valida que sea válido (ver
- * PasswordResetToken.esValido() en el modelo: no usado y no vencido), y
- * si todo está bien, actualiza la contraseña y marca el token como
- * usado para que no pueda reutilizarse.
+ * texto plano recibido), valida que sea válido -- cuac -- (ver
+ * PasswordResetToken.esValido())
  */
 async function restablecerContrasena(tokenPlano, nuevaPassword) {
-  const tokenHash = crypto.createHash('sha256').update(tokenPlano).digest('hex');
+  const tokenHash = crypto
+    .createHash("sha256")
+    .update(tokenPlano)
+    .digest("hex");
 
-  const registroToken = await PasswordResetToken.findOne({ where: { tokenHash } });
+  const registroToken = await PasswordResetToken.findOne({
+    where: { tokenHash },
+  });
 
   const tokenInvalido = () => {
-    const error = new Error('Token inválido, ya usado o expirado.');
+    const error = new Error("Token inválido, ya usado o expirado.");
     error.status = 400;
     return error;
   };

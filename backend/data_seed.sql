@@ -1,17 +1,5 @@
--- ============================================================================
 -- data_seed.sql
--- Equivalente en SQL puro de `npx sequelize-cli db:seed:all` de este proyecto.
--- Sirve para popular una base "simil" con la MISMA estructura que genera
--- backend/bbdd_seed.sql, sin necesidad de Node ni sequelize-cli.
---
--- Requisitos: correr DESPUÉS de bbdd_seed.sql (necesita las tablas creadas).
---
--- Correr con:  psql -U <usuario> -d <base> -f data_seed.sql
---
--- Nota: NO registra nada en la tabla SequelizeData de sequelize-cli. Si en
--- esta base después corren `db:seed:all`, va a re-insertar y chocar con los
--- IDs únicos — usar este script O los seeders, no ambos.
--- ============================================================================
+
 
 BEGIN;
 

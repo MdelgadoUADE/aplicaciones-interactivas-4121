@@ -16,13 +16,7 @@ async function listar(idProducto) {
   });
 }
 
-/**
- * Agrega una imagen. Si esPrincipal=true, desmarca cualquier otra imagen
- * principal del mismo producto ANTES de insertar la nueva — la base
- * tiene un índice único parcial (uq_producto_imagen_principal) que
- * rechazaría el INSERT si hubiera dos con esPrincipal=true al mismo
- * tiempo, así que este orden importa.
- */
+// Desmarcá la principal antes de insertar: el índice único parcial no deja dos.
 async function agregar(idProducto, { imageUrl, orden, esPrincipal }) {
   const producto = await Producto.findByPk(idProducto);
   if (!producto) {
@@ -40,9 +34,7 @@ async function agregar(idProducto, { imageUrl, orden, esPrincipal }) {
       );
     }
 
-    // Sin `orden` explícito, la imagen nueva va al final. Si el producto
-    // todavía no tiene principal y no se indicó nada, la primera que se
-    // sube queda como principal.
+    // Sin orden va al final; si no hay principal, la primera queda como tal.
     let ordenFinal = orden;
     let principalFinal = esPrincipal;
     if (ordenFinal === undefined || principalFinal === undefined) {
@@ -79,11 +71,7 @@ function noEncontrada() {
   return error;
 }
 
-/**
- * Cambia esPrincipal y/u orden de una imagen. Al marcar una como principal
- * se desmarcan las demás del producto dentro de la misma transacción (el
- * índice único parcial no admite dos principales a la vez).
- */
+// Al marcar principal, desmarcamos las demás en la misma transacción.
 async function actualizar(idProducto, idImagen, { esPrincipal, orden }) {
   const t = await sequelize.transaction();
   try {
@@ -110,11 +98,7 @@ async function actualizar(idProducto, idImagen, { esPrincipal, orden }) {
   }
 }
 
-/**
- * Reordena todas las imágenes del producto. `ids` es la lista completa de
- * idImagen en el orden deseado; tiene que contener exactamente las
- * imágenes del producto (ni más, ni menos, sin repetidas).
- */
+// ids tiene que traer exactamente las imágenes del producto.
 async function reordenar(idProducto, ids) {
   const producto = await Producto.findByPk(idProducto);
   if (!producto) {
@@ -167,10 +151,8 @@ async function eliminar(idProducto, idImagen) {
   }
 
   await imagen.destroy();
-  // Nota: si la imagen borrada era la esPrincipal, el producto queda
-  // sin imagen principal hasta que el admin marque otra. No se elige
-  // automáticamente una nueva principal, para no sorprender al admin
-  // con un cambio que no pidió explícitamente.
+  // Si borrás la principal, el producto queda sin principal hasta que el
+  // admin elija otra.
 }
 
 module.exports = {

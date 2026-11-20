@@ -1,17 +1,13 @@
 // models/usuario.model.js
 module.exports = (sequelize, DataTypes) => {
   const Usuario = sequelize.define(
-    'Usuario',
+    "Usuario",
     {
+      //Necesita UUID V4 en la BBDD si no explota
       idUsuario: {
         type: DataTypes.UUID,
         primaryKey: true,
         defaultValue: DataTypes.UUIDV4,
-        // La base ya genera esto con gen_random_uuid() (DEFAULT en el SQL),
-        // pero declararlo también acá permite que Sequelize arme el objeto
-        // completo en memoria antes del INSERT si hiciera falta (por ej.
-        // para usarlo en otra tabla dentro de la misma transacción sin
-        // esperar el round-trip a la base).
       },
       nombre: {
         type: DataTypes.STRING(100),
@@ -40,16 +36,10 @@ module.exports = (sequelize, DataTypes) => {
       rol: {
         type: DataTypes.STRING(20),
         allowNull: false,
-        defaultValue: 'admin',
-        // Único rol del sistema, según la consigna del TPO (que solo
-        // define "visitante" -sin cuenta- y "administrador"). No existe
-        // rol 'cliente': quien no está autenticado es un visitante
-        // implícito, no una fila en esta tabla.
-        // El registro sigue protegido por INVITE_CODE (ver
-        // auth.service.js) en vez de por distinción de roles, ya que
-        // ahora CUALQUIER registro exitoso crea un admin.
+        defaultValue: "admin",
+        // Único rol del sistema, por eso el default
         validate: {
-          isIn: [['admin']],
+          isIn: [["admin"]],
         },
       },
       direccion: {
@@ -76,29 +66,24 @@ module.exports = (sequelize, DataTypes) => {
       },
     },
     {
-      tableName: 'usuarios',
+      tableName: "usuarios",
       underscored: true,
-      timestamps: false, // fecha_registro ya cumple ese rol, no created_at/updated_at
+      timestamps: false,
       defaultScope: {
-        // Excluye el hash de password de TODAS las consultas por defecto.
-        // Ver nota de seguridad de la clase de ciberseguridad: nunca debe
-        // viajar en ninguna respuesta salvo que se pida explícitamente.
-        attributes: { exclude: ['passwordHash'] },
+        attributes: { exclude: ["passwordHash"] },
       },
       scopes: {
-        // Único lugar donde se necesita el hash: al hacer login, para
-        // comparar con bcrypt. Se usa así: Usuario.scope('conPassword').findOne(...)
         conPassword: {
           attributes: {},
         },
       },
-    }
+    },
   );
 
   Usuario.associate = (models) => {
     Usuario.hasMany(models.PasswordResetToken, {
-      foreignKey: 'idUsuario',
-      as: 'tokensRecuperacion',
+      foreignKey: "idUsuario",
+      as: "tokensRecuperacion",
     });
   };
 

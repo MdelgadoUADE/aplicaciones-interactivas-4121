@@ -93,13 +93,7 @@ async function actualizar(id, { nombre, descripcion }) {
   return { ...categoria.toJSON(), productCount };
 }
 
-/**
- * Eliminar una categoría, respetando la regla de negocio (y el trigger
- * fn_check_categoria_on_delete de la base): ningún producto puede
- * quedarse sin categorías. Se verifica ANTES de intentar borrar, para
- * poder devolver un 409 con mensaje claro en vez de que el trigger de
- * Postgres tire una excepción genérica.
- */
+// elimina una categoria
 async function eliminar(id) {
   const categoria = await Categoria.findByPk(id);
   if (!categoria) {
@@ -132,10 +126,7 @@ async function listarProductosDeCategoria(id, { page = 1, limit = 20 } = {}) {
     throw error;
   }
 
-  // Se delega en productService.listar para que este endpoint devuelva la
-  // misma forma que GET /products y, sobre todo, solo productos ACTIVOS:
-  // antes devolvía filas crudas del modelo e incluía productos inactivos
-  // a cualquier visitante.
+  //Lista productos activos
   return productService.listar({
     page,
     limit,

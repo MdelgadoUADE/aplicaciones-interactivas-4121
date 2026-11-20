@@ -1,4 +1,5 @@
 // controllers/category.controller.js
+// Aqui viven todos las funciones para crear categorias
 const categoryService = require("../services/category.service");
 
 async function listar(req, res, next) {
